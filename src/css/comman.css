@@ -1,0 +1,105 @@
+/* Common Styles for Forms */
+.container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    background-color: #f9f9f9;
+}
+
+h2 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+/* Form Group Styles */
+.form-group {
+    margin-bottom: 15px;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+/* Input Styles */
+input[type="text"],
+input[type="email"],
+input[type="number"],
+input[type="date"],
+input[type="file"] {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box; /* Ensure padding doesn't affect width */
+}
+
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="number"]:focus,
+input[type="date"]:focus {
+    border-color: #007bff;
+    outline: none;
+}
+
+/* Button Styles */
+button {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s;
+}
+
+button.submit {
+    background-color: #007bff;
+    color: white;
+}
+
+button.cancel {
+    background-color: #ccc;
+    color: #333;
+    margin-left: 10px; /* Add space between buttons */
+}
+
+button.submit:hover {
+    background-color: #0056b3; /* Darker shade on hover */
+}
+
+button.cancel:hover {
+    background-color: #bbb; /* Darker shade on hover */
+}
+
+/* Progress and Message Styles */
+.success-message {
+    color: green;
+    font-weight: bold;
+    text-align: center;
+}
+
+.error-message {
+    color: red;
+    font-weight: bold;
+    text-align: center;
+}
+
+/* Progress Bar Styles */
+.progress-container {
+    width: 100%;
+    background-color: #f3f3f3;
+    border-radius: 4px;
+    margin-top: 10px;
+}
+
+.progress-bar {
+    height: 20px;
+    width: 0;
+    background-color: #007bff;
+    border-radius: 4px;
+    transition: width 0.3s;
+}
