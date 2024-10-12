@@ -8,6 +8,7 @@ import { faSearch, faChevronDown, faChevronUp } from '@fortawesome/free-solid-sv
 const AllStudentDetails = () => {
     const [studentData, setStudentData] = useState([]);
     const [error, setError] = useState('');
+    const [loading, setLoading] = useState(true);
     const [pinNumber, setPinNumber] = useState(''); // State for pin input
     const [visibleCards, setVisibleCards] = useState({}); // State to keep track of visible cards
 
@@ -26,6 +27,7 @@ const AllStudentDetails = () => {
         try {
             const response = await axios.get('http://localhost:5000/api/student/studentDetails'); // Replace with your API endpoint
             setStudentData(response.data);
+            setLoading(false);
         } catch (err) {
             setError('Error fetching student data');
             console.error(err);
@@ -67,6 +69,7 @@ const AllStudentDetails = () => {
                 }
             });
             setStudentData(response.data);
+            setLoading(false);
             setError('');
         } catch (err) {
             setError('Error fetching student data by pin');
@@ -85,6 +88,9 @@ const AllStudentDetails = () => {
         return <div className="text-red-600">{error}</div>;
     }
 
+    if(loading){
+        return <div>Loading...</div>;
+    }
 
     if (studentData.length === 0) {
         return <div>No data Found</div>;
