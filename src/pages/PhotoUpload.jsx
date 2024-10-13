@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import  { useState } from 'react';
 import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import { storage } from '../firebase_config/firebase'; // Import Firebase storage from the firebase.js file
 
@@ -56,7 +56,7 @@ const PhotoUpload = () => {
         value={pinNumber}
         onChange={handlePinChange}  // Input for pin number
       />
-      <input type="file" onChange={handleFileChange} />  // Input for file
+      <input type="file" onChange={handleFileChange} />
       <button onClick={handleUpload}>Upload</button>
       <p>Upload Progress: {progress}%</p>
       {url && (
