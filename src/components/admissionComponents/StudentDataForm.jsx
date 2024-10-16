@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
-import { storage } from '../firebase_config/firebase'; // Adjust the import according to your file structure
+import { storage } from '../../firebase_config/firebase'; // Adjust the import according to your file structure
 
 const StudentDataForm = () => {
     const [studentData, setStudentData] = useState({
