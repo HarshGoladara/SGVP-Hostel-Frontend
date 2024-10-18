@@ -1,19 +1,17 @@
 import globals from "globals";
-import tseslintPlugin from "@typescript-eslint/eslint-plugin";
-import tsParser from "@typescript-eslint/parser";
+import pluginJs from "@eslint/js";
 import pluginReact from "eslint-plugin-react";
 
 export default [
   {
-    files: ["**/*.{js,mjs,cjs,jsx}"],
+    files: ["**/*.{js,mjs,cjs}"],
     languageOptions: {
-      parser: tsParser,
+      parser: pluginJs.configs.recommended.parser, // Use the JavaScript parser
       parserOptions: {
         ecmaVersion: 2021,
         sourceType: "module",
         ecmaFeatures: {
           jsx: true,
-          tsx: true,
         },
       },
       globals: {
@@ -21,7 +19,6 @@ export default [
       }
     },
     plugins: {
-      "@typescript-eslint": tseslintPlugin,
       react: pluginReact,
     },
     rules: {
@@ -32,12 +29,10 @@ export default [
       "prefer-const": ["error", { ignoreReadBeforeAssign: true }],
       "no-use-before-define": "off",
 
-      // TypeScript rules
-      "@typescript-eslint/no-use-before-define": ["error"],
-
       // React-specific rules
-      "react/jsx-filename-extension": ["warn", { extensions: [".tsx"] }],
+      "react/jsx-filename-extension": ["warn", { extensions: [".jsx"] }],
       "react/react-in-jsx-scope": "off",
     },
   },
+  pluginJs.configs.recommended
 ];
