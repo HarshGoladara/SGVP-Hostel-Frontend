@@ -52,7 +52,7 @@
     "vite": "^5.4.8"
   },
   "lint-staged": {
-    "{src,src/**/*}.{tsx,ts,html,css}": "prettier --write",
-    "{src,src/**/*}.{tsx,ts}": "eslint"
+    "{src,src/**/*}.{jsx,js,html,css}": "prettier --write",
+    "{src,src/**/*}.{jsx,js}": "eslint"
   }
 }
