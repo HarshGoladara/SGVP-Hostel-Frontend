@@ -1,12 +1,12 @@
-import  { useState } from 'react';
+import { useState } from 'react';
 import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
-import { storage } from '../firebase_config/firebase'; // Import Firebase storage from the firebase.js file
+import { storage } from '../firebase_config/firebase.js'; // Import Firebase storage from the firebase.js file
 
 const PhotoUpload = () => {
-  const [file, setFile] = useState(null);  // State to store selected file
+  const [file, setFile] = useState(null); // State to store selected file
   const [pinNumber, setPinNumber] = useState(''); // State to store pin number
-  const [url, setUrl] = useState('');  // State to store download URL
-  const [progress, setProgress] = useState(0);  // State to track upload progress
+  const [url, setUrl] = useState(''); // State to store download URL
+  const [progress, setProgress] = useState(0); // State to track upload progress
 
   // Handle file input change
   const handleFileChange = (e) => {
@@ -29,10 +29,12 @@ const PhotoUpload = () => {
     const uploadTask = uploadBytesResumable(storageRef, file);
 
     // Track upload progress
-    uploadTask.on('state_changed',
+    uploadTask.on(
+      'state_changed',
       (snapshot) => {
-        const progressPercent = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-        setProgress(progressPercent);  // Update progress state
+        const progressPercent =
+          (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        setProgress(progressPercent); // Update progress state
       },
       (error) => {
         console.error('Upload failed:', error);
@@ -40,10 +42,10 @@ const PhotoUpload = () => {
       () => {
         // Get the download URL after upload completes
         getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-          setUrl(downloadURL);  // Store the download URL
+          setUrl(downloadURL); // Store the download URL
           console.log('File available at:', downloadURL);
         });
-      }
+      },
     );
   };
 
@@ -54,14 +56,17 @@ const PhotoUpload = () => {
         type="text"
         placeholder="Enter Student Pin Number"
         value={pinNumber}
-        onChange={handlePinChange}  // Input for pin number
+        onChange={handlePinChange} // Input for pin number
       />
       <input type="file" onChange={handleFileChange} />
       <button onClick={handleUpload}>Upload</button>
       <p>Upload Progress: {progress}%</p>
       {url && (
         <p>
-          Photo URL: <a href={url} target="_blank" rel="noopener noreferrer">{url}</a>
+          Photo URL:{' '}
+          <a href={url} target="_blank" rel="noopener noreferrer">
+            {url}
+          </a>
         </p>
       )}
     </div>
