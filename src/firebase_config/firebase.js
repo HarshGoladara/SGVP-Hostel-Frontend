@@ -1,15 +1,24 @@
 // firebase.js
 import { initializeApp } from 'firebase/app';
 import { getStorage } from 'firebase/storage';
+import {
+  VITE_FIREBASE_API_KEY,
+  VITE_FIREBASE_AUTH_DOMAIN,
+  VITE_FIREBASE_PROJECT_ID,
+  VITE_FIREBASE_STORAGE_BUCKET,
+  VITE_FIREBASE_MESSAGING_SENDER_ID,
+  VITE_APP_ID,
+  VITE_MEASUREMENT_ID,
+} from '../helper/envConfig/envConfig.js';
 
 const firebaseConfig = {
-  apiKey: "AIzaSyDTSzd1gebOhVcb_iyj8VqLSXf7c0T0QmI",
-  authDomain: "sgvp-collage-erp.firebaseapp.com",
-  projectId: "sgvp-collage-erp",
-  storageBucket: "sgvp-collage-erp.appspot.com",
-  messagingSenderId: "306045411251",
-  appId: "1:306045411251:web:56cfed4f6d12547d8d35c6",
-  measurementId: "G-D6VYTN28ZM"
+  apiKey: VITE_FIREBASE_API_KEY,
+  authDomain: VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: VITE_FIREBASE_PROJECT_ID,
+  storageBucket: VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: VITE_APP_ID,
+  measurementId: VITE_MEASUREMENT_ID,
 };
 
 // Initialize Firebase
