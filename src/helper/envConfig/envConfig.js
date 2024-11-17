@@ -6,4 +6,5 @@ export const {
   VITE_FIREBASE_MESSAGING_SENDER_ID,
   VITE_APP_ID,
   VITE_MEASUREMENT_ID,
+  VITE_BACKEND_BASE_API,
 } = import.meta.env;

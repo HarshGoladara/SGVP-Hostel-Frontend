@@ -1,0 +1,135 @@
+/* Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  height: 100%;
+  font-family: Arial, sans-serif;
+}
+
+/* Sidebar Container */
+.sidebar-container {
+  /* position: fixed;
+    left: 15px;
+    top: 15px;
+    bottom: 15px;
+    right: 15px; */
+  margin: 15px 0px 15px 15px;
+  width: 250px;
+  transition: width 0.4s ease;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.sidebar-container.collapsed {
+  width: 80px; /* Shrink to icon size */
+}
+
+/* Sidebar Styling */
+.sidebar {
+  background-color: #ffffff;
+  color: black;
+  width: 100%;
+  height: calc(100% - 40px);
+  padding: 20px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: padding 0.4s ease;
+  /* border-width: 1px;
+    border-color: black; */
+}
+
+/* Title and Header */
+.sidebar-title {
+  font-size: 1.2rem;
+  font-weight: bold;
+  transition:
+    opacity 0.3s ease-in-out,
+    width 0.4s ease;
+  white-space: nowrap;
+  overflow: hidden;
+  width: 100%;
+}
+
+.sidebar-title.hidden {
+  opacity: 0;
+  width: 0;
+}
+
+/* Header with Toggle Icon */
+.toggle-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  margin-bottom: 20px;
+}
+
+/* Sidebar Items */
+ul {
+  list-style: none;
+}
+
+ul li {
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: background 0.3s ease;
+  margin-bottom: 10px;
+}
+
+.imgg {
+  padding: 0px 10px 5px 10px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: background 0.3s ease;
+  margin-bottom: 10px;
+}
+
+ul li i {
+  margin-right: 10px;
+}
+
+.menu-text {
+  margin-left: 10px;
+  white-space: nowrap;
+  overflow: hidden;
+  transition:
+    opacity 0.3s ease,
+    width 0.4s ease;
+  width: auto;
+}
+
+.menu-text.hidden {
+  opacity: 0;
+  width: 0;
+}
+
+/* Active & Hover States */
+ul li:hover {
+  background: #bfecff;
+}
+
+ul li.active {
+  background: #37afe1;
+  color: white;
+}
+
+/* Padding and alignment remain constant */
+.sidebar-container.collapsed ul li {
+  justify-content: center;
+}
+
+.sidebar-container.collapsed .sidebar {
+  padding: 20px; /* No padding change */
+}
