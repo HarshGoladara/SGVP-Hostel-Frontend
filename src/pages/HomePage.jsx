@@ -22,6 +22,7 @@ import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import AddIcon from '@mui/icons-material/Add';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import { Button } from '@mui/material';
+// import Background from './Background.jsx';
 
 const drawerWidth = 240;
 
@@ -124,132 +125,7 @@ function HomePage() {
     },
   ];
 
-  return (
-    <Box sx={{ display: 'flex' }}>
-      <CssBaseline />
-      <AppBar position="fixed" open={open}>
-        <Toolbar sx={{ display: 'flex', justifyContent: 'space-between' }}>
-          <Box sx={{ display: 'flex', gap: '40px', width: '50%' }}>
-            <IconButton
-              color="inherit"
-              aria-label="open drawer"
-              onClick={handleDrawerOpen}
-              edge="start"
-              sx={{
-                // marginRight: 5,
-                ...(open && { display: 'none' }),
-              }}
-            >
-              <MenuIcon />
-            </IconButton>
-            <Typography variant="h6" noWrap component="div">
-              {location.pathname === '/insert'
-                ? allPages[0].label
-                : location.pathname === '/list'
-                  ? allPages[1].label
-                  : location.pathname.split('/')[1] === 'update'
-                    ? 'Update Data'
-                    : location.pathname.split('/')[1] === 'view'
-                      ? 'View Data'
-                      : 'Welcome'}
-            </Typography>
-          </Box>
-          <Box
-            sx={{ display: 'flex', justifyContent: 'flex-end', width: '50%' }}
-          >
-            <Button
-              sx={{
-                width: '100px',
-              }}
-              onClick={() => handleLogOut('/api/logOut')}
-            >
-              <LoginIcon sx={{ color: 'white', cursor: 'pointer' }} />
-            </Button>
-          </Box>
-        </Toolbar>
-      </AppBar>
-      <Drawer variant="permanent" open={open}>
-        <DrawerHeader>
-          <IconButton onClick={handleDrawerClose}>
-            {theme.direction === 'rtl' ? (
-              <ChevronRightIcon />
-            ) : (
-              <ChevronLeftIcon />
-            )}
-          </IconButton>
-        </DrawerHeader>
-        <Divider />
-        {/* <List>
-          {authentication.map((element, index) => (
-            <ListItem
-              key={element.text}
-              disablePadding
-              sx={{ display: "block" }}
-            >
-              <ListItemButton
-                sx={{
-                  minHeight: 48,
-                  justifyContent: open ? "initial" : "center",
-                  px: 2.5,
-                }}
-              >
-                <ListItemIcon
-                  sx={{
-                    minWidth: 0,
-                    mr: open ? 3 : "auto",
-                    justifyContent: "center",
-                  }}
-                >
-                  <Link to={element.path}>{element.element}</Link>
-                </ListItemIcon>
-                <ListItemText
-                  primary={element.text}
-                  sx={{ opacity: open ? 1 : 0 }}
-                />
-              </ListItemButton>
-            </ListItem>
-          ))}
-        </List> */}
-        <Divider />
-        <List>
-          {allPages.map((element) => (
-            <ListItem
-              key={element.text}
-              disablePadding
-              sx={{ display: 'block' }}
-            >
-              <ListItemButton
-                sx={{
-                  minHeight: 48,
-                  justifyContent: open ? 'initial' : 'center',
-                  px: 2.5,
-                }}
-              >
-                <ListItemIcon
-                  sx={{
-                    minWidth: 0,
-                    mr: open ? 3 : 'auto',
-                    justifyContent: 'center',
-                  }}
-                >
-                  <Link to={element.path}>{element.element}</Link>
-                </ListItemIcon>
-                <ListItemText
-                  primary={element.text}
-                  sx={{ opacity: open ? 1 : 0 }}
-                />
-              </ListItemButton>
-            </ListItem>
-          ))}
-        </List>
-      </Drawer>
-      <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
-        <DrawerHeader />
-        {/* all children access */}
-        <Outlet />
-      </Box>
-    </Box>
-  );
+  return <></>;
 }
 
 export default HomePage;
