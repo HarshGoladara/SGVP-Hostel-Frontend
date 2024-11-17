@@ -10,7 +10,7 @@ import Divider from '@mui/material/Divider';
 import BedIcon from '@mui/icons-material/Bed';
 import { Tooltip, IconButton } from '@mui/material';
 
-import '../css/Sidebar.css';
+import '../assets/css/layouts/Sidebar.css';
 // import logo from ''
 
 const Sidebar = () => {

@@ -1,4 +1,4 @@
-import '../css/Navbar.css';
+import '../assets/css/layouts/Navbar.css';
 export default function Header() {
   return (
     <>

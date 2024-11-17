@@ -3,7 +3,7 @@ import SearchIcon from '@mui/icons-material/Search';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import axios from 'axios';
 import { VITE_BACKEND_BASE_API } from '../../helper/envConfig/envConfig.js';
-import './css/StudentNavbar.css';
+import '../../assets/css/studentDetails/StudentNavbar.css';
 
 function StudentNavbar() {
   const [studentData, setStudentData] = useState([]);
@@ -36,7 +36,7 @@ function StudentNavbar() {
       <div className="h-16 bg-[#ffffff] flex items-center px-4 rounded-md justify-between ">
         <div>
           <span className="text-[25px] font-bold">Student</span>
-          <span className="text-[18px]">{`  (${studentData.length})`}</span>
+          <span className="text-[18px]">{`(${studentData?.length})`}</span>
         </div>
         <div className="flex flex-row mr-3">
           <div className="relative inline-block text-left pr-10">
