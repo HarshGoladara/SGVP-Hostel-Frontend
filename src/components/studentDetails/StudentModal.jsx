@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import DetailsCard from './DetailsCard';
-import './css/ModalStyle.css';
+import '../../assets/css/studentDetails/ModalStyle.css';
 
 const StudentModal = ({ student, open, onClose }) => {
   const [showStudent, setShowStudent] = useState(true);

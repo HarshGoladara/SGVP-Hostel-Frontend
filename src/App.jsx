@@ -16,7 +16,7 @@ import ActivateAccountPage from './pages/authentication/ActivateAccount.jsx';
 import SetNewPasswordPage from './pages/authentication/SetNewPassword.jsx';
 import ProtectedRoute from './pages/authentication/ProtectedRoutes.jsx';
 
-import './css/App.css';
+import './assets/css/App.css';
 import Sidebar from './layouts/Sidebar.jsx';
 // import StudentInfo from './components/studentDetails/StudentInfo.jsx'
 import StudentNavbar from './components/studentDetails/StudentNavbar.jsx';
@@ -65,6 +65,10 @@ function App() {
               ),
             },
             {
+              path: '/student',
+              element: <StudentLayout />,
+            },
+            {
               path: '/addStudent',
               element: <AdmissionForm />,
             },
@@ -84,13 +88,7 @@ function App() {
 
   return (
     <>
-      <div className="app-container">
-        <Sidebar /> {/* Sidebar should take full height */}
-        <div className="flex-grow">
-          <StudentLayout />
-          {/* Main content would go here */}
-        </div>
-      </div>
+      <RouterProvider router={router} />
     </>
   );
 }
