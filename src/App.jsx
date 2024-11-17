@@ -65,7 +65,7 @@ function App() {
               ),
             },
             {
-              path: '/studentLayout',
+              path: '/student',
               element: <StudentLayout />,
             },
             {
