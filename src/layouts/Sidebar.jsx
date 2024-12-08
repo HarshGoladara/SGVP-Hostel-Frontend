@@ -92,8 +92,8 @@ const Sidebar = () => {
             </li>
 
             <li
-              className={activeItem === 'Gatepass' ? 'active' : ''}
-              onClick={() => handleItemClick('Gatepass')}
+              className={activeItem === 'Room Allotment' ? 'active' : ''}
+              onClick={() => handleItemClick('Room Allotment')}
             >
               <BedIcon />
               <span className={`menu-text ${isOpen ? '' : 'hidden'}`}>

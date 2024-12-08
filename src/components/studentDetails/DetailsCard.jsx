@@ -43,7 +43,10 @@ const DetailsCard = ({ student, onClose }) => {
             {/* Fixed 30% width for the image */}
             {student.student_photo_url ? (
               <img
-                src={student.student_photo_url}
+                src={
+                  student.student_photo_url ||
+                  `https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQVrNIrc_GMNFCWvfIVx-5-1jI0YMf-3a6yyg&s`
+                }
                 alt={student.student_full_name}
                 className="h-full w-full object-cover rounded-lg"
               />

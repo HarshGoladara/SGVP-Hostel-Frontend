@@ -3,15 +3,20 @@ import axios from 'axios';
 import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import { storage } from '../../firebase_config/firebase'; // Adjust the import according to your file structure
 import toast from 'react-hot-toast';
+import { VITE_BACKEND_BASE_API } from '../../helper/envConfig/envConfig.js';
 
 const AdmissionForm = () => {
   const [formData, setFormData] = useState({
     // Student Data
     pin_number: '',
-    student_full_name: '',
+    // student_full_name: '',
+    student_surname: '',
+    student_name: '',
+    student_father_name: '',
     dob: '',
     nationality: '',
     religion: '',
+    caste: '',
     address: '',
     city: '',
     postal_pin_number: '',
@@ -111,11 +116,26 @@ const AdmissionForm = () => {
 
     if (!formData.pin_number || isNaN(formData.pin_number))
       return 'Pin Number is required and must be a number.';
+    // if (
+    //   !formData.student_full_name.trim() ||
+    //   !alphabetRegex.test(formData.student_full_name.trim())
+    // )
+    //   return 'Student Full Name is required.';
     if (
-      !formData.student_full_name.trim() ||
-      !alphabetRegex.test(formData.student_full_name.trim())
+      !formData.student_surname.trim() ||
+      !alphabetRegex.test(formData.student_surname.trim())
     )
-      return 'Student Full Name is required.';
+      return 'Student Surname is required.';
+    if (
+      !formData.student_name.trim() ||
+      !alphabetRegex.test(formData.student_name.trim())
+    )
+      return 'Student Name is required.';
+    if (
+      !formData.student_father_name.trim() ||
+      !alphabetRegex.test(formData.student_father_name.trim())
+    )
+      return 'Student Father Name is required.';
     if (!formData.dob || isNaN(Date.parse(formData.dob)))
       return 'Date of Birth is required and must be a valid date.';
     if (
@@ -125,6 +145,8 @@ const AdmissionForm = () => {
       return 'Nationality is required.';
     if (!formData.religion || !alphabetRegex.test(formData.religion.trim()))
       return 'Religion is required.';
+    if (!formData.caste || !alphabetRegex.test(formData.caste.trim()))
+      return 'Caste is required.';
     if (!formData.address) return 'Address is required.';
     if (!formData.city || !alphabetRegex.test(formData.city.trim()))
       return 'City is required.';
@@ -320,7 +342,7 @@ const AdmissionForm = () => {
 
       // Submit the form data along with image URLs to the server
       const response = await axios.post(
-        'http://localhost:5000/api/admission/addStudent',
+        `${VITE_BACKEND_BASE_API}/admission/addStudent`,
         updatedFormData,
       );
       console.log('Student data added successfully:', response.data);
@@ -355,7 +377,7 @@ const AdmissionForm = () => {
             <div>
               <label className="block text-sm text-gray-700">Pin Number</label>
               <input
-                type="number"
+                type="text"
                 name="pin_number"
                 value={formData.pin_number}
                 onChange={handleChange}
@@ -363,7 +385,7 @@ const AdmissionForm = () => {
               />
             </div>
 
-            <div>
+            {/* <div>
               <label className="block text-sm text-gray-700">
                 Student Full Name
               </label>
@@ -371,6 +393,42 @@ const AdmissionForm = () => {
                 type="text"
                 name="student_full_name"
                 value={formData.student_full_name}
+                onChange={handleChange}
+                className="mt-1 block w-full p-2 border border-gray-600 rounded-md"
+              />
+            </div> */}
+            <div>
+              <label className="block text-sm text-gray-700">
+                Student Surname
+              </label>
+              <input
+                type="text"
+                name="student_surname"
+                value={formData.student_surname}
+                onChange={handleChange}
+                className="mt-1 block w-full p-2 border border-gray-600 rounded-md"
+              />
+            </div>
+            <div>
+              <label className="block text-sm text-gray-700">
+                Student Name
+              </label>
+              <input
+                type="text"
+                name="student_name"
+                value={formData.student_name}
+                onChange={handleChange}
+                className="mt-1 block w-full p-2 border border-gray-600 rounded-md"
+              />
+            </div>
+            <div>
+              <label className="block text-sm text-gray-700">
+                Student Father Name
+              </label>
+              <input
+                type="text"
+                name="student_father_name"
+                value={formData.student_father_name}
                 onChange={handleChange}
                 className="mt-1 block w-full p-2 border border-gray-600 rounded-md"
               />
@@ -402,13 +460,37 @@ const AdmissionForm = () => {
 
             <div>
               <label className="block text-sm text-gray-700">Religion</label>
-              <input
-                type="text"
+              <select
                 name="religion"
                 value={formData.religion}
                 onChange={handleChange}
                 className="mt-1 block w-full p-2 border border-gray-600 rounded-md"
-              />
+              >
+                <option value="" disabled>
+                  Select Religion
+                </option>
+                <option value="Hinduism">Hinduism</option>
+                <option value="Jainism">Jainism</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm text-gray-700">Caste</label>
+              <select
+                name="caste"
+                value={formData.caste}
+                onChange={handleChange}
+                className="mt-1 block w-full p-2 border border-gray-600 rounded-md"
+              >
+                <option value="" disabled>
+                  Select Caste
+                </option>
+                <option value="General">General</option>
+                <option value="OBC">OBC</option>
+                <option value="SC">SC</option>
+                <option value="ST">ST</option>
+                <option value="Other">Other</option>
+              </select>
             </div>
 
             <div className="md:col-span-2 lg:col-span-3">
@@ -437,7 +519,7 @@ const AdmissionForm = () => {
                 Postal Pin Number
               </label>
               <input
-                type="number"
+                type="text"
                 name="postal_pin_number"
                 value={formData.postal_pin_number}
                 onChange={handleChange}
@@ -450,7 +532,7 @@ const AdmissionForm = () => {
                 Student Contact Number
               </label>
               <input
-                type="number"
+                type="text"
                 name="student_contact_number"
                 value={formData.student_contact_number}
                 onChange={handleChange}
@@ -564,7 +646,7 @@ const AdmissionForm = () => {
                 Course Duration (Years):
               </label>
               <input
-                type="number"
+                type="text"
                 name="course_duration_years"
                 value={formData.course_duration_years}
                 onChange={handleChange}
@@ -576,7 +658,7 @@ const AdmissionForm = () => {
             <div>
               <label className="block text-gray-600 mb-1">Current Year:</label>
               <input
-                type="number"
+                type="text"
                 name="current_year"
                 value={formData.current_year}
                 onChange={handleChange}
@@ -590,7 +672,7 @@ const AdmissionForm = () => {
                 Current Semester:
               </label>
               <input
-                type="number"
+                type="text"
                 name="current_sem"
                 value={formData.current_sem}
                 onChange={handleChange}
@@ -625,7 +707,7 @@ const AdmissionForm = () => {
                 Father Contact Number:
               </label>
               <input
-                type="number"
+                type="text"
                 name="father_contact_number"
                 value={formData.father_contact_number}
                 onChange={handleChange}
@@ -676,7 +758,7 @@ const AdmissionForm = () => {
                 Mother Contact Number:
               </label>
               <input
-                type="number"
+                type="text"
                 name="mother_contact_number"
                 value={formData.mother_contact_number}
                 onChange={handleChange}
@@ -717,7 +799,7 @@ const AdmissionForm = () => {
                 Approval Person Contact:
               </label>
               <input
-                type="number"
+                type="text"
                 name="approval_person_contact"
                 value={formData.approval_person_contact}
                 onChange={handleChange}
@@ -794,7 +876,7 @@ const AdmissionForm = () => {
                 Relative Contact Number:
               </label>
               <input
-                type="number"
+                type="text"
                 name="relative_contact_number"
                 value={formData.relative_contact_number}
                 onChange={handleChange}
@@ -843,7 +925,7 @@ const AdmissionForm = () => {
                 Sant Phone Number:
               </label>
               <input
-                type="number"
+                type="text"
                 name="sant_phone_number"
                 value={formData.sant_phone_number}
                 onChange={handleChange}
@@ -893,7 +975,7 @@ const AdmissionForm = () => {
             <div>
               <label className="block text-gray-600 mb-1">Mobile Number:</label>
               <input
-                type="number"
+                type="text"
                 name="reference_relative_mobile"
                 value={formData.reference_relative_mobile}
                 onChange={handleChange}

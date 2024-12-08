@@ -15,6 +15,7 @@ import RegisterPage from './pages/authentication/Register.jsx';
 import ActivateAccountPage from './pages/authentication/ActivateAccount.jsx';
 import SetNewPasswordPage from './pages/authentication/SetNewPassword.jsx';
 import ProtectedRoute from './pages/authentication/ProtectedRoutes.jsx';
+import { Toaster } from 'react-hot-toast';
 
 import './css/App.css';
 import Sidebar from './layouts/Sidebar.jsx';
@@ -45,6 +46,40 @@ function App() {
       element: <SetNewPasswordPage />,
     },
     {
+      path: '/form',
+      element: (
+        <>
+          <StudentDataForm />
+          <StudentEducationForm />
+          <ParentDetailForm />
+          <RelativeForm />
+          <SantReferenceForm />
+          <RelativeReferenceForm />
+        </>
+      ),
+    },
+    {
+      path: '/addStudent',
+      element: <AdmissionForm />,
+    },
+    {
+      path: '/photo',
+      element: <PhotoUpload />,
+    },
+    // ---------temporarily public access start----------------------
+    {
+      path: '/studentDetails',
+      element: (
+        <div className="app-container">
+          <Sidebar />
+          <div className="flex-grow">
+            <StudentLayout />
+          </div>
+        </div>
+      ),
+    },
+    // ---------temporarily public access end----------------------
+    {
       element: <ProtectedRoute />,
       children: [
         {
@@ -52,29 +87,15 @@ function App() {
           element: <HomePage />,
           children: [
             {
-              path: '/form',
-              element: (
-                <>
-                  <StudentDataForm />
-                  <StudentEducationForm />
-                  <ParentDetailForm />
-                  <RelativeForm />
-                  <SantReferenceForm />
-                  <RelativeReferenceForm />
-                </>
-              ),
-            },
-            {
-              path: '/addStudent',
-              element: <AdmissionForm />,
-            },
-            {
-              path: '/photo',
-              element: <PhotoUpload />,
-            },
-            {
               path: '/studentDetails',
-              element: <AllStudentDetails />,
+              element: (
+                <div className="app-container">
+                  <Sidebar />
+                  <div className="flex-grow">
+                    <StudentLayout />
+                  </div>
+                </div>
+              ),
             },
           ],
         },
@@ -84,13 +105,30 @@ function App() {
 
   return (
     <>
-      <div className="app-container">
-        <Sidebar /> {/* Sidebar should take full height */}
+      {/* <div className="app-container">
+        <Sidebar />
         <div className="flex-grow">
           <StudentLayout />
-          {/* Main content would go here */}
         </div>
+      </div> */}
+
+      {/* ----------------------------------------------------- */}
+      {/* <RouterProvider router={router} /> */}
+      {/* ----------------------------------------------------- */}
+
+      <div>
+        <Toaster
+          position="top-center"
+          toastOptions={{
+            success: {
+              theme: {
+                primary: '#4aed88',
+              },
+            },
+          }}
+        ></Toaster>
       </div>
+      <RouterProvider router={router} />
     </>
   );
 }

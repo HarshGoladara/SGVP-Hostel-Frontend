@@ -1,251 +1,203 @@
-import React, { useState } from 'react';
+import React from 'react';
+import { useForm } from 'react-hook-form';
 import axios from 'axios';
 import toast from 'react-hot-toast';
+import { TextField, Button } from '@mui/material';
+import { VITE_BACKEND_BASE_API } from '../../helper/envConfig/envConfig.js';
 
 const StudentEducationForm = () => {
-  const [educationData, setEducationData] = useState({
-    pin_number: '',
-    name_of_university: '',
-    name_of_collage: '',
-    course: '',
-    branch: '',
-    course_duration_years: '',
-    current_year: '',
-    current_sem: '',
-  });
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+  } = useForm();
+  const [loading, setLoading] = React.useState(false);
 
-  const [loading, setLoading] = useState(false);
-  const [successMessage, setSuccessMessage] = useState('');
-  const [errorMessage, setErrorMessage] = useState('');
-
-  const handleChange = (e) => {
-    setEducationData({ ...educationData, [e.target.name]: e.target.value });
-  };
-
-  // Validation function
-  const validateForm = () => {
-    const alphabetRegex = /^[A-Za-z\s]+$/;
-
-    if (!educationData.pin_number || isNaN(educationData.pin_number))
-      return 'Pin number must be a number and not empty.';
-
-    if (
-      !educationData.name_of_university ||
-      !alphabetRegex.test(educationData.name_of_university)
-    )
-      return 'University name is required.';
-
-    if (
-      !educationData.name_of_collage ||
-      !alphabetRegex.test(educationData.name_of_collage)
-    )
-      return 'College name is required.';
-
-    if (!educationData.course || !alphabetRegex.test(educationData.course))
-      return 'Course is required.';
-
-    if (!educationData.branch || !alphabetRegex.test(educationData.branch))
-      return 'Branch is required.';
-
-    if (
-      !educationData.course_duration_years ||
-      isNaN(educationData.course_duration_years)
-    )
-      return 'Course duration must be a number and not empty.';
-
-    if (!educationData.current_year || isNaN(educationData.current_year))
-      return 'Current year must be a number and not empty.';
-
-    if (!educationData.current_sem || isNaN(educationData.current_sem))
-      return 'Current semester must be a number and not empty.';
-
-    return null;
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const onSubmit = async (data) => {
     setLoading(true);
-    setSuccessMessage('');
-    setErrorMessage('');
-
-    // Validate the form
-    const error = validateForm();
-    if (error) {
-      toast.error(error);
-      setErrorMessage(error);
-      setLoading(false);
-      return;
-    }
-
     try {
       const response = await axios.post(
-        'http://localhost:5000/api/admission/addStudentEducation',
-        educationData,
+        `${VITE_BACKEND_BASE_API}/admission/addStudentEducation`,
+        data,
       );
-      console.log(response.data);
-      setSuccessMessage('Student Education data added successfully!');
       toast.success('Student Education data added successfully!');
+      reset(); // Reset the form after success
     } catch (error) {
+      toast.error('Error, Try again!');
       console.error('error submitting student education data', error);
-      setErrorMessage('Error, Try again!', error.response.data);
-      toast.error(`${error.response.data}`);
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <>
-      <form
-        onSubmit={handleSubmit}
-        className="mb-10 max-w-xl mx-auto bg-slate-300 p-8 rounded-lg shadow-lg"
+    <form
+      onSubmit={handleSubmit(onSubmit)}
+      className="mb-10 max-w-xl mx-auto bg-slate-300 p-8 rounded-lg shadow-lg"
+    >
+      <h2 className="text-2xl font-semibold text-gray-700 mb-6">
+        Add Student Education
+      </h2>
+
+      <TextField
+        label="Pin Number"
+        variant="outlined"
+        fullWidth
+        margin="normal"
+        {...register('pin_number', {
+          required: 'Pin number is required',
+          pattern: {
+            value: /^[0-9]+$/,
+            message: 'Pin number must be a valid number',
+          },
+        })}
+        error={!!errors.pin_number}
+        helperText={errors.pin_number ? errors.pin_number.message : ''}
+        className="mt-1 block w-full p-2 border border-gray-600 rounded-md bg-white"
+      />
+
+      <TextField
+        label="Name of University"
+        variant="outlined"
+        fullWidth
+        margin="normal"
+        {...register('name_of_university', {
+          required: 'University name is required',
+          pattern: {
+            value: /^[A-Za-z\s]+$/,
+            message: 'University name must contain only letters and spaces',
+          },
+        })}
+        error={!!errors.name_of_university}
+        helperText={
+          errors.name_of_university ? errors.name_of_university.message : ''
+        }
+        className="mt-1 block w-full p-2 border border-gray-600 rounded-md bg-white"
+      />
+
+      <TextField
+        label="Name of College"
+        variant="outlined"
+        fullWidth
+        margin="normal"
+        {...register('name_of_collage', {
+          required: 'College name is required',
+          pattern: {
+            value: /^[A-Za-z\s]+$/,
+            message: 'College name must contain only letters and spaces',
+          },
+        })}
+        error={!!errors.name_of_collage}
+        helperText={
+          errors.name_of_collage ? errors.name_of_collage.message : ''
+        }
+        className="mt-1 block w-full p-2 border border-gray-600 rounded-md bg-white"
+      />
+
+      <TextField
+        label="Course"
+        variant="outlined"
+        fullWidth
+        margin="normal"
+        {...register('course', {
+          required: 'Course is required',
+          pattern: {
+            value: /^[A-Za-z\s]+$/,
+            message: 'Course name must contain only letters and spaces',
+          },
+        })}
+        error={!!errors.course}
+        helperText={errors.course ? errors.course.message : ''}
+        className="mt-1 block w-full p-2 border border-gray-600 rounded-md bg-white"
+      />
+
+      <TextField
+        label="Branch"
+        variant="outlined"
+        fullWidth
+        margin="normal"
+        {...register('branch', {
+          required: 'Branch is required',
+          pattern: {
+            value: /^[A-Za-z\s]+$/,
+            message: 'Branch name must contain only letters and spaces',
+          },
+        })}
+        error={!!errors.branch}
+        helperText={errors.branch ? errors.branch.message : ''}
+        className="mt-1 block w-full p-2 border border-gray-600 rounded-md bg-white"
+      />
+
+      <TextField
+        label="Course Duration (years)"
+        variant="outlined"
+        fullWidth
+        margin="normal"
+        type="number"
+        {...register('course_duration_years', {
+          required: 'Course duration is required',
+          valueAsNumber: true,
+        })}
+        error={!!errors.course_duration_years}
+        helperText={
+          errors.course_duration_years
+            ? errors.course_duration_years.message
+            : ''
+        }
+        className="mt-1 block w-full p-2 border border-gray-600 rounded-md bg-white"
+      />
+
+      <TextField
+        label="Current Year"
+        variant="outlined"
+        fullWidth
+        margin="normal"
+        type="number"
+        {...register('current_year', {
+          required: 'Current year is required',
+          valueAsNumber: true,
+        })}
+        error={!!errors.current_year}
+        helperText={errors.current_year ? errors.current_year.message : ''}
+        className="mt-1 block w-full p-2 border border-gray-600 rounded-md bg-white"
+      />
+
+      <TextField
+        label="Current Semester"
+        variant="outlined"
+        fullWidth
+        margin="normal"
+        type="number"
+        {...register('current_sem', {
+          required: 'Current semester is required',
+          valueAsNumber: true,
+        })}
+        error={!!errors.current_sem}
+        helperText={errors.current_sem ? errors.current_sem.message : ''}
+        className="mt-1 block w-full p-2 border border-gray-600 rounded-md bg-white"
+      />
+
+      <Button
+        type="submit"
+        variant="contained"
+        color="primary"
+        fullWidth
+        disabled={loading}
+        className="mt-4"
       >
-        <h2 className="text-2xl font-semibold text-gray-700 mb-6">
-          Add Student Education
-        </h2>
-
-        <div className="mb-4">
-          <label className="block text-gray-600 text-sm font-semibold mb-2">
-            Pin Number:
-          </label>
-          <input
-            type="text"
-            name="pin_number"
-            value={educationData.pin_number}
-            onChange={handleChange}
-            className="w-full px-4 py-2 border border-gray-600 rounded-md focus:ring focus:ring-blue-200"
-          />
-        </div>
-
-        <div className="mb-4">
-          <label className="block text-gray-600 text-sm font-semibold mb-2">
-            Name of University:
-          </label>
-          <input
-            type="text"
-            name="name_of_university"
-            value={educationData.name_of_university}
-            onChange={handleChange}
-            className="w-full px-4 py-2 border border-gray-600 rounded-md focus:ring focus:ring-blue-200"
-          />
-        </div>
-
-        <div className="mb-4">
-          <label className="block text-gray-600 text-sm font-semibold mb-2">
-            Name of College:
-          </label>
-          <input
-            type="text"
-            name="name_of_collage"
-            value={educationData.name_of_collage}
-            onChange={handleChange}
-            className="w-full px-4 py-2 border border-gray-600 rounded-md focus:ring focus:ring-blue-200"
-          />
-        </div>
-
-        <div className="mb-4">
-          <label className="block text-gray-600 text-sm font-semibold mb-2">
-            Course:
-          </label>
-          <input
-            type="text"
-            name="course"
-            value={educationData.course}
-            onChange={handleChange}
-            className="w-full px-4 py-2 border border-gray-600 rounded-md focus:ring focus:ring-blue-200"
-          />
-        </div>
-
-        <div className="mb-4">
-          <label className="block text-gray-600 text-sm font-semibold mb-2">
-            Branch:
-          </label>
-          <input
-            type="text"
-            name="branch"
-            value={educationData.branch}
-            onChange={handleChange}
-            className="w-full px-4 py-2 border border-gray-600 rounded-md focus:ring focus:ring-blue-200"
-          />
-        </div>
-
-        <div className="mb-4">
-          <label className="block text-gray-600 text-sm font-semibold mb-2">
-            Course Duration (years):
-          </label>
-          <input
-            type="text"
-            name="course_duration_years"
-            value={educationData.course_duration_years}
-            onChange={handleChange}
-            className="w-full px-4 py-2 border border-gray-600 rounded-md focus:ring focus:ring-blue-200"
-          />
-        </div>
-
-        <div className="mb-4">
-          <label className="block text-gray-600 text-sm font-semibold mb-2">
-            Current Year:
-          </label>
-          <input
-            type="text"
-            name="current_year"
-            value={educationData.current_year}
-            onChange={handleChange}
-            className="w-full px-4 py-2 border border-gray-600 rounded-md focus:ring focus:ring-blue-200"
-          />
-        </div>
-
-        <div className="mb-4">
-          <label className="block text-gray-600 text-sm font-semibold mb-2">
-            Current Semester:
-          </label>
-          <input
-            type="text"
-            name="current_sem"
-            value={educationData.current_sem}
-            onChange={handleChange}
-            className="w-full px-4 py-2 border border-gray-600 rounded-md focus:ring focus:ring-blue-200"
-          />
-        </div>
-
-        <button
-          type="submit"
-          className="w-1/4 bg-blue-600 text-white font-bold py-2 rounded hover:bg-blue-700"
-          disabled={loading}
-        >
-          {loading ? 'Submitting...' : 'Submit'}
-        </button>
-        <button
-          type="button"
-          className="ml-10 w-1/4 bg-blue-600 text-white font-bold py-2 rounded hover:bg-blue-700"
-          onClick={() =>
-            setEducationData({
-              // Student Data
-              pin_number: '',
-              name_of_university: '',
-              name_of_collage: '',
-              course: '',
-              branch: '',
-              course_duration_years: '',
-              current_year: '',
-              current_sem: '',
-            })
-          }
-        >
-          Cancel
-        </button>
-        {/* {successMessage && (
-                    <p className="bg-green-100 text-green-800 border border-green-200 rounded-md p-4 my-4 text-center font-medium shadow-md">
-                        {successMessage}
-                    </p>
-                )}
-                {errorMessage && (
-                    <p className="bg-red-100 text-red-800 border border-red-200 rounded-md p-4 my-4 text-center font-medium shadow-md">
-                        {errorMessage}
-                    </p>
-                )} */}
-      </form>
-    </>
+        {loading ? 'Submitting...' : 'Submit'}
+      </Button>
+      {/* <Button
+        variant="outlined"
+        color="secondary"
+        fullWidth
+        onClick={() => reset()}
+        className="mt-2"
+      >
+        Cancel
+      </Button> */}
+    </form>
   );
 };
 
