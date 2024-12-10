@@ -330,7 +330,7 @@ const AdmissionForm = () => {
         );
       }
 
-      console.log(studentPhotoUrl, fatherPhotoUrl, motherPhotoUrl);
+      // console.log(studentPhotoUrl, fatherPhotoUrl, motherPhotoUrl);
 
       // Update form data with the URLs
       const updatedFormData = {
@@ -778,7 +778,13 @@ const AdmissionForm = () => {
                 className="text-black mt-1 block w-full p-2 border border-gray-600 rounded-md"
               />
             </div>
+          </div>
 
+          <h2 className="text-xl font-semibold mb-4 text-gray-700">
+            Add Approval Person Details
+          </h2>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-4">
             {/* Approval Person Name */}
             <div>
               <label className="block text-gray-600 mb-1">

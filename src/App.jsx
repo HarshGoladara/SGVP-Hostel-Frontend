@@ -22,6 +22,7 @@ import Sidebar from './layouts/Sidebar.jsx';
 // import StudentInfo from './components/studentDetails/StudentInfo.jsx'
 import StudentNavbar from './components/studentDetails/StudentNavbar.jsx';
 import StudentLayout from './components/studentDetails/StudentLayout.jsx';
+import TempAdmissionForm from './components/admissionComponents/TempAdmissionForm.jsx';
 
 function App() {
   const router = createBrowserRouter([
@@ -61,6 +62,10 @@ function App() {
     {
       path: '/addStudent',
       element: <AdmissionForm />,
+    },
+    {
+      path: '/tempAddStudent',
+      element: <TempAdmissionForm />,
     },
     {
       path: '/photo',
