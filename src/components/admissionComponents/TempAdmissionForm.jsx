@@ -13,6 +13,8 @@ import {
   Select,
   CircularProgress,
 } from '@mui/material';
+import CloseIcon from '@mui/icons-material/Close';
+import './css/GuidePopInOut.css';
 
 const TempAdmissionForm = () => {
   const {
@@ -20,6 +22,7 @@ const TempAdmissionForm = () => {
     handleSubmit,
     formState: { errors },
     setValue,
+    reset,
   } = useForm();
   const [photoFile, setPhotoFile] = useState({
     studentPhotoFile: null,
@@ -29,6 +32,20 @@ const TempAdmissionForm = () => {
   const [loading, setLoading] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
+  const [isGuideVisible, setIsGuideVisible] = useState(false); // State for the guide pop-up
+  const [isExiting, setIsExiting] = useState(false); // Tracks exit animation
+
+  const toggleGuide = () => {
+    if (isGuideVisible) {
+      setIsExiting(true); // Trigger exit animation
+      setTimeout(() => {
+        setIsGuideVisible(false); // Remove from DOM after animation
+        setIsExiting(false); // Reset exit state
+      }, 300); // Match the animation duration (0.5s)
+    } else {
+      setIsGuideVisible(true); // Show the modal
+    }
+  };
 
   const handleFileChange = (e) => {
     const { name, files } = e.target;
@@ -286,749 +303,939 @@ const TempAdmissionForm = () => {
     }
   };
 
+  const backgroundStyle = {
+    backgroundImage: `url('..//images/sgvp-bg-2.jpg')`, // Path to your image
+    backgroundSize: 'cover', // Ensures the image covers the entire div
+    backgroundRepeat: 'no-repeat', // Prevents tiling of the image
+    backgroundPosition: 'center', // Centers the image
+    height: '100vh', // Full viewport height
+    justifyContent: 'center',
+    alignItems: 'center',
+  };
+
+  const logoStyle = {
+    position: 'relative',
+    width: '100px', // Adjust size of the logo
+    height: 'auto', // Maintain aspect ratio
+  };
+
   return (
-    <form
-      onSubmit={handleSubmit(onSubmit)}
-      className="max-w-4xl mx-auto p-8 bg-slate-400 shadow-lg rounded-lg mt-8"
-    >
-      <h1 className="text-3xl font-bold mb-8 text-center text-gray-800">
-        Admission Form
-      </h1>
+    <div className="h-screen overflow-y-auto" style={backgroundStyle}>
+      <button
+        onClick={toggleGuide}
+        className={`absolute top-4 right-4 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition`}
+      >
+        Guide Me
+      </button>
 
-      <div className="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-md mb-10">
-        <h2 className="text-xl font-semibold mb-4 text-gray-700">
-          Student Data
-        </h2>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {/* <div>
-                        <TextField
-                            label="Pin Number"
-                            variant="outlined"
-                            fullWidth
-                            {...register('pin_number', { required: true })}
-                            error={!!errors.pin_number}
-                            helperText={
-                                errors.pin_number
-                                    ? 'Pin Number is required and must be a number.'
-                                    : ''
-                            }
-                            className="mt-1 block w-full p-2 border border-gray-600 rounded-md bg-white"
-                        />
-                    </div> */}
-
-          <div>
-            <TextField
-              label="Student Surname"
-              variant="outlined"
-              fullWidth
-              {...register('student_surname', { required: true })}
-              error={!!errors.student_surname}
-              helperText={
-                errors.student_surname ? 'Student Surame is required.' : ''
-              }
-              className="mt-1 block w-full p-2 border border-gray-600 rounded-md bg-white"
-            />
-          </div>
-          <div>
-            <TextField
-              label="Student Name"
-              variant="outlined"
-              fullWidth
-              {...register('student_name', { required: true })}
-              error={!!errors.student_name}
-              helperText={
-                errors.student_name ? 'Student Name is required.' : ''
-              }
-              className="mt-1 block w-full p-2 border border-gray-600 rounded-md bg-white"
-            />
-          </div>
-          <div>
-            <TextField
-              label="Student Father Name"
-              variant="outlined"
-              fullWidth
-              {...register('student_father_name', { required: true })}
-              error={!!errors.student_father_name}
-              helperText={
-                errors.student_father_name
-                  ? 'Student Father Name is required.'
-                  : ''
-              }
-              className="mt-1 block w-full p-2 border border-gray-600 rounded-md bg-white"
-            />
-          </div>
-
-          <div>
-            <TextField
-              label="Date of Birth"
-              type="date"
-              variant="outlined"
-              fullWidth
-              {...register('dob', { required: true })}
-              error={!!errors.dob}
-              helperText={
-                errors.dob
-                  ? 'Date of Birth is required and must be a valid date.'
-                  : ''
-              }
-              InputLabelProps={{ shrink: true }}
-              className="mt-1 block w-full p-2 border border-gray-600 rounded-md bg-white"
-            />
-          </div>
-
-          <div>
-            <TextField
-              label="Nationality"
-              variant="outlined"
-              fullWidth
-              {...register('nationality', { required: true })}
-              error={!!errors.nationality}
-              helperText={errors.nationality ? 'Nationality is required.' : ''}
-              className="mt-1 block w-full p-2 border border-gray-600 rounded-md bg-white"
-            />
-          </div>
-
-          <div>
-            <FormControl
-              fullWidth
-              variant="outlined"
-              className="mt-1 block w-full p-2 border border-gray-600 rounded-md bg-white"
-            >
-              <InputLabel>Select Religion</InputLabel>
-              <Select
-                label="Select Religion"
-                {...register('religion', { required: true })}
-              >
-                <MenuItem value="Hinduism">Hinduism</MenuItem>
-                <MenuItem value="Jainism">Jainism</MenuItem>
-                <MenuItem value="Other">Other</MenuItem>
-              </Select>
-            </FormControl>
-          </div>
-
-          <div>
-            <FormControl
-              fullWidth
-              variant="outlined"
-              className="mt-1 block w-full p-2 border border-gray-600 rounded-md bg-white"
-            >
-              <InputLabel>Select Caste</InputLabel>
-              <Select
-                label="Select Caste"
-                {...register('caste', { required: true })}
-              >
-                <MenuItem value="General">General</MenuItem>
-                <MenuItem value="OBC">OBC</MenuItem>
-                <MenuItem value="SC">SC</MenuItem>
-                <MenuItem value="ST">ST</MenuItem>
-                <MenuItem value="Other">Other</MenuItem>
-              </Select>
-            </FormControl>
-          </div>
-
-          <div className="md:col-span-2 lg:col-span-3">
-            <TextField
-              label="Address"
-              variant="outlined"
-              fullWidth
-              multiline
-              rows={4}
-              aria-colspan={200}
-              {...register('address', { required: true })}
-              error={!!errors.address}
-              helperText={errors.address ? 'Address is required.' : ''}
-              className="mt-1 block w-full p-2 border border-gray-600 rounded-md bg-white"
-            />
-          </div>
-
-          <div sm={6}>
-            <TextField
-              label="City"
-              variant="outlined"
-              fullWidth
-              {...register('city', { required: true })}
-              error={!!errors.city}
-              helperText={errors.city ? 'City is required.' : ''}
-              className="mt-1 block w-full p-2 border border-gray-600 rounded-md bg-white"
-            />
-          </div>
-
-          <div sm={6}>
-            <TextField
-              label="Postal Pin Number"
-              variant="outlined"
-              fullWidth
-              {...register('postal_pin_number', { required: true })}
-              error={!!errors.postal_pin_number}
-              helperText={
-                errors.postal_pin_number
-                  ? 'Postal Pin Number is required and must be a number.'
-                  : ''
-              }
-              className="mt-1 block w-full p-2 border border-gray-600 rounded-md bg-white"
-            />
-          </div>
-
-          <div sm={6}>
-            <TextField
-              label="Student Contact Number"
-              variant="outlined"
-              fullWidth
-              {...register('student_contact_number', {
-                required: true,
-                maxLength: 10,
-              })}
-              error={!!errors.student_contact_number}
-              helperText={
-                errors.student_contact_number
-                  ? 'Student Contact Number is required and must be a 10-digit number.'
-                  : ''
-              }
-              className="mt-1 block w-full p-2 border border-gray-600 rounded-md bg-white"
-            />
-          </div>
-
-          <div sm={6}>
-            <TextField
-              label="Student Email"
-              type="email"
-              variant="outlined"
-              fullWidth
-              {...register('student_email', { required: true })}
-              error={!!errors.student_email}
-              helperText={
-                errors.student_email ? 'A valid Student Email is required.' : ''
-              }
-              className="mt-1 block w-full p-2 border border-gray-600 rounded-md bg-white"
-            />
-          </div>
-
-          <div>
-            <TextField
-              label="Student Qualification"
-              variant="outlined"
-              fullWidth
-              {...register('student_qualification', { required: true })}
-              error={!!errors.student_qualification}
-              helperText={
-                errors.student_qualification
-                  ? 'Student Qualification is required.'
-                  : ''
-              }
-              className="mt-1 block w-full p-2 border border-gray-600 rounded-md bg-white"
-            />
-          </div>
-
-          <div>
-            <TextField
-              label="Student Profile Photo"
-              type="file"
-              variant="outlined"
-              name="studentPhotoFile"
-              onChange={handleFileChange}
-              fullWidth
-              {...register('student_profile_photo', { required: true })}
-              error={!!errors.dob}
-              helperText={
-                errors.dob ? 'Must upload a student profile photo' : ''
-              }
-              InputLabelProps={{ shrink: true }}
-              className="mt-1 block w-full p-2 border border-gray-600 rounded-md bg-white"
-            />
-          </div>
-        </div>
-      </div>
-
-      <div className="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-md mb-10">
-        <h2 className="text-xl font-semibold mb-4 text-gray-700">
-          Student Education
-        </h2>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          <div>
-            <TextField
-              label="Name of University"
-              variant="outlined"
-              fullWidth
-              margin="normal"
-              {...register('name_of_university', {
-                required: 'University name is required',
-                pattern: {
-                  value: /^[A-Za-z\s]+$/,
-                  message:
-                    'University name must contain only letters and spaces',
-                },
-              })}
-              error={!!errors.name_of_university}
-              helperText={
-                errors.name_of_university
-                  ? errors.name_of_university.message
-                  : ''
-              }
-              className="mt-1 block w-full p-2 border border-gray-600 rounded-md bg-white"
-            />
-          </div>
-
-          <div>
-            <TextField
-              label="Name of College"
-              variant="outlined"
-              fullWidth
-              margin="normal"
-              {...register('name_of_collage', {
-                required: 'College name is required',
-                pattern: {
-                  value: /^[A-Za-z\s]+$/,
-                  message: 'College name must contain only letters and spaces',
-                },
-              })}
-              error={!!errors.name_of_collage}
-              helperText={
-                errors.name_of_collage ? errors.name_of_collage.message : ''
-              }
-              className="mt-1 block w-full p-2 border border-gray-600 rounded-md bg-white"
-            />
-          </div>
-
-          <div>
-            <TextField
-              label="Course"
-              variant="outlined"
-              fullWidth
-              margin="normal"
-              {...register('course', {
-                required: 'Course is required',
-                pattern: {
-                  value: /^[A-Za-z\s]+$/,
-                  message: 'Course name must contain only letters and spaces',
-                },
-              })}
-              error={!!errors.course}
-              helperText={errors.course ? errors.course.message : ''}
-              className="mt-1 block w-full p-2 border border-gray-600 rounded-md bg-white"
-            />
-          </div>
-
-          <div>
-            <TextField
-              label="Branch"
-              variant="outlined"
-              fullWidth
-              margin="normal"
-              {...register('branch', {
-                required: 'Branch is required',
-                pattern: {
-                  value: /^[A-Za-z\s]+$/,
-                  message: 'Branch name must contain only letters and spaces',
-                },
-              })}
-              error={!!errors.branch}
-              helperText={errors.branch ? errors.branch.message : ''}
-              className="mt-1 block w-full p-2 border border-gray-600 rounded-md bg-white"
-            />
-          </div>
-
-          <div>
-            <TextField
-              label="Course Duration (years)"
-              variant="outlined"
-              fullWidth
-              margin="normal"
-              {...register('course_duration_years', {
-                required: 'Course duration is required',
-                valueAsNumber: true,
-              })}
-              error={!!errors.course_duration_years}
-              helperText={
-                errors.course_duration_years
-                  ? errors.course_duration_years.message
-                  : ''
-              }
-              className="mt-1 block w-full p-2 border border-gray-600 rounded-md bg-white"
-            />
-          </div>
-
-          <div>
-            <TextField
-              label="Current Year"
-              variant="outlined"
-              fullWidth
-              margin="normal"
-              {...register('current_year', {
-                required: 'Current year is required',
-                valueAsNumber: true,
-              })}
-              error={!!errors.current_year}
-              helperText={
-                errors.current_year ? errors.current_year.message : ''
-              }
-              className="mt-1 block w-full p-2 border border-gray-600 rounded-md bg-white"
-            />
-          </div>
-
-          <div>
-            <TextField
-              label="Current Semester"
-              variant="outlined"
-              fullWidth
-              margin="normal"
-              {...register('current_sem', {
-                required: 'Current semester is required',
-                valueAsNumber: true,
-              })}
-              error={!!errors.current_sem}
-              helperText={errors.current_sem ? errors.current_sem.message : ''}
-              className="mt-1 block w-full p-2 border border-gray-600 rounded-md bg-white"
-            />
-          </div>
-        </div>
-      </div>
-      <div className="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-md mb-10">
-        <h2 className="text-xl font-semibold mb-4 text-gray-700">
-          Parent Details
-        </h2>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          <div>
-            <TextField
-              label="Father Name"
-              variant="outlined"
-              fullWidth
-              {...register('father_name', {
-                required: 'Father name is required.',
-              })}
-              error={!!errors.father_name}
-              helperText={errors.father_name?.message}
-              className="mt-1 block w-full p-2 border border-gray-600 rounded-md bg-white"
-            />
-          </div>
-          <div>
-            <TextField
-              label="Father Contact Number"
-              variant="outlined"
-              fullWidth
-              {...register('father_contact_number', {
-                required: 'Father contact number is required.',
-              })}
-              error={!!errors.father_contact_number}
-              helperText={errors.father_contact_number?.message}
-              className="mt-1 block w-full p-2 border border-gray-600 rounded-md bg-white"
-            />
-          </div>
-          <div>
-            <TextField
-              label="Father Email"
-              variant="outlined"
-              fullWidth
-              {...register('father_email', {
-                required: 'Father email is required.',
-              })}
-              error={!!errors.father_email}
-              helperText={errors.father_email?.message}
-              className="mt-1 block w-full p-2 border border-gray-600 rounded-md bg-white"
-            />
-          </div>
-          <div>
-            <TextField
-              label="Father Profile Photo"
-              type="file"
-              variant="outlined"
-              name="fatherPhotoFile"
-              onChange={handleFileChange}
-              fullWidth
-              {...register('father_profile_photo', { required: true })}
-              error={!!errors.dob}
-              helperText={
-                errors.dob ? 'Must upload a father profile photo' : ''
-              }
-              InputLabelProps={{ shrink: true }}
-              className="mt-1 block w-full p-2 border border-gray-600 rounded-md bg-white"
-            />
-          </div>
-          <div>
-            <TextField
-              label="Mother Name"
-              variant="outlined"
-              fullWidth
-              {...register('mother_name', {
-                required: 'Mother name is required.',
-              })}
-              error={!!errors.mother_name}
-              helperText={errors.mother_name?.message}
-              className="mt-1 block w-full p-2 border border-gray-600 rounded-md bg-white"
-            />
-          </div>
-          <div>
-            <TextField
-              label="Mother Contact Number"
-              variant="outlined"
-              fullWidth
-              {...register('mother_contact_number', {
-                required: 'Mother contact number is required.',
-              })}
-              error={!!errors.mother_contact_number}
-              helperText={errors.mother_contact_number?.message}
-              className="mt-1 block w-full p-2 border border-gray-600 rounded-md bg-white"
-            />
-          </div>
-          <div>
-            <TextField
-              label="Mother Profile Photo"
-              type="file"
-              variant="outlined"
-              name="motherPhotoFile"
-              onChange={handleFileChange}
-              fullWidth
-              {...register('mother_profile_photo', { required: true })}
-              error={!!errors.dob}
-              helperText={
-                errors.dob ? 'Must upload a mother profile photo' : ''
-              }
-              InputLabelProps={{ shrink: true }}
-              className="mt-1 block w-full p-2 border border-gray-600 rounded-md bg-white"
-            />
-          </div>
-        </div>
-
-        <h2 className="text-xl font-semibold mb-4 text-gray-700 mt-4">
-          Approval Person Details
-        </h2>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          <div>
-            <TextField
-              label="Approval Person Name"
-              variant="outlined"
-              fullWidth
-              {...register('approval_person_name', {
-                required: 'Approval person name is required.',
-              })}
-              error={!!errors.approval_person_name}
-              helperText={errors.approval_person_name?.message}
-              className="mt-1 block w-full p-2 border border-gray-600 rounded-md bg-white"
-            />
-          </div>
-          <div>
-            <TextField
-              label="Approval Person Contact"
-              variant="outlined"
-              fullWidth
-              {...register('approval_person_contact', {
-                required: 'Approval person contact is required.',
-              })}
-              error={!!errors.approval_person_contact}
-              helperText={errors.approval_person_contact?.message}
-              className="mt-1 block w-full p-2 border border-gray-600 rounded-md bg-white"
-            />
-          </div>
-          <div>
-            <TextField
-              label="Approval Person Relation"
-              variant="outlined"
-              fullWidth
-              {...register('approval_person_relation', {
-                required: 'Approval person relation is required.',
-              })}
-              error={!!errors.approval_person_relation}
-              helperText={errors.approval_person_relation?.message}
-              className="mt-1 block w-full p-2 border border-gray-600 rounded-md bg-white"
-            />
-          </div>
-          <div>
-            <TextField
-              label="Approval Person Email"
-              variant="outlined"
-              fullWidth
-              {...register('approval_person_email', {
-                required: 'Approval person email is required.',
-              })}
-              error={!!errors.approval_person_email}
-              helperText={errors.approval_person_email?.message}
-              className="mt-1 block w-full p-2 border border-gray-600 rounded-md bg-white"
-            />
-          </div>
-        </div>
-      </div>
-
-      <div className="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-md mb-10">
-        <h2 className="text-xl font-semibold mb-4 text-gray-700">
-          Relative Details
-        </h2>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          <div>
-            <TextField
-              label="Relative Name"
-              fullWidth
-              variant="outlined"
-              {...register('relative_name', {
-                required: 'Relative name is required',
-                pattern: /^[A-Za-z\s]+$/,
-              })}
-              error={!!errors.relative_name}
-              helperText={errors.relative_name?.message}
-              className="mt-1 block w-full p-2 border border-gray-600 rounded-md bg-white"
-            />
-          </div>
-          <div>
-            <TextField
-              label="Relative Relation"
-              fullWidth
-              variant="outlined"
-              {...register('relative_relation', {
-                required: 'Relation is required',
-                pattern: /^[A-Za-z\s]+$/,
-              })}
-              error={!!errors.relative_relation}
-              helperText={errors.relative_relation?.message}
-              className="mt-1 block w-full p-2 border border-gray-600 rounded-md bg-white"
-            />
-          </div>
-          <div>
-            <TextField
-              label="Relative Contact Number"
-              fullWidth
-              variant="outlined"
-              type="text"
-              {...register('relative_contact_number', {
-                required: 'Contact number is required',
-                pattern: /^[0-9]{10}$/,
-              })}
-              error={!!errors.relative_contact_number}
-              helperText={errors.relative_contact_number?.message}
-              className="mt-1 block w-full p-2 border border-gray-600 rounded-md bg-white"
-            />
-          </div>
-          <div className="md:col-span-2 lg:col-span-3">
-            <TextField
-              label="Relative Address"
-              fullWidth
-              variant="outlined"
-              multiline
-              rows={4}
-              {...register('relative_address', {
-                required: 'Address is required',
-              })}
-              error={!!errors.relative_address}
-              helperText={errors.relative_address?.message}
-              className="mt-1 block w-full p-2 border border-gray-600 rounded-md bg-white"
-            />
-          </div>
-        </div>
-      </div>
-      <div className="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-md mb-10">
-        <h2 className="text-xl font-semibold mb-4 text-gray-700">
-          Sant Reference Details
-        </h2>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          <div>
-            <TextField
-              label="Name of Sant"
-              fullWidth
-              variant="outlined"
-              {...register('name_of_sant', {
-                required: 'Name of Sant is required',
-                pattern: /^[A-Za-z\s]+$/,
-              })}
-              error={!!errors.name_of_sant}
-              helperText={errors.name_of_sant?.message}
-              className="mt-1 block w-full p-2 border border-gray-600 rounded-md bg-white"
-            />
-          </div>
-          <div>
-            <TextField
-              label="Sant Phone Number"
-              fullWidth
-              variant="outlined"
-              type="text"
-              {...register('sant_phone_number', {
-                required: 'Sant phone number is required',
-                pattern: /^[0-9]{10}$/,
-              })}
-              error={!!errors.sant_phone_number}
-              helperText={errors.sant_phone_number?.message}
-              className="mt-1 block w-full p-2 border border-gray-600 rounded-md bg-white"
-            />
-          </div>
-        </div>
-      </div>
-      <div className="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-md mb-10">
-        <h2 className="text-xl font-semibold mb-4 text-gray-700">
-          Relative Reference Details
-        </h2>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          <div>
-            <TextField
-              label="Full Name"
-              fullWidth
-              variant="outlined"
-              {...register('reference_relative_full_name', {
-                required: 'Full name is required',
-                pattern: /^[A-Za-z\s]+$/,
-              })}
-              error={!!errors.reference_relative_full_name}
-              helperText={errors.reference_relative_full_name?.message}
-              className="mt-1 block w-full p-2 border border-gray-600 rounded-md bg-white"
-            />
-          </div>
-          <div>
-            <TextField
-              label="Relation"
-              fullWidth
-              variant="outlined"
-              {...register('reference_relative_relation', {
-                required: 'Relation is required',
-                pattern: /^[A-Za-z\s]+$/,
-              })}
-              error={!!errors.reference_relative_relation}
-              helperText={errors.reference_relative_relation?.message}
-              className="mt-1 block w-full p-2 border border-gray-600 rounded-md bg-white"
-            />
-          </div>
-          <div>
-            <TextField
-              label="Mobile Number"
-              fullWidth
-              variant="outlined"
-              type="text"
-              {...register('reference_relative_mobile', {
-                required: 'Mobile number is required',
-                pattern: /^[0-9]{10}$/,
-              })}
-              error={!!errors.reference_relative_mobile}
-              helperText={errors.reference_relative_mobile?.message}
-              className="mt-1 block w-full p-2 border border-gray-600 rounded-md bg-white"
-            />
-          </div>
-        </div>
-      </div>
-
-      <div className="flex justify-center mt-6">
-        <Box sx={{ display: 'flex', gap: 2 }}>
-          <Button
-            type="submit"
-            variant="contained"
-            color="primary"
-            disabled={loading}
-            className="w-full"
+      {(isGuideVisible || isExiting) && (
+        <div
+          className={`fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 ${isExiting ? 'guide-exit' : 'guide-enter'}`}
+          onClick={toggleGuide} // Close when clicking outside the modal
+        >
+          <div
+            className="bg-white p-6 shadow-lg rounded-lg transform transition-transform duration-300 scale-100"
+            onClick={(e) => e.stopPropagation()} // Prevent close when clicking inside the modal
           >
-            {loading ? <CircularProgress size={24} /> : 'Submit'}
-          </Button>
-          {/* <Button
-                        type="button"
-                        variant="outlined"
-                        color="secondary"
-                        onClick={handleReset}
-                        sx={{ width: 150 }}
-                    >
-                        Cancel
-                    </Button> */}
-        </Box>
-      </div>
-    </form>
+            <CloseIcon
+              style={{
+                cursor: 'pointer',
+                position: 'absolute',
+                top: '16px',
+                right: '16px',
+                color: '#555',
+              }}
+              onClick={toggleGuide} // Close the guide
+            />
+
+            <h2 className="text-xl font-bold mb-4">How to Fill the Form</h2>
+            <p>{`Fill all the names carefully (Only Alphabets).`}</p>
+            <p>{`Upload a clear photo of the student, father, and mother.`}</p>
+            <p>{`Ensure email and phone numbers are correctly entered.`}</p>
+            <p>{`Approval person will be the person who will take responsibility of student's leave.`}</p>
+            <p>{`Double-check all fields before submitting.`}</p>
+            <p>{`All the fields are Mendatory to be filled.`}</p>
+
+            <h2 className="text-xl font-bold mb-4 mt-4">
+              If Data is Not Available
+            </h2>
+            <p>{`For email enter:- noemail@gmail.com.`}</p>
+            <p>{`For name and relations enter:- NA.`}</p>
+            <p>{`For contact numbers enter:- 0.`}</p>
+          </div>
+        </div>
+      )}
+
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="max-w-4xl mx-auto p-8 bg-slate-400 shadow-lg rounded-lg mt-8 bg-opacity-0"
+      >
+        <div className="flex items-center justify-between mb-4 bg-white bg-opacity-50">
+          <img
+            src="..//images/logo.jpg"
+            alt="Logo"
+            style={logoStyle}
+            className="bg-opacity-50"
+          />
+          <h1 className="text-3xl font-bold m-auto text-center text-gray-800 flex-1">
+            Admission Form
+          </h1>
+        </div>
+
+        <div className="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-md mb-10 bg-opacity-50">
+          <h2 className="text-xl font-semibold mb-4 text-gray-700">
+            Student Data
+          </h2>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div>
+              <TextField
+                label="Student Surname"
+                variant="outlined"
+                fullWidth
+                {...register('student_surname', {
+                  required: true,
+                  pattern: {
+                    value: /^[A-Za-z\s]+$/,
+                    message:
+                      'Student surname must contain only letters and spaces',
+                  },
+                })}
+                error={!!errors.student_surname}
+                helperText={
+                  errors.student_surname ? 'Student Surame is required.' : ''
+                }
+                className="mt-1 block w-full p-2 border border-gray-600 rounded-md bg-white"
+              />
+            </div>
+            <div>
+              <TextField
+                label="Student Name"
+                variant="outlined"
+                fullWidth
+                {...register('student_name', {
+                  required: true,
+                  pattern: {
+                    value: /^[A-Za-z\s]+$/,
+                    message:
+                      'Student name must contain only letters and spaces',
+                  },
+                })}
+                error={!!errors.student_name}
+                helperText={
+                  errors.student_name ? 'Student Name is required.' : ''
+                }
+                className="mt-1 block w-full p-2 border border-gray-600 rounded-md bg-white"
+              />
+            </div>
+            <div>
+              <TextField
+                label="Student Father Name"
+                variant="outlined"
+                fullWidth
+                {...register('student_father_name', {
+                  required: true,
+                  pattern: {
+                    value: /^[A-Za-z\s]+$/,
+                    message:
+                      'Student father name must contain only letters and spaces',
+                  },
+                })}
+                error={!!errors.student_father_name}
+                helperText={
+                  errors.student_father_name
+                    ? 'Student Father Name is required.'
+                    : ''
+                }
+                className="mt-1 block w-full p-2 border border-gray-600 rounded-md bg-white"
+              />
+            </div>
+
+            <div>
+              <TextField
+                label="Date of Birth"
+                type="date"
+                variant="outlined"
+                fullWidth
+                {...register('dob', { required: true })}
+                error={!!errors.dob}
+                helperText={
+                  errors.dob
+                    ? 'Date of Birth is required and must be a valid date.'
+                    : ''
+                }
+                InputLabelProps={{ shrink: true }}
+                className="mt-1 block w-full p-2 border border-gray-600 rounded-md bg-white"
+              />
+            </div>
+
+            <div>
+              <TextField
+                label="Nationality"
+                variant="outlined"
+                fullWidth
+                {...register('nationality', {
+                  required: true,
+                  pattern: {
+                    value: /^[A-Za-z\s]+$/,
+                    message: 'Nationality must contain only letters',
+                  },
+                })}
+                error={!!errors.nationality}
+                helperText={
+                  errors.nationality ? 'Nationality is required.' : ''
+                }
+                className="mt-1 block w-full p-2 border border-gray-600 rounded-md bg-white"
+              />
+            </div>
+
+            <div>
+              <FormControl
+                fullWidth
+                variant="outlined"
+                className="mt-1 block w-full p-2 border border-gray-600 rounded-md bg-white"
+              >
+                <InputLabel>Select Religion</InputLabel>
+                <Select
+                  label="Select Religion"
+                  {...register('religion', { required: true })}
+                >
+                  <MenuItem value="Hinduism">Hinduism</MenuItem>
+                  <MenuItem value="Jainism">Jainism</MenuItem>
+                  <MenuItem value="Other">Other</MenuItem>
+                </Select>
+              </FormControl>
+            </div>
+
+            <div>
+              <FormControl
+                fullWidth
+                variant="outlined"
+                className="mt-1 block w-full p-2 border border-gray-600 rounded-md bg-white"
+              >
+                <InputLabel>Select Caste</InputLabel>
+                <Select
+                  label="Select Caste"
+                  {...register('caste', { required: true })}
+                >
+                  <MenuItem value="General">General</MenuItem>
+                  <MenuItem value="OBC">OBC</MenuItem>
+                  <MenuItem value="SC">SC</MenuItem>
+                  <MenuItem value="ST">ST</MenuItem>
+                  <MenuItem value="Other">Other</MenuItem>
+                </Select>
+              </FormControl>
+            </div>
+
+            <div className="md:col-span-2 lg:col-span-3">
+              <TextField
+                label="Address"
+                variant="outlined"
+                fullWidth
+                multiline
+                rows={4}
+                aria-colspan={200}
+                {...register('address', { required: true })}
+                error={!!errors.address}
+                helperText={errors.address ? 'Address is required.' : ''}
+                className="mt-1 block w-full p-2 border border-gray-600 rounded-md bg-white"
+              />
+            </div>
+
+            <div sm={6}>
+              <TextField
+                label="City"
+                variant="outlined"
+                fullWidth
+                {...register('city', {
+                  required: true,
+                  pattern: {
+                    value: /^[A-Za-z\s]+$/,
+                    message: 'City name must contain only letters',
+                  },
+                })}
+                error={!!errors.city}
+                helperText={errors.city ? 'City is required.' : ''}
+                className="mt-1 block w-full p-2 border border-gray-600 rounded-md bg-white"
+              />
+            </div>
+
+            <div sm={6}>
+              <TextField
+                label="Postal Pin Number"
+                variant="outlined"
+                fullWidth
+                {...register('postal_pin_number', {
+                  required: true,
+                  pattern: {
+                    value: /^\d+$/,
+                    message: 'Postal pin number must contain only digits',
+                  },
+                })}
+                error={!!errors.postal_pin_number}
+                helperText={
+                  errors.postal_pin_number
+                    ? 'Postal Pin Number is required and must be a number.'
+                    : ''
+                }
+                className="mt-1 block w-full p-2 border border-gray-600 rounded-md bg-white"
+              />
+            </div>
+
+            <div sm={6}>
+              <TextField
+                label="Student Contact Number"
+                variant="outlined"
+                fullWidth
+                {...register('student_contact_number', {
+                  required: true,
+                  pattern: {
+                    value: /^\d+$/,
+                    message: 'Student Contact number must contain only digits',
+                  },
+                })}
+                error={!!errors.student_contact_number}
+                helperText={
+                  errors.student_contact_number
+                    ? 'Student Contact Number is required and must be a valid number.'
+                    : ''
+                }
+                className="mt-1 block w-full p-2 border border-gray-600 rounded-md bg-white"
+              />
+            </div>
+
+            <div sm={6}>
+              <TextField
+                label="Student Email"
+                type="email"
+                variant="outlined"
+                fullWidth
+                {...register('student_email', {
+                  required: true,
+                  pattern: {
+                    value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+                    message: 'Please enter a valid email address.',
+                  },
+                })}
+                error={!!errors.student_email}
+                helperText={
+                  errors.student_email
+                    ? 'A valid Student Email is required.'
+                    : ''
+                }
+                className="mt-1 block w-full p-2 border border-gray-600 rounded-md bg-white"
+              />
+            </div>
+
+            <div>
+              <TextField
+                label="Student Qualification"
+                variant="outlined"
+                fullWidth
+                {...register('student_qualification', { required: true })}
+                error={!!errors.student_qualification}
+                helperText={
+                  errors.student_qualification
+                    ? 'Student Qualification is required.'
+                    : ''
+                }
+                className="mt-1 block w-full p-2 border border-gray-600 rounded-md bg-white"
+              />
+            </div>
+
+            <div>
+              <TextField
+                label="Student Profile Photo"
+                type="file"
+                variant="outlined"
+                name="studentPhotoFile"
+                onChange={handleFileChange}
+                fullWidth
+                {...register('student_profile_photo', { required: true })}
+                error={!!errors.dob}
+                helperText={
+                  errors.dob ? 'Must upload a student profile photo' : ''
+                }
+                InputLabelProps={{ shrink: true }}
+                className="mt-1 block w-full p-2 border border-gray-600 rounded-md bg-white"
+              />
+            </div>
+          </div>
+        </div>
+
+        <div className="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-md mb-10 bg-opacity-50">
+          <h2 className="text-xl font-semibold mb-4 text-gray-700">
+            Student Education
+          </h2>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div>
+              <TextField
+                label="Name of University"
+                variant="outlined"
+                fullWidth
+                margin="normal"
+                {...register('name_of_university', {
+                  required: 'University name is required',
+                  pattern: {
+                    value: /^[A-Za-z\s]+$/,
+                    message:
+                      'University name must contain only letters and spaces',
+                  },
+                })}
+                error={!!errors.name_of_university}
+                helperText={
+                  errors.name_of_university
+                    ? errors.name_of_university.message
+                    : ''
+                }
+                className="mt-1 block w-full p-2 border border-gray-600 rounded-md bg-white"
+              />
+            </div>
+
+            <div>
+              <TextField
+                label="Name of College"
+                variant="outlined"
+                fullWidth
+                margin="normal"
+                {...register('name_of_collage', {
+                  required: 'College name is required',
+                  pattern: {
+                    value: /^[A-Za-z\s]+$/,
+                    message:
+                      'College name must contain only letters and spaces',
+                  },
+                })}
+                error={!!errors.name_of_collage}
+                helperText={
+                  errors.name_of_collage ? errors.name_of_collage.message : ''
+                }
+                className="mt-1 block w-full p-2 border border-gray-600 rounded-md bg-white"
+              />
+            </div>
+
+            <div>
+              <TextField
+                label="Course"
+                variant="outlined"
+                fullWidth
+                margin="normal"
+                {...register('course', {
+                  required: 'Course is required',
+                  pattern: {
+                    value: /^[A-Za-z\s]+$/,
+                    message: 'Course name must contain only letters and spaces',
+                  },
+                })}
+                error={!!errors.course}
+                helperText={errors.course ? errors.course.message : ''}
+                className="mt-1 block w-full p-2 border border-gray-600 rounded-md bg-white"
+              />
+            </div>
+
+            <div>
+              <TextField
+                label="Branch"
+                variant="outlined"
+                fullWidth
+                margin="normal"
+                {...register('branch', {
+                  required: 'Branch is required',
+                  pattern: {
+                    value: /^[A-Za-z\s]+$/,
+                    message: 'Branch name must contain only letters and spaces',
+                  },
+                })}
+                error={!!errors.branch}
+                helperText={errors.branch ? errors.branch.message : ''}
+                className="mt-1 block w-full p-2 border border-gray-600 rounded-md bg-white"
+              />
+            </div>
+
+            <div>
+              <TextField
+                label="Course Duration (years)"
+                variant="outlined"
+                fullWidth
+                margin="normal"
+                {...register('course_duration_years', {
+                  required: 'Course duration is required',
+                  valueAsNumber: true,
+                  pattern: {
+                    value: /^\d+$/, // Allows numbers only
+                    message:
+                      'Course Duration (years) must contain only numbers.',
+                  },
+                })}
+                error={!!errors.course_duration_years}
+                helperText={
+                  errors.course_duration_years
+                    ? errors.course_duration_years.message
+                    : ''
+                }
+                className="mt-1 block w-full p-2 border border-gray-600 rounded-md bg-white"
+              />
+            </div>
+
+            <div>
+              <TextField
+                label="Current Year"
+                variant="outlined"
+                fullWidth
+                margin="normal"
+                {...register('current_year', {
+                  required: 'Current year is required',
+                  valueAsNumber: true,
+                  pattern: {
+                    value: /^\d+$/, // Allows numbers only
+                    message: 'Current Year must contain only numbers.',
+                  },
+                })}
+                error={!!errors.current_year}
+                helperText={
+                  errors.current_year ? errors.current_year.message : ''
+                }
+                className="mt-1 block w-full p-2 border border-gray-600 rounded-md bg-white"
+              />
+            </div>
+
+            <div>
+              <TextField
+                label="Current Semester"
+                variant="outlined"
+                fullWidth
+                margin="normal"
+                {...register('current_sem', {
+                  required: 'Current semester is required',
+                  valueAsNumber: true,
+                  pattern: {
+                    value: /^\d+$/, // Allows numbers only
+                    message: 'Current Semester must contain only numbers.',
+                  },
+                })}
+                error={!!errors.current_sem}
+                helperText={
+                  errors.current_sem ? errors.current_sem.message : ''
+                }
+                className="mt-1 block w-full p-2 border border-gray-600 rounded-md bg-white"
+              />
+            </div>
+          </div>
+        </div>
+
+        <div className="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-md mb-10 bg-opacity-50">
+          <h2 className="text-xl font-semibold mb-4 text-gray-700">
+            Parent Details
+          </h2>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div>
+              <TextField
+                label="Father Name"
+                variant="outlined"
+                fullWidth
+                {...register('father_name', {
+                  required: 'Father name is required.',
+                  pattern: {
+                    value: /^[A-Za-z\s]+$/,
+                    message: 'Father name must contain only letters',
+                  },
+                })}
+                error={!!errors.father_name}
+                helperText={errors.father_name?.message}
+                className="mt-1 block w-full p-2 border border-gray-600 rounded-md bg-white"
+              />
+            </div>
+            <div>
+              <TextField
+                label="Father Contact Number"
+                variant="outlined"
+                fullWidth
+                {...register('father_contact_number', {
+                  required: 'Father contact number is required.',
+                  pattern: {
+                    value: /^\d+$/, // Allows numbers only
+                    message: 'Father Contact Number must contain only numbers.',
+                  },
+                })}
+                error={!!errors.father_contact_number}
+                helperText={errors.father_contact_number?.message}
+                className="mt-1 block w-full p-2 border border-gray-600 rounded-md bg-white"
+              />
+            </div>
+            <div>
+              <TextField
+                label="Father Email"
+                variant="outlined"
+                fullWidth
+                {...register('father_email', {
+                  required: 'Father email is required.',
+                  pattern: {
+                    value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+                    message: 'Please enter a valid email address.',
+                  },
+                })}
+                error={!!errors.father_email}
+                helperText={errors.father_email?.message}
+                className="mt-1 block w-full p-2 border border-gray-600 rounded-md bg-white"
+              />
+            </div>
+            <div>
+              <TextField
+                label="Father Profile Photo"
+                type="file"
+                variant="outlined"
+                name="fatherPhotoFile"
+                onChange={handleFileChange}
+                fullWidth
+                {...register('father_profile_photo', { required: true })}
+                error={!!errors.dob}
+                helperText={
+                  errors.dob ? 'Must upload a father profile photo' : ''
+                }
+                InputLabelProps={{ shrink: true }}
+                className="mt-1 block w-full p-2 border border-gray-600 rounded-md bg-white"
+              />
+            </div>
+            <div>
+              <TextField
+                label="Mother Name"
+                variant="outlined"
+                fullWidth
+                {...register('mother_name', {
+                  required: 'Mother name is required.',
+                  pattern: {
+                    value: /^[A-Za-z\s]+$/,
+                    message: 'Mother name must contain only letters and spaces',
+                  },
+                })}
+                error={!!errors.mother_name}
+                helperText={errors.mother_name?.message}
+                className="mt-1 block w-full p-2 border border-gray-600 rounded-md bg-white"
+              />
+            </div>
+            <div>
+              <TextField
+                label="Mother Contact Number"
+                variant="outlined"
+                fullWidth
+                {...register('mother_contact_number', {
+                  required: 'Mother contact number is required.',
+                  pattern: {
+                    value: /^\d+$/, // Allows numbers only
+                    message: 'Mother Contact Number must contain only numbers.',
+                  },
+                })}
+                error={!!errors.mother_contact_number}
+                helperText={errors.mother_contact_number?.message}
+                className="mt-1 block w-full p-2 border border-gray-600 rounded-md bg-white"
+              />
+            </div>
+            <div>
+              <TextField
+                label="Mother Profile Photo"
+                type="file"
+                variant="outlined"
+                name="motherPhotoFile"
+                onChange={handleFileChange}
+                fullWidth
+                {...register('mother_profile_photo', { required: true })}
+                error={!!errors.dob}
+                helperText={
+                  errors.dob ? 'Must upload a mother profile photo' : ''
+                }
+                InputLabelProps={{ shrink: true }}
+                className="mt-1 block w-full p-2 border border-gray-600 rounded-md bg-white"
+              />
+            </div>
+          </div>
+
+          <h2 className="text-xl font-semibold mb-4 text-gray-700 mt-4">
+            Approval Person Details
+          </h2>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div>
+              <TextField
+                label="Approval Person Name"
+                variant="outlined"
+                fullWidth
+                {...register('approval_person_name', {
+                  required: 'Approval person name is required.',
+                  pattern: {
+                    value: /^[A-Za-z\s]+$/,
+                    message:
+                      'Approval Person name must contain only letters and spaces',
+                  },
+                })}
+                error={!!errors.approval_person_name}
+                helperText={errors.approval_person_name?.message}
+                className="mt-1 block w-full p-2 border border-gray-600 rounded-md bg-white"
+              />
+            </div>
+            <div>
+              <TextField
+                label="Approval Person Contact"
+                variant="outlined"
+                fullWidth
+                {...register('approval_person_contact', {
+                  required: 'Approval person contact is required.',
+                  pattern: {
+                    value: /^\d+$/, // Allows numbers only
+                    message:
+                      'Approval Person Contact Number must contain only numbers.',
+                  },
+                })}
+                error={!!errors.approval_person_contact}
+                helperText={errors.approval_person_contact?.message}
+                className="mt-1 block w-full p-2 border border-gray-600 rounded-md bg-white"
+              />
+            </div>
+            <div>
+              <TextField
+                label="Approval Person Relation"
+                variant="outlined"
+                fullWidth
+                {...register('approval_person_relation', {
+                  required: 'Approval person relation is required.',
+                  pattern: {
+                    value: /^[A-Za-z\s]+$/,
+                    message: 'Relation must contain only letters and spaces',
+                  },
+                })}
+                error={!!errors.approval_person_relation}
+                helperText={errors.approval_person_relation?.message}
+                className="mt-1 block w-full p-2 border border-gray-600 rounded-md bg-white"
+              />
+            </div>
+            <div>
+              <TextField
+                label="Approval Person Email"
+                variant="outlined"
+                fullWidth
+                {...register('approval_person_email', {
+                  required: 'Approval person email is required.',
+                  pattern: {
+                    value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+                    message: 'Please enter a valid email address.',
+                  },
+                })}
+                error={!!errors.approval_person_email}
+                helperText={errors.approval_person_email?.message}
+                className="mt-1 block w-full p-2 border border-gray-600 rounded-md bg-white"
+              />
+            </div>
+          </div>
+        </div>
+
+        <div className="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-md mb-10 bg-opacity-50">
+          <h2 className="text-xl font-semibold mb-4 text-gray-700">
+            Relative Details
+          </h2>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div>
+              <TextField
+                label="Relative Name"
+                fullWidth
+                variant="outlined"
+                {...register('relative_name', {
+                  required: 'Relative name is required',
+                  pattern: {
+                    value: /^[A-Za-z\s]+$/,
+                    message:
+                      'Relative name must contain only letters and spaces',
+                  },
+                })}
+                error={!!errors.relative_name}
+                helperText={errors.relative_name?.message}
+                className="mt-1 block w-full p-2 border border-gray-600 rounded-md bg-white"
+              />
+            </div>
+            <div>
+              <TextField
+                label="Relative Relation"
+                fullWidth
+                variant="outlined"
+                {...register('relative_relation', {
+                  required: 'Relation is required',
+                  pattern: {
+                    value: /^[A-Za-z\s]+$/,
+                    message: 'Relation must contain only letters and spaces',
+                  },
+                })}
+                error={!!errors.relative_relation}
+                helperText={errors.relative_relation?.message}
+                className="mt-1 block w-full p-2 border border-gray-600 rounded-md bg-white"
+              />
+            </div>
+            <div>
+              <TextField
+                label="Relative Contact Number"
+                fullWidth
+                variant="outlined"
+                type="text"
+                {...register('relative_contact_number', {
+                  required: 'Contact number is required',
+                  pattern: {
+                    value: /^\d+$/, // Allows numbers only
+                    message:
+                      'Relative Contact Number must contain only numbers.',
+                  },
+                })}
+                error={!!errors.relative_contact_number}
+                helperText={errors.relative_contact_number?.message}
+                className="mt-1 block w-full p-2 border border-gray-600 rounded-md bg-white"
+              />
+            </div>
+            <div className="md:col-span-2 lg:col-span-3">
+              <TextField
+                label="Relative Address"
+                fullWidth
+                variant="outlined"
+                multiline
+                rows={4}
+                {...register('relative_address', {
+                  required: 'Address is required',
+                })}
+                error={!!errors.relative_address}
+                helperText={errors.relative_address?.message}
+                className="mt-1 block w-full p-2 border border-gray-600 rounded-md bg-white"
+              />
+            </div>
+          </div>
+        </div>
+
+        <div className="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-md mb-10 bg-opacity-50">
+          <h2 className="text-xl font-semibold mb-4 text-gray-700">
+            Sant Reference Details
+          </h2>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div>
+              <TextField
+                label="Name of Sant"
+                fullWidth
+                variant="outlined"
+                {...register('name_of_sant', {
+                  required: 'Name of Sant is required',
+                  pattern: {
+                    value: /^[A-Za-z\s]+$/,
+                    message:
+                      'Name of Sant must contain only letters and spaces',
+                  },
+                })}
+                error={!!errors.name_of_sant}
+                helperText={errors.name_of_sant?.message}
+                className="mt-1 block w-full p-2 border border-gray-600 rounded-md bg-white"
+              />
+            </div>
+            <div>
+              <TextField
+                label="Sant Phone Number"
+                fullWidth
+                variant="outlined"
+                type="text"
+                {...register('sant_phone_number', {
+                  required: 'Sant phone number is required',
+                  pattern: {
+                    value: /^\d+$/, // Allows numbers only
+                    message: 'Sant Phone Number must contain only numbers.',
+                  },
+                })}
+                error={!!errors.sant_phone_number}
+                helperText={errors.sant_phone_number?.message}
+                className="mt-1 block w-full p-2 border border-gray-600 rounded-md bg-white"
+              />
+            </div>
+          </div>
+        </div>
+
+        <div className="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-md mb-10 bg-opacity-50">
+          <h2 className="text-xl font-semibold mb-4 text-gray-700">
+            Relative Reference Details
+          </h2>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div>
+              <TextField
+                label="Full Name"
+                fullWidth
+                variant="outlined"
+                {...register('reference_relative_full_name', {
+                  required: 'Full name is required',
+                  pattern: {
+                    value: /^[A-Za-z\s]+$/,
+                    message: 'Name must contain only letters and spaces',
+                  },
+                })}
+                error={!!errors.reference_relative_full_name}
+                helperText={errors.reference_relative_full_name?.message}
+                className="mt-1 block w-full p-2 border border-gray-600 rounded-md bg-white"
+              />
+            </div>
+            <div>
+              <TextField
+                label="Relation"
+                fullWidth
+                variant="outlined"
+                {...register('reference_relative_relation', {
+                  required: 'Relation is required',
+                  pattern: {
+                    value: /^[A-Za-z\s]+$/,
+                    message: 'Relation must contain only letters and spaces',
+                  },
+                })}
+                error={!!errors.reference_relative_relation}
+                helperText={errors.reference_relative_relation?.message}
+                className="mt-1 block w-full p-2 border border-gray-600 rounded-md bg-white"
+              />
+            </div>
+            <div>
+              <TextField
+                label="Mobile Number"
+                fullWidth
+                variant="outlined"
+                type="text"
+                {...register('reference_relative_mobile', {
+                  required: 'Mobile number is required',
+                  pattern: {
+                    value: /^\d+$/, // Allows numbers only
+                    message: 'Mobile Number must contain only numbers.',
+                  },
+                })}
+                error={!!errors.reference_relative_mobile}
+                helperText={errors.reference_relative_mobile?.message}
+                className="mt-1 block w-full p-2 border border-gray-600 rounded-md bg-white"
+              />
+            </div>
+          </div>
+        </div>
+
+        <div className="flex justify-center mt-6">
+          <Box sx={{ display: 'flex', gap: 2 }}>
+            <Button
+              type="submit"
+              variant="contained"
+              color="primary"
+              disabled={loading}
+              className="w-full"
+            >
+              {loading ? <CircularProgress size={24} /> : 'Submit'}
+            </Button>
+            <Button
+              type="button"
+              variant="contained"
+              className="w-full"
+              onClick={() => reset()}
+            >
+              Cancel
+            </Button>
+          </Box>
+        </div>
+      </form>
+    </div>
   );
 };
 
