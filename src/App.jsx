@@ -24,11 +24,27 @@ import StudentNavbar from './components/studentDetails/StudentNavbar.jsx';
 import StudentLayout from './components/studentDetails/StudentLayout.jsx';
 import TempAdmissionForm from './components/admissionComponents/TempAdmissionForm.jsx';
 
+import LoginComponent from './components/authComponents/LoginComponent.jsx';
+import OtpVerificationComponent from './components/authComponents/OtpVerificationComponent.jsx';
+import WelcomeComponent from './components/authComponents/WelcomeComponent.jsx';
+
 function App() {
   const router = createBrowserRouter([
     {
+      path: '/',
+      element: <HomePage />,
+    },
+    {
       path: '/login',
-      element: <LoginPage />,
+      element: <LoginComponent />,
+    },
+    {
+      path: '/otpVerification',
+      element: <OtpVerificationComponent />,
+    },
+    {
+      path: '/welcome',
+      element: <WelcomeComponent />,
     },
     {
       path: '/forgotpassword',
