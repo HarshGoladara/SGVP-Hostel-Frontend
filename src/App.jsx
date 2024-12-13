@@ -27,12 +27,16 @@ import TempAdmissionForm from './components/admissionComponents/TempAdmissionFor
 import LoginComponent from './components/authComponents/LoginComponent.jsx';
 import OtpVerificationComponent from './components/authComponents/OtpVerificationComponent.jsx';
 import WelcomeComponent from './components/authComponents/WelcomeComponent.jsx';
+import HomeComponent from './components/introComponents/HomeComponent.jsx';
+import { Photo } from '@mui/icons-material';
+import TempStudentLayout from './components/tempStudentComponents/TempStudentLayout.jsx';
+import AlumniStudentLayout from './components/alumniStudentComponents/AlumniStudentLayout.jsx';
 
 function App() {
   const router = createBrowserRouter([
     {
       path: '/',
-      element: <HomePage />,
+      element: <HomeComponent />,
     },
     {
       path: '/login',
@@ -47,39 +51,6 @@ function App() {
       element: <WelcomeComponent />,
     },
     {
-      path: '/forgotpassword',
-      element: <ForgotPasswordPage />,
-    },
-    {
-      path: '/register',
-      element: <RegisterPage />,
-    },
-    {
-      path: '/activateAccount',
-      element: <ActivateAccountPage />,
-    },
-    {
-      path: '/setNewPassword',
-      element: <SetNewPasswordPage />,
-    },
-    {
-      path: '/form',
-      element: (
-        <>
-          <StudentDataForm />
-          <StudentEducationForm />
-          <ParentDetailForm />
-          <RelativeForm />
-          <SantReferenceForm />
-          <RelativeReferenceForm />
-        </>
-      ),
-    },
-    {
-      path: '/addStudent',
-      element: <AdmissionForm />,
-    },
-    {
       path: '/tempAddStudent',
       element: <TempAdmissionForm />,
     },
@@ -88,6 +59,18 @@ function App() {
       element: <PhotoUpload />,
     },
     // ---------temporarily public access start----------------------
+
+    {
+      path: '/dashboard',
+      element: (
+        <div className="app-container">
+          <Sidebar />
+          <div className="flex-grow">
+            <HomeComponent />
+          </div>
+        </div>
+      ),
+    },
     {
       path: '/studentDetails',
       element: (
@@ -99,6 +82,62 @@ function App() {
         </div>
       ),
     },
+    {
+      path: '/tempStudentDetails',
+      element: (
+        <div className="app-container">
+          <Sidebar />
+          <div className="flex-grow">
+            <TempStudentLayout />
+          </div>
+        </div>
+      ),
+    },
+    {
+      path: '/attendence',
+      element: (
+        <div className="app-container">
+          <Sidebar />
+          <div className="flex-grow">
+            <HomeComponent />
+          </div>
+        </div>
+      ),
+    },
+    {
+      path: '/gatepass',
+      element: (
+        <div className="app-container">
+          <Sidebar />
+          <div className="flex-grow">
+            <HomeComponent />
+          </div>
+        </div>
+      ),
+    },
+    {
+      path: '/roomAllotment',
+      element: (
+        <div className="app-container">
+          <Sidebar />
+          <div className="flex-grow">
+            <HomeComponent />
+          </div>
+        </div>
+      ),
+    },
+    {
+      path: '/alumni',
+      element: (
+        <div className="app-container">
+          <Sidebar />
+          <div className="flex-grow">
+            <AlumniStudentLayout />
+          </div>
+        </div>
+      ),
+    },
+
     // ---------temporarily public access end----------------------
     {
       element: <ProtectedRoute />,

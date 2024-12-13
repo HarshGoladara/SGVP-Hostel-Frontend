@@ -13,6 +13,7 @@ import { useForm, Controller } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { VITE_BACKEND_BASE_API } from '../../helper/envConfig/envConfig';
+import toast from 'react-hot-toast';
 
 const LoginComponent = () => {
   const {
@@ -37,13 +38,15 @@ const LoginComponent = () => {
       });
 
       if (response.status === 200) {
-        console.log('Login successful');
+        console.log('OTP sent successfully');
         // Redirect to OTP verification page on success
+        toast.success(`OTP sent on ${data.mobileNumber}`);
         navigate('/otpVerification', {
           state: { mobileNumber: data.mobileNumber },
         });
       } else {
-        console.log('Login failed', response.data);
+        console.log('Otp Sending failed', response.data);
+        toast.error('Error: Try Again');
         // Handle failure here
       }
     } catch (error) {

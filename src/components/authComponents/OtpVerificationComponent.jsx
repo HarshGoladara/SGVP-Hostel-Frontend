@@ -11,6 +11,7 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { VITE_BACKEND_BASE_API } from '../../helper/envConfig/envConfig';
 import { useLocation } from 'react-router-dom';
+import toast from 'react-hot-toast';
 
 export default function OtpVerificationComponent() {
   const location = useLocation(); // To access the state passed from the login component
@@ -35,17 +36,32 @@ export default function OtpVerificationComponent() {
 
       if (response.status === 200) {
         const userRole = response.data.data;
-        console.log(userRole);
-        console.log('OTP verified successfully');
-        // Navigate to the home page upon successful OTP verification
-        navigate('/welcome', { state: { userRole: userRole } });
+        // console.log(userRole);
+        // console.log('OTP verified successfully');
+
+        // // Navigate to the home page upon successful OTP verification
+        // navigate('/welcome', { state: { userRole: userRole } });
+
+        toast.success('Login Successful.');
+        if (
+          userRole.role_name === 'rector' ||
+          userRole.role_name === 'chief rector'
+        ) {
+          navigate('/dashboard', { state: { userRole: userRole } });
+        } else {
+          navigate('/welcome', { state: { userRole: userRole } });
+        }
       } else {
         console.error('OTP verification failed');
         // Handle OTP verification failure
+        toast.error('Login Failed');
+        navigate('/login');
       }
     } catch (error) {
       console.error('Error during OTP verification', error);
       // Handle error here
+      toast.error('Login Failed');
+      navigate('/login');
     } finally {
       setLoading(false); // Reset loading state after the API call completes
     }

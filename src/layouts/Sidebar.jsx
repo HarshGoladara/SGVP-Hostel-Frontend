@@ -9,11 +9,14 @@ import LogoutIcon from '@mui/icons-material/Logout';
 import Divider from '@mui/material/Divider';
 import BedIcon from '@mui/icons-material/Bed';
 import { Tooltip, IconButton } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 
 import '../css/Sidebar.css';
+import toast from 'react-hot-toast';
 // import logo from ''
 
 const Sidebar = () => {
+  const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(true);
   const [activeItem, setActiveItem] = useState('Dashboard');
 
@@ -21,10 +24,16 @@ const Sidebar = () => {
     setIsOpen(!isOpen);
   };
 
-  const handleItemClick = (item) => {
+  const handleItemClick = (item, route) => {
     if (item != activeItem) {
       setActiveItem(item); // Set the active item
+      navigate(route); // Navigate to the respective route
     }
+  };
+
+  const handleLoginNavigation = () => {
+    toast.success('Logout Successful');
+    navigate('/login'); // Navigate to the login page
   };
 
   return (
@@ -53,7 +62,7 @@ const Sidebar = () => {
           <ul>
             <li
               className={activeItem === 'Dashboard' ? 'active' : ''}
-              onClick={() => handleItemClick('Dashboard')}
+              onClick={() => handleItemClick('Dashboard', '/dashboard')}
             >
               <DashboardIcon />
               <span className={`menu-text ${isOpen ? '' : 'hidden'}`}>
@@ -63,7 +72,7 @@ const Sidebar = () => {
 
             <li
               className={activeItem === 'Student' ? 'active' : ''}
-              onClick={() => handleItemClick('Student')}
+              onClick={() => handleItemClick('Student', '/studentDetails')}
             >
               <PersonIcon />
               <span className={`menu-text ${isOpen ? '' : 'hidden'}`}>
@@ -72,8 +81,20 @@ const Sidebar = () => {
             </li>
 
             <li
+              className={activeItem === 'Admission Request' ? 'active' : ''}
+              onClick={() =>
+                handleItemClick('Admission Request', '/tempStudentDetails')
+              }
+            >
+              <PersonIcon />
+              <span className={`menu-text ${isOpen ? 'wrap-text' : 'hidden'}`}>
+                Admission Request
+              </span>
+            </li>
+
+            <li
               className={activeItem === 'Attendence' ? 'active' : ''}
-              onClick={() => handleItemClick('Attendence')}
+              onClick={() => handleItemClick('Attendence', '/attendence')}
             >
               <CalendarMonthIcon />
               <span className={`menu-text ${isOpen ? '' : 'hidden'}`}>
@@ -83,7 +104,7 @@ const Sidebar = () => {
 
             <li
               className={activeItem === 'Gatepass' ? 'active' : ''}
-              onClick={() => handleItemClick('Gatepass')}
+              onClick={() => handleItemClick('Gatepass', '/gatepass')}
             >
               <ConfirmationNumberIcon />
               <span className={`menu-text ${isOpen ? '' : 'hidden'}`}>
@@ -93,7 +114,9 @@ const Sidebar = () => {
 
             <li
               className={activeItem === 'Room Allotment' ? 'active' : ''}
-              onClick={() => handleItemClick('Room Allotment')}
+              onClick={() =>
+                handleItemClick('Room Allotment', '/roomAllotment')
+              }
             >
               <BedIcon />
               <span className={`menu-text ${isOpen ? '' : 'hidden'}`}>
@@ -102,12 +125,12 @@ const Sidebar = () => {
             </li>
 
             <li
-              className={activeItem === 'Alumini' ? 'active' : ''}
-              onClick={() => handleItemClick('Alumini')}
+              className={activeItem === 'Alumni' ? 'active' : ''}
+              onClick={() => handleItemClick('Alumni', '/alumni')}
             >
               <PersonIcon />
               <span className={`menu-text ${isOpen ? '' : 'hidden'}`}>
-                Alumini
+                Alumni
               </span>
             </li>
           </ul>
@@ -121,7 +144,7 @@ const Sidebar = () => {
           <p className={`${isOpen ? '' : 'hidden'}`}>SGVP ADMIN</p>
           <div className={`${isOpen ? '' : 'hidden'} ml-2`}>
             <Tooltip title="Logout">
-              <IconButton>
+              <IconButton onClick={handleLoginNavigation}>
                 <LogoutIcon sx={{ color: 'black' }} />
               </IconButton>
             </Tooltip>

@@ -6,13 +6,6 @@ const WelcomeComponent = () => {
   const location = useLocation();
   const userRole = location.state?.userRole;
 
-  // // Redirect to login page if role is not available
-  // useEffect(() => {
-  //     if (!location.state) {
-  //         navigate('/login');
-  //     }
-  // }, [location.state, navigate]);
-
   return (
     <Box
       sx={{

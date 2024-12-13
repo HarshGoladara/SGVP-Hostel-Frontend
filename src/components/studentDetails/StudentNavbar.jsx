@@ -7,6 +7,7 @@ import './css/StudentNavbar.css';
 
 function StudentNavbar({ onSearch }) {
   const [studentData, setStudentData] = useState([]);
+  const [noOfStudent, setNoOfStudent] = useState(0);
   const [selectedOption, setSelectedOption] = useState('All');
   const [showMenu, setShowMenu] = useState(false);
   const [pinNumber, setPinNumber] = useState('');
@@ -33,7 +34,7 @@ function StudentNavbar({ onSearch }) {
       const query = searchQuery.trim();
       if (!query) {
         const { data } = await axios.get(
-          `${VITE_BACKEND_BASE_API}/student/studentDetails`,
+          `${VITE_BACKEND_BASE_API}/student/studentDetails?page=1&limit=10`,
         );
         results = data.data;
       } else {
@@ -77,7 +78,8 @@ function StudentNavbar({ onSearch }) {
         const { data } = await axios.get(
           `${VITE_BACKEND_BASE_API}/student/studentDetails`,
         );
-        setStudentData(data.data);
+        // setStudentData(data.data);
+        setNoOfStudent(data.data.length);
       } catch (error) {
         console.log(error);
       }
@@ -90,7 +92,7 @@ function StudentNavbar({ onSearch }) {
       <div className="h-16 bg-[#ffffff] flex items-center px-4 rounded-md justify-between ">
         <div>
           <span className="text-[25px] font-bold">Student</span>
-          <span className="text-[18px]">{`  (${studentData?.length})`}</span>
+          <span className="text-[18px]">{`  (${noOfStudent})`}</span>
         </div>
         <div className="flex flex-row mr-3">
           <div className="relative inline-block text-left pr-10">

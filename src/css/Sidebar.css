@@ -102,12 +102,17 @@ ul li i {
 
 .menu-text {
   margin-left: 10px;
-  white-space: nowrap;
-  overflow: hidden;
+  /* white-space: nowrap; */
+  white-space: normal;
+  word-break: break-word;
+  /* overflow: hidden; */
+  overflow: visible;
   transition:
     opacity 0.3s ease,
     width 0.4s ease;
   width: auto;
+  line-height: 1.2; /* Adjust line height for better readability */
+  text-align: left; /* Align text for multiline */
 }
 
 .menu-text.hidden {
