@@ -43,6 +43,27 @@ body {
   transition: padding 0.4s ease;
   /* border-width: 1px;
     border-color: black; */
+  overflow: hidden; /* Prevent unintended overflow */
+}
+
+/* Scrollable Sidebar Content */
+ul {
+  list-style: none;
+  flex-grow: 1; /* Allows ul to grow and take up remaining space */
+  overflow-y: auto; /* Enable vertical scrolling */
+  max-height: calc(
+    100vh - 150px
+  ); /* Adjust based on header and footer height */
+  padding-right: 10px; /* Add padding for better spacing */
+}
+
+/* Hide Scrollbar */
+ul::-webkit-scrollbar {
+  display: none; /* Hide scrollbar in WebKit-based browsers */
+}
+
+ul {
+  scrollbar-width: none; /* Hide scrollbar in Firefox */
 }
 
 /* Title and Header */
@@ -72,10 +93,6 @@ body {
 }
 
 /* Sidebar Items */
-ul {
-  list-style: none;
-}
-
 ul li {
   padding: 10px;
   display: flex;

@@ -9,6 +9,10 @@ export default function HomeComponent() {
     navigate('/login'); // Navigate to the login page
   };
 
+  const handleAdmissionFormNavigation = () => {
+    navigate('/tempAddStudent'); // Navigate to the admission form page
+  };
+
   return (
     <Box
       sx={{
@@ -124,12 +128,13 @@ export default function HomeComponent() {
             </Typography>
           </Paper>
 
-          {/* Navigation Button */}
+          {/* Navigation Buttons */}
           <Box
             sx={{
               marginTop: 4,
               display: 'flex',
               justifyContent: 'center',
+              gap: 2, // Add spacing between buttons
             }}
           >
             <Button
@@ -143,6 +148,18 @@ export default function HomeComponent() {
               }}
             >
               Go to Login
+            </Button>
+            <Button
+              variant="outlined"
+              color="secondary"
+              onClick={handleAdmissionFormNavigation}
+              sx={{
+                padding: '12px 24px',
+                fontWeight: 'bold',
+                fontSize: '16px',
+              }}
+            >
+              Fill Up Admission Form
             </Button>
           </Box>
         </Box>

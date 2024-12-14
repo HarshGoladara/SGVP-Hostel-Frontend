@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-
+import React, { useState, useEffect } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import PersonIcon from '@mui/icons-material/Person';
 import MenuIcon from '@mui/icons-material/Menu';
@@ -9,23 +9,50 @@ import LogoutIcon from '@mui/icons-material/Logout';
 import Divider from '@mui/material/Divider';
 import BedIcon from '@mui/icons-material/Bed';
 import { Tooltip, IconButton } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
-
-import '../css/Sidebar.css';
 import toast from 'react-hot-toast';
-// import logo from ''
+import '../css/Sidebar.css';
 
 const Sidebar = () => {
   const navigate = useNavigate();
-  const [isOpen, setIsOpen] = useState(true);
-  const [activeItem, setActiveItem] = useState('Dashboard');
+  const location = useLocation(); // Get the current location
+  const [isOpen, setIsOpen] = useState(false);
+  const [activeItem, setActiveItem] = useState('');
+
+  // Map routes to sidebar item labels
+  const routeToItemMap = {
+    '/dashboard': 'Dashboard',
+    '/studentDetails': 'Student',
+    '/tempStudentDetails': 'Admission Request',
+    '/attendence': 'Attendence',
+    '/gatepass': 'Gatepass',
+    '/archivedGatepass': 'Archived Gatepass',
+    '/roomAllotment': 'Room Allotment',
+    '/alumni': 'Alumni',
+  };
+
+  // Sync active item with the current route on mount and location change
+  useEffect(() => {
+    const currentPath = location.pathname;
+    const matchedItem = routeToItemMap[currentPath] || 'Dashboard'; // Default to Dashboard if no match
+    setActiveItem(matchedItem);
+  }, [location.pathname]);
+
+  // Retrieve sidebar state from local storage on mount
+  useEffect(() => {
+    const savedSidebarState = localStorage.getItem('sidebarState');
+    if (savedSidebarState !== null) {
+      setIsOpen(JSON.parse(savedSidebarState)); // Parse and set the saved state
+    }
+  }, []);
 
   const toggleSidebar = () => {
-    setIsOpen(!isOpen);
+    const newState = !isOpen;
+    setIsOpen(newState);
+    localStorage.setItem('sidebarState', JSON.stringify(newState)); // Save state to local storage
   };
 
   const handleItemClick = (item, route) => {
-    if (item != activeItem) {
+    if (item !== activeItem) {
       setActiveItem(item); // Set the active item
       navigate(route); // Navigate to the respective route
     }
@@ -50,7 +77,6 @@ const Sidebar = () => {
             <MenuIcon />
           </div>
 
-          {/* <Divider/> */}
           <Divider
             style={{
               backgroundColor: 'white',
@@ -113,6 +139,18 @@ const Sidebar = () => {
             </li>
 
             <li
+              className={activeItem === 'Archived Gatepass' ? 'active' : ''}
+              onClick={() =>
+                handleItemClick('Archived Gatepass', '/archivedGatepass')
+              }
+            >
+              <ConfirmationNumberIcon />
+              <span className={`menu-text ${isOpen ? '' : 'hidden'}`}>
+                Archived Gatepass
+              </span>
+            </li>
+
+            <li
               className={activeItem === 'Room Allotment' ? 'active' : ''}
               onClick={() =>
                 handleItemClick('Room Allotment', '/roomAllotment')
@@ -133,9 +171,25 @@ const Sidebar = () => {
                 Alumni
               </span>
             </li>
+
+            <div className="imgg flex justify-start">
+              <img
+                src="..//images/logo.jpg"
+                alt="Profile"
+                className="mr-3 w-10"
+              ></img>
+              <p className={`${isOpen ? '' : 'hidden'}`}>SGVP ADMIN</p>
+              <div className={`${isOpen ? '' : 'hidden'} ml-2`}>
+                <Tooltip title="Logout">
+                  <IconButton onClick={handleLoginNavigation}>
+                    <LogoutIcon sx={{ color: 'black' }} />
+                  </IconButton>
+                </Tooltip>
+              </div>
+            </div>
           </ul>
         </div>
-        <div className="imgg flex justify-start">
+        {/* <div className="imgg flex justify-start">
           <img
             src="..//images/logo.jpg"
             alt="Profile"
@@ -149,7 +203,7 @@ const Sidebar = () => {
               </IconButton>
             </Tooltip>
           </div>
-        </div>
+        </div> */}
       </div>
     </div>
   );

@@ -31,6 +31,9 @@ import HomeComponent from './components/introComponents/HomeComponent.jsx';
 import { Photo } from '@mui/icons-material';
 import TempStudentLayout from './components/tempStudentComponents/TempStudentLayout.jsx';
 import AlumniStudentLayout from './components/alumniStudentComponents/AlumniStudentLayout.jsx';
+import GatepassBodyTemp from './components/gatepassComponents/GatepassBodyTemp.jsx';
+import GatepassLayout from './components/gatepassComponents/GatepassLayout.jsx';
+import ArchivedGatepassLayout from './components/archivedGatepassComponents/ArchivedGatepassLayout.jsx';
 
 function App() {
   const router = createBrowserRouter([
@@ -110,7 +113,19 @@ function App() {
         <div className="app-container">
           <Sidebar />
           <div className="flex-grow">
-            <HomeComponent />
+            <GatepassLayout />
+            {/* <GatepassBodyTemp /> */}
+          </div>
+        </div>
+      ),
+    },
+    {
+      path: '/archivedGatepass',
+      element: (
+        <div className="app-container">
+          <Sidebar />
+          <div className="flex-grow">
+            <ArchivedGatepassLayout />
           </div>
         </div>
       ),

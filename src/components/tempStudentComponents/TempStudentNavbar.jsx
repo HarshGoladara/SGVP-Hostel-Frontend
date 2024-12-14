@@ -17,7 +17,9 @@ function TempStudentNavbar({ onSearch }) {
 
   const handleSelect = (option) => {
     setSelectedOption(option);
+    setSearchQuery('');
     setShowMenu(false);
+    filterStudents(option);
   };
 
   const handlePinInput = (e) => {
@@ -26,6 +28,41 @@ function TempStudentNavbar({ onSearch }) {
 
   const handleSearchInput = (e) => {
     setSearchQuery(e.target.value);
+  };
+
+  const filterStudents = async (option) => {
+    try {
+      if (option === 'All') {
+        const { data } = await axios.get(
+          `${VITE_BACKEND_BASE_API}/admission/getTempStudentDetails`,
+          {
+            params: {
+              page: 1,
+              limit: 10,
+            },
+          },
+        );
+        const results = data.data;
+        setStudentData(results);
+        onSearch(results); // Update the parent state
+      } else {
+        const { data } = await axios.get(
+          `${VITE_BACKEND_BASE_API}/admission/getTempStudentDetails`,
+          {
+            params: {
+              page: 1,
+              limit: 10,
+              admission_status: option.toLowerCase(),
+            },
+          },
+        );
+        const results = data.data;
+        setStudentData(results);
+        onSearch(results); // Update the parent state
+      }
+    } catch (error) {
+      console.log('Error fetching student data', error);
+    }
   };
 
   const searchStudents = async () => {

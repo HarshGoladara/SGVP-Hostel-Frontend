@@ -17,7 +17,9 @@ function StudentNavbar({ onSearch }) {
 
   const handleSelect = (option) => {
     setSelectedOption(option);
+    setSearchQuery('');
     setShowMenu(false);
+    filterStudents(option);
   };
 
   const handlePinInput = (e) => {
@@ -26,6 +28,41 @@ function StudentNavbar({ onSearch }) {
 
   const handleSearchInput = (e) => {
     setSearchQuery(e.target.value);
+  };
+
+  const filterStudents = async (option) => {
+    try {
+      if (option === 'All') {
+        const { data } = await axios.get(
+          `${VITE_BACKEND_BASE_API}/student/studentDetails`,
+          {
+            params: {
+              page: 1,
+              limit: 10,
+            },
+          },
+        );
+        const results = data.data;
+        setStudentData(results);
+        onSearch(results); // Update the parent state
+      } else {
+        const { data } = await axios.get(
+          `${VITE_BACKEND_BASE_API}/student/studentDetails`,
+          {
+            params: {
+              page: 1,
+              limit: 10,
+              category: option,
+            },
+          },
+        );
+        const results = data.data;
+        setStudentData(results);
+        onSearch(results); // Update the parent state
+      }
+    } catch (error) {
+      console.log('Error fetching student data', error);
+    }
   };
 
   const searchStudents = async () => {
@@ -62,7 +99,7 @@ function StudentNavbar({ onSearch }) {
             results = data.rows;
           }
         } catch (error) {
-          res.status(500).send('Error fetching student data');
+          console.log('Error fetching student data');
         }
       }
       setStudentData(results);
@@ -97,7 +134,7 @@ function StudentNavbar({ onSearch }) {
         <div className="flex flex-row mr-3">
           <div className="relative inline-block text-left pr-10">
             <div className="flex flex-row">
-              <div className="mt-[4px] flex flex-row mr-2">Filter</div>
+              <div className="mt-[4px] flex flex-row mr-2">Category:-</div>
               <button
                 onClick={() => setShowMenu(!showMenu)}
                 className="flex items-center border-[1.5px] border-black focus:border-[#37AFE1] rounded-md px-2 py-1 text-gray-700 focus:outline-none"
