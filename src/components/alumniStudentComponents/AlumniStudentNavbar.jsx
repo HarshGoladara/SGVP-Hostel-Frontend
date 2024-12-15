@@ -5,7 +5,7 @@ import axios from 'axios';
 import { VITE_BACKEND_BASE_API } from '../../helper/envConfig/envConfig.js';
 import './css/AlumniStudentNavbar.css';
 
-function AlumniStudentNavbar({ onSearch }) {
+function AlumniStudentNavbar({ onSearch, isLoading }) {
   const [studentData, setStudentData] = useState([]);
   const [noOfStudent, setNoOfStudent] = useState(0);
   const [selectedOption, setSelectedOption] = useState('All');
@@ -29,6 +29,7 @@ function AlumniStudentNavbar({ onSearch }) {
   };
 
   const searchStudents = async () => {
+    isLoading(true);
     try {
       let results;
       const query = searchQuery.trim();
@@ -66,14 +67,18 @@ function AlumniStudentNavbar({ onSearch }) {
         }
       }
       setStudentData(results);
+      setNoOfStudent(results.length);
       onSearch(results); // Update the parent state
     } catch (err) {
       console.error('Error fetching student data:', err);
+    } finally {
+      isLoading(false);
     }
   };
 
   useEffect(() => {
     const getData = async () => {
+      isLoading(true);
       try {
         const { data } = await axios.get(
           `${VITE_BACKEND_BASE_API}/student/getAlumni`,
@@ -82,6 +87,8 @@ function AlumniStudentNavbar({ onSearch }) {
         setNoOfStudent(data.data.length);
       } catch (error) {
         console.log(error);
+      } finally {
+        isLoading(false);
       }
     };
     getData();

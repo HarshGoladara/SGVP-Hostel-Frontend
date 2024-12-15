@@ -4,8 +4,12 @@ import { IconButton } from '@mui/material';
 import { ArrowBack, ArrowForward } from '@mui/icons-material';
 import AlumniStudentModal from './AlumniStudentModal.jsx';
 import { VITE_BACKEND_BASE_API } from '../../helper/envConfig/envConfig.js';
+import ActionDropdown from './ActionDropdown.jsx';
+// import { CircularProgress } from '@mui/material';
+import CustomCircularLoader from '../commonCustomComponents/CustomCircularLoader.jsx';
+import HairballSpinner from '../commonCustomComponents/HairballSpinner.jsx';
 
-const AlumniStudentTable = ({ searchResults }) => {
+const AlumniStudentTable = ({ searchResults, loading }) => {
   const [students, setStudents] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
@@ -21,6 +25,7 @@ const AlumniStudentTable = ({ searchResults }) => {
       setTotalPages(data.pagination.totalPages);
     } catch (error) {
       console.error('Error fetching student data', error);
+    } finally {
     }
   };
 
@@ -128,46 +133,78 @@ const AlumniStudentTable = ({ searchResults }) => {
             </tr>
           </thead>
           <tbody>
-            {students.map((student) => (
-              <tr
-                key={student.pin_number}
-                className="border-b hover:bg-gray-50"
-              >
-                <td className="py-2 px-4">
-                  {student.student_photo_url ? (
-                    <img
-                      src={student.student_photo_url}
-                      alt={student.student_full_name}
-                      className="w-12 h-12 rounded-full"
-                    />
-                  ) : (
-                    <div className="flex items-center justify-center w-12 h-12 bg-blue-500 text-white text-lg font-bold rounded-full">
-                      {student.student_full_name.charAt(0)}
+            {loading ? (
+              <tr>
+                <td colSpan="6">
+                  <div className="relative py-8">
+                    <div className="absolute inset-0 flex justify-center items-center h-auto">
+                      {/* <CustomCircularLoader size={50} logoSrc="/images/logo.jpg" /> */}
+                      <HairballSpinner
+                        colors={{
+                          fillColor1: '#c0392b',
+                          fillColor2: '#d35400',
+                          fillColor3: '#f39c12',
+                          fillColor4: '#16a085',
+                        }}
+                        backgroundColor="#fff"
+                        speed={1.5}
+                        width={90}
+                        height={90}
+                        logoSrc="/images/logo.jpg"
+                        logoSize={45}
+                      />
                     </div>
-                  )}
-                </td>
-                <td className="py-2 px-4">
-                  <div className="flex flex-col">
-                    <span className="font-bold">
-                      {student.student_full_name}
-                    </span>
-                    <span className="text-gray-500 text-sm">
-                      {student.pin_number}
-                    </span>{' '}
-                    {/* Pin number in light font */}
                   </div>
                 </td>
-                <td className="py-2 px-4">{student.student_contact_number}</td>
-                <td className="py-2 px-4">
-                  <button
-                    onClick={() => handleShowDetails(student)}
-                    className="bg-[#37AFE1] text-white px-2 py-1 rounded hover:bg-blue-600"
-                  >
-                    Show
-                  </button>
-                </td>
               </tr>
-            ))}
+            ) : (
+              students.map((student) => (
+                <tr
+                  key={student.pin_number}
+                  className="border-b hover:bg-gray-50"
+                >
+                  <td className="py-2 px-4">
+                    {student.student_photo_url ? (
+                      <img
+                        src={student.student_photo_url}
+                        alt={student.student_full_name}
+                        className="w-12 h-12 rounded-full"
+                      />
+                    ) : (
+                      <div className="flex items-center justify-center w-12 h-12 bg-blue-500 text-white text-lg font-bold rounded-full">
+                        {student.student_full_name.charAt(0)}
+                      </div>
+                    )}
+                  </td>
+                  <td className="py-2 px-4">
+                    <div className="flex flex-col">
+                      <span className="font-bold">
+                        {student.student_full_name}
+                      </span>
+                      <span className="text-gray-500 text-sm">
+                        {student.pin_number}
+                      </span>{' '}
+                      {/* Pin number in light font */}
+                    </div>
+                  </td>
+                  <td className="py-2 px-4">
+                    {student.student_contact_number}
+                  </td>
+                  <td className="py-2 px-4">
+                    Action
+                    <ActionDropdown
+                      onActionSelect={(action) => {
+                        if (action === 'Show') {
+                          handleShowDetails(student);
+                        } else if (action === 'Move Back To SGVP') {
+                          //
+                        }
+                      }}
+                    />
+                  </td>
+                </tr>
+              ))
+            )}
           </tbody>
         </table>
         <AlumniStudentModal

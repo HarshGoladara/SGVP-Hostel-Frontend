@@ -5,7 +5,7 @@ import axios from 'axios';
 import { VITE_BACKEND_BASE_API } from '../../helper/envConfig/envConfig.js';
 import './css/StudentNavbar.css';
 
-function StudentNavbar({ onSearch }) {
+function StudentNavbar({ onSearch, isLoading }) {
   const [studentData, setStudentData] = useState([]);
   const [noOfStudent, setNoOfStudent] = useState(0);
   const [selectedOption, setSelectedOption] = useState('All');
@@ -31,6 +31,7 @@ function StudentNavbar({ onSearch }) {
   };
 
   const filterStudents = async (option) => {
+    isLoading(true);
     try {
       if (option === 'All') {
         const { data } = await axios.get(
@@ -44,6 +45,7 @@ function StudentNavbar({ onSearch }) {
         );
         const results = data.data;
         setStudentData(results);
+        setNoOfStudent(results.length);
         onSearch(results); // Update the parent state
       } else {
         const { data } = await axios.get(
@@ -58,14 +60,18 @@ function StudentNavbar({ onSearch }) {
         );
         const results = data.data;
         setStudentData(results);
+        setNoOfStudent(results.length);
         onSearch(results); // Update the parent state
       }
     } catch (error) {
       console.log('Error fetching student data', error);
+    } finally {
+      isLoading(false);
     }
   };
 
   const searchStudents = async () => {
+    isLoading(true);
     try {
       let results;
       const query = searchQuery.trim();
@@ -103,14 +109,18 @@ function StudentNavbar({ onSearch }) {
         }
       }
       setStudentData(results);
+      setNoOfStudent(results.length);
       onSearch(results); // Update the parent state
     } catch (err) {
       console.error('Error fetching student data:', err);
+    } finally {
+      isLoading(false);
     }
   };
 
   useEffect(() => {
     const getData = async () => {
+      isLoading(true);
       try {
         const { data } = await axios.get(
           `${VITE_BACKEND_BASE_API}/student/studentDetails`,
@@ -119,6 +129,8 @@ function StudentNavbar({ onSearch }) {
         setNoOfStudent(data.data.length);
       } catch (error) {
         console.log(error);
+      } finally {
+        isLoading(false);
       }
     };
     getData();

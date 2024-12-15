@@ -34,6 +34,10 @@ import AlumniStudentLayout from './components/alumniStudentComponents/AlumniStud
 import GatepassBodyTemp from './components/gatepassComponents/GatepassBodyTemp.jsx';
 import GatepassLayout from './components/gatepassComponents/GatepassLayout.jsx';
 import ArchivedGatepassLayout from './components/archivedGatepassComponents/ArchivedGatepassLayout.jsx';
+import CustomCircularLoader from './components/commonCustomComponents/CustomCircularLoader.jsx';
+import HairballSpinner from './components/commonCustomComponents/HairballSpinner.jsx';
+import { Blocks } from 'react-loader-spinner';
+import BlocksLoader from './components/commonCustomComponents/BlocksLoader.jsx';
 
 function App() {
   const router = createBrowserRouter([
@@ -60,6 +64,31 @@ function App() {
     {
       path: '/photo',
       element: <PhotoUpload />,
+    },
+    {
+      path: '/circle',
+      element: (
+        <div>
+          <CustomCircularLoader size={150} logoSrc="/images/logo.jpg" />
+          <div>
+            <HairballSpinner
+              colors={{
+                fillColor1: '#c0392b',
+                fillColor2: '#d35400',
+                fillColor3: '#f39c12',
+                fillColor4: '#16a085',
+              }}
+              backgroundColor="#fff"
+              speed={1.5}
+              width={200}
+              height={200}
+              logoSrc="/images/logo.jpg"
+              logoSize={115}
+            />
+          </div>
+          <BlocksLoader visible={true} logoSrc="/images/logo.jpg" />
+        </div>
+      ),
     },
     // ---------temporarily public access start----------------------
 

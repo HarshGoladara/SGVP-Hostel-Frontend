@@ -91,9 +91,16 @@ const DetailsCard = ({ student, onClose }) => {
                   <div className="text-[12px] text-gray-600 ">
                     Date Of Birth
                   </div>
-                  <div>
+                  {/* <div>
                     {student.dob.substr(8, 2)}-{student.dob.substr(5, 2)}-
                     {student.dob.substr(0, 4)}
+                  </div> */}
+                  <div>
+                    {new Date(student.dob).toLocaleDateString('en-GB', {
+                      day: '2-digit',
+                      month: '2-digit',
+                      year: 'numeric',
+                    })}
                   </div>
                 </div>
                 <div className="flex flex-col">

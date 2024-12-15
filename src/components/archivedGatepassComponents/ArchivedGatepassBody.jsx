@@ -5,8 +5,11 @@ import { ArrowBack, ArrowForward } from '@mui/icons-material';
 import { VITE_BACKEND_BASE_API } from '../../helper/envConfig/envConfig.js';
 import ActionDropdown from './ActionDropdown.jsx';
 import toast from 'react-hot-toast';
+import { CircularProgress } from '@mui/material';
+import CustomCircularLoader from '../commonCustomComponents/CustomCircularLoader.jsx';
+import HairballSpinner from '../commonCustomComponents/HairballSpinner.jsx';
 
-const ArchivedGatepassTable = ({ searchResults }) => {
+const ArchivedGatepassTable = ({ searchResults, loading }) => {
   const [gatepasses, setGatepasses] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
@@ -134,34 +137,62 @@ const ArchivedGatepassTable = ({ searchResults }) => {
             </tr>
           </thead>
           <tbody>
-            {gatepasses.map((gatepass) => (
-              <tr
-                key={gatepass.gatepass_number}
-                className="border-b hover:bg-gray-50"
-              >
-                <td className="py-2 px-4">
-                  <span className="font-bold">{gatepass.gatepass_number}</span>
+            {loading ? (
+              <tr>
+                <td colSpan="8">
+                  <div className="relative py-8">
+                    <div className="absolute inset-0 flex justify-center items-center h-auto">
+                      {/* <CustomCircularLoader size={50} logoSrc="/images/logo.jpg" /> */}
+                      <HairballSpinner
+                        colors={{
+                          fillColor1: '#c0392b',
+                          fillColor2: '#d35400',
+                          fillColor3: '#f39c12',
+                          fillColor4: '#16a085',
+                        }}
+                        backgroundColor="#fff"
+                        speed={1.5}
+                        width={90}
+                        height={90}
+                        logoSrc="/images/logo.jpg"
+                        logoSize={45}
+                      />
+                    </div>
+                  </div>
                 </td>
-                <td className="py-2 px-4">
-                  <span className="font-bold">{gatepass.pin_number}</span>
-                </td>
-                <td className="py-2 px-4">{gatepass.student_full_name}</td>
-                <td className="py-2 px-4">
-                  {new Date(gatepass.outgoing_timestamp).toLocaleString()}
-                </td>
-                <td className="py-2 px-4">
-                  {new Date(
-                    gatepass.permission_upto_timestamp,
-                  ).toLocaleString()}
-                </td>
-                <td className="py-2 px-4 text-center">
-                  {gatepass.in_timestamp
-                    ? new Date(gatepass.in_timestamp).toLocaleString()
-                    : '-'}
-                </td>
-                <td className="py-2 px-4">{gatepass.reason}</td>
               </tr>
-            ))}
+            ) : (
+              gatepasses.map((gatepass) => (
+                <tr
+                  key={gatepass.gatepass_number}
+                  className="border-b hover:bg-gray-50"
+                >
+                  <td className="py-2 px-4">
+                    <span className="font-bold">
+                      {gatepass.gatepass_number}
+                    </span>
+                  </td>
+                  <td className="py-2 px-4">
+                    <span className="font-bold">{gatepass.pin_number}</span>
+                  </td>
+                  <td className="py-2 px-4">{gatepass.student_full_name}</td>
+                  <td className="py-2 px-4">
+                    {new Date(gatepass.outgoing_timestamp).toLocaleString()}
+                  </td>
+                  <td className="py-2 px-4">
+                    {new Date(
+                      gatepass.permission_upto_timestamp,
+                    ).toLocaleString()}
+                  </td>
+                  <td className="py-2 px-4">
+                    {gatepass.in_timestamp
+                      ? new Date(gatepass.in_timestamp).toLocaleString()
+                      : '-'}
+                  </td>
+                  <td className="py-2 px-4">{gatepass.reason}</td>
+                </tr>
+              ))
+            )}
           </tbody>
         </table>
       </div>

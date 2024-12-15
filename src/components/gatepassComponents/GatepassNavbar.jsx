@@ -5,7 +5,7 @@ import axios from 'axios';
 import { VITE_BACKEND_BASE_API } from '../../helper/envConfig/envConfig.js';
 import './css/GatepassNavbar.css';
 
-function GatepassNavbar({ onSearch }) {
+function GatepassNavbar({ onSearch, isLoading }) {
   const [gatepassData, setGatepassData] = useState([]);
   const [noOfGatepass, setNoOfGatepass] = useState(0);
   const [selectedParentOption, setSelectedParentOption] = useState('Approved');
@@ -30,6 +30,7 @@ function GatepassNavbar({ onSearch }) {
   };
 
   const filterGatepasses = async (parentOption, adminOption) => {
+    isLoading(true);
     try {
       let filterParams = {
         page: 1,
@@ -53,9 +54,12 @@ function GatepassNavbar({ onSearch }) {
       );
       const results = data.data;
       setGatepassData(results);
+      setNoOfGatepass(results.length);
       onSearch(results); // Update the parent state
     } catch (error) {
       console.error('Error fetching gatepass data', error);
+    } finally {
+      isLoading(false);
     }
   };
 
@@ -100,14 +104,17 @@ function GatepassNavbar({ onSearch }) {
 
   useEffect(() => {
     const getData = async () => {
+      isLoading(true);
       try {
         const { data } = await axios.get(
-          `${VITE_BACKEND_BASE_API}/gatepass/getGatepassForAdminApproval`,
+          `${VITE_BACKEND_BASE_API}/gatepass/getGatepassForAdminApproval?parent_approval_status=approved&admin_approval_status=pending`,
         );
         // setGatepassData(data.data);
         setNoOfGatepass(data.data.length);
       } catch (error) {
         console.log(error);
+      } finally {
+        isLoading(false);
       }
     };
     getData();
