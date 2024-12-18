@@ -8,9 +8,15 @@ import toast from 'react-hot-toast';
 import { CircularProgress } from '@mui/material';
 import CustomCircularLoader from '../commonCustomComponents/CustomCircularLoader.jsx';
 import HairballSpinner from '../commonCustomComponents/HairballSpinner.jsx';
+import GatepassModal from './GatepassModal.jsx';
 
-const GatepassTable = ({ searchResults, loading }) => {
-  const [gatepasses, setGatepasses] = useState([]);
+const GatepassTable = ({
+  gatepasses,
+  setGatepasses,
+  selectedParentOption,
+  selectedAdminOption,
+  loading,
+}) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [selectedGatepass, setSelectedGatepass] = useState(null);
@@ -29,6 +35,7 @@ const GatepassTable = ({ searchResults, loading }) => {
           },
         },
       );
+      // console.log(data);
       setGatepasses(data.data);
       setTotalPages(data.pagination.totalPages);
     } catch (error) {
@@ -37,15 +44,15 @@ const GatepassTable = ({ searchResults, loading }) => {
   };
 
   useEffect(() => {
-    // console.log("searchResults in body:", searchResults);
-    if (searchResults) {
-      setGatepasses(searchResults);
+    if (gatepasses) {
+      // console.log("searchResults in body:", searchResults);
+      setGatepasses(gatepasses);
       setTotalPages(1); // Adjust pagination for search results
       setCurrentPage(1);
     } else {
       fetchGatepasses(currentPage);
     }
-  }, [searchResults, currentPage]);
+  }, [gatepasses, currentPage]);
 
   useEffect(() => {
     fetchGatepasses(currentPage);
@@ -112,19 +119,34 @@ const GatepassTable = ({ searchResults, loading }) => {
     return pageNumbers;
   };
 
+  const removeGatepassFromList = (gatepassNumber) => {
+    setGatepasses((prevGatepasses) =>
+      prevGatepasses.filter((gp) => gp.gatepass_number !== gatepassNumber),
+    );
+  };
+
   const handleApproveAction = async (gatepass) => {
     try {
       const updateAdminApprovalBody = {
         gatepass_number: gatepass.gatepass_number,
         admin_approval_status: 'approved',
+        remarks: gatepass.remarks,
       };
-      const { response } = await axios.put(
+      const response = await axios.put(
         `${VITE_BACKEND_BASE_API}/gatepass/updateAdminApproval`,
         updateAdminApprovalBody,
       );
-      console.log('Admin Approval successful:', response);
+      if (response.status === 200) {
+        // console.log('Admin Approval successful:', response);
+        toast.success('Admin Approval successful');
+        removeGatepassFromList(gatepass.gatepass_number);
+      } else {
+        console.error('Error updating gatepass approval');
+        toast.error('Error! Try Again');
+      }
     } catch (error) {
       console.error('Error updating gatepass approval', error);
+      toast.error('Error! Try Again');
     }
   };
 
@@ -133,14 +155,24 @@ const GatepassTable = ({ searchResults, loading }) => {
       const updateAdminApprovalBody = {
         gatepass_number: gatepass.gatepass_number,
         admin_approval_status: 'disapproved',
+        remarks: gatepass.remarks,
       };
-      const { response } = await axios.put(
+      const response = await axios.put(
         `${VITE_BACKEND_BASE_API}/gatepass/updateAdminApproval`,
         updateAdminApprovalBody,
       );
-      console.log('Admin DisApproval successful:', response);
+
+      if (response.status === 200) {
+        // console.log('Admin DisApproval successful:', response);
+        toast.success('Admin DisApproval successful');
+        removeGatepassFromList(gatepass.gatepass_number);
+      } else {
+        console.error('Error updating gatepass Disapproval');
+        toast.error('Error! Try Again');
+      }
     } catch (error) {
       console.error('Error updating gatepass Disapproval', error);
+      toast.error('Error! Try Again');
     }
   };
 
@@ -150,35 +182,50 @@ const GatepassTable = ({ searchResults, loading }) => {
         gatepass_number: gatepass.gatepass_number,
         in_timestamp: new Date(),
       };
-      const { response } = await axios.put(
+      const response = await axios.put(
         `${VITE_BACKEND_BASE_API}/gatepass/updateIntimeByAdmin`,
         updateReEntryBody,
       );
-      console.log('Re Entry by Admin successful:', response);
-      toast.success('Re Entry Completed');
+      if (response.status === 200) {
+        // console.log('Re Entry by Admin successful:', response);
+        const archivedGatepassBody = {
+          gatepass_number: gatepass.gatepass_number,
+          pin_number: gatepass.pin_number,
+          gatepass_created: gatepass.gatepass_created,
+          outgoing_timestamp: gatepass.outgoing_timestamp,
+          permission_upto_timestamp: gatepass.permission_upto_timestamp,
+          reason: gatepass.reason,
+          parent_approval_status: 'completed',
+          admin_approval_status: 'completed',
+          in_timestamp: updateReEntryBody.in_timestamp,
+          remarks: gatepass.remarks,
+        };
 
-      const archivedGatepassBody = {
-        gatepass_number: gatepass.gatepass_number,
-        pin_number: gatepass.pin_number,
-        gatepass_created: gatepass.gatepass_created,
-        outgoing_timestamp: gatepass.outgoing_timestamp,
-        permission_upto_timestamp: gatepass.permission_upto_timestamp,
-        reason: gatepass.reason,
-        parent_approval_status: 'completed',
-        admin_approval_status: 'completed',
-        in_timestamp: updateReEntryBody.in_timestamp,
-        remarks: gatepass.remarks,
-      };
-
-      const { responsePost } = await axios.post(
-        `${VITE_BACKEND_BASE_API}/gatepass/addGatepassInArchived`,
-        archivedGatepassBody,
-      );
-      console.log('Gatepass Moved to Archived successful:', responsePost);
-      toast.success('Gatepass Moved to Archived');
+        const responsePost = await axios.post(
+          `${VITE_BACKEND_BASE_API}/gatepass/addGatepassInArchived`,
+          archivedGatepassBody,
+        );
+        if (responsePost.status === 200) {
+          // console.log('Gatepass Moved to Archived successfully:', responsePost);
+          toast.success('Re-Entry Completed And Gatepass Archived');
+          removeGatepassFromList(gatepass.gatepass_number);
+        } else {
+          console.error('Error updating in time by admin');
+          toast.error('Error Try Again');
+        }
+      } else {
+        console.error('Error updating in time by admin');
+        toast.error('Error Try Again');
+      }
     } catch (error) {
       console.error('Error updating in time by admin', error);
+      toast.error('Error Try Again');
     }
+  };
+
+  const handleGenerateAction = (gatepass) => {
+    // printing logic
+    console.log(gatepass.gatepass_number);
   };
 
   // return (
@@ -197,7 +244,7 @@ const GatepassTable = ({ searchResults, loading }) => {
               {' '}
               {/* Apply rounded corners to the entire row */}
               {/* Rounded left side */}
-              <th className="py-2 px-4 text-left font-bold">Gatepass</th>
+              <th className="py-2 px-4 text-left font-bold">GID</th>
               <th className="py-2 px-4 text-left font-bold">Pin</th>
               <th className="py-2 px-4 text-left font-bold">Name</th>
               <th className="py-2 px-4 text-left font-bold">Out Going</th>
@@ -216,8 +263,11 @@ const GatepassTable = ({ searchResults, loading }) => {
                 <td colSpan="8">
                   <div className="relative py-8">
                     <div className="absolute inset-0 flex justify-center items-center h-auto">
-                      {/* <CustomCircularLoader size={50} logoSrc="/images/logo.jpg" /> */}
-                      <HairballSpinner
+                      <CustomCircularLoader
+                        size={50}
+                        logoSrc="/images/logo.jpg"
+                      />
+                      {/* <HairballSpinner
                         colors={{
                           fillColor1: '#c0392b',
                           fillColor2: '#d35400',
@@ -230,7 +280,7 @@ const GatepassTable = ({ searchResults, loading }) => {
                         height={90}
                         logoSrc="/images/logo.jpg"
                         logoSize={45}
-                      />
+                      /> */}
                     </div>
                   </div>
                 </td>
@@ -268,8 +318,12 @@ const GatepassTable = ({ searchResults, loading }) => {
                     Action
                     <ActionDropdown
                       onActionSelect={(action) => {
-                        if (action === 'Approve') {
+                        if (action === 'View') {
+                          handleShowDetails(gatepass);
+                        } else if (action === 'Approve') {
                           handleApproveAction(gatepass);
+                        } else if (action === 'Generate') {
+                          handleGenerateAction(gatepass);
                         } else if (action === 'Disapprove') {
                           handleDisApproveAction(gatepass);
                         } else if (action === 'Re-entry') {
@@ -286,6 +340,15 @@ const GatepassTable = ({ searchResults, loading }) => {
             )}
           </tbody>
         </table>
+        <GatepassModal
+          gatepasses={gatepasses}
+          setGatepasses={setGatepasses}
+          selectedParentOption={selectedParentOption}
+          selectedAdminOption={selectedAdminOption}
+          gatepass={selectedGatepass}
+          open={modalOpen}
+          onClose={handleCloseModal}
+        />
       </div>
       <div className="flex justify-between items-center py-4 mx-5">
         <span className="text-gray-700 whitespace-nowrap">

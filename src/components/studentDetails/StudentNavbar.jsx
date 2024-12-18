@@ -1,14 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import SearchIcon from '@mui/icons-material/Search';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
 import axios from 'axios';
 import { VITE_BACKEND_BASE_API } from '../../helper/envConfig/envConfig.js';
 import './css/StudentNavbar.css';
+import DrawerBasic from '../commonCustomComponents/DrawerBasic.jsx';
 
-function StudentNavbar({ onSearch, isLoading }) {
-  const [studentData, setStudentData] = useState([]);
-  const [noOfStudent, setNoOfStudent] = useState(0);
-  const [selectedOption, setSelectedOption] = useState('All');
+function StudentNavbar({
+  students,
+  setStudents,
+  selectedOption,
+  setSelectedOption,
+  isLoading,
+}) {
   const [showMenu, setShowMenu] = useState(false);
   const [pinNumber, setPinNumber] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
@@ -44,9 +49,9 @@ function StudentNavbar({ onSearch, isLoading }) {
           },
         );
         const results = data.data;
-        setStudentData(results);
-        setNoOfStudent(results.length);
-        onSearch(results); // Update the parent state
+        // setStudentData(results);
+        // setNoOfStudent(results.length);
+        setStudents(results);
       } else {
         const { data } = await axios.get(
           `${VITE_BACKEND_BASE_API}/student/studentDetails`,
@@ -59,9 +64,9 @@ function StudentNavbar({ onSearch, isLoading }) {
           },
         );
         const results = data.data;
-        setStudentData(results);
-        setNoOfStudent(results.length);
-        onSearch(results); // Update the parent state
+        // setStudentData(results);
+        // setNoOfStudent(results.length);
+        setStudents(results);
       }
     } catch (error) {
       console.log('Error fetching student data', error);
@@ -108,9 +113,9 @@ function StudentNavbar({ onSearch, isLoading }) {
           console.log('Error fetching student data');
         }
       }
-      setStudentData(results);
-      setNoOfStudent(results.length);
-      onSearch(results); // Update the parent state
+      // setStudentData(results);
+      // setNoOfStudent(results.length);
+      setStudents(results);
     } catch (err) {
       console.error('Error fetching student data:', err);
     } finally {
@@ -125,8 +130,9 @@ function StudentNavbar({ onSearch, isLoading }) {
         const { data } = await axios.get(
           `${VITE_BACKEND_BASE_API}/student/studentDetails`,
         );
-        // setStudentData(data.data);
-        setNoOfStudent(data.data.length);
+        // // setStudentData(data.data);
+        // setNoOfStudent(data.data.length);
+        setStudents(data.data);
       } catch (error) {
         console.log(error);
       } finally {
@@ -140,8 +146,11 @@ function StudentNavbar({ onSearch, isLoading }) {
     <div className="w-full colour-white p-[15px]">
       <div className="h-16 bg-[#ffffff] flex items-center px-4 rounded-md justify-between ">
         <div>
+          <DrawerBasic />
+        </div>
+        <div>
           <span className="text-[25px] font-bold">Student</span>
-          <span className="text-[18px]">{`  (${noOfStudent})`}</span>
+          <span className="text-[18px]">{`  (${students.length})`}</span>
         </div>
         <div className="flex flex-row mr-3">
           <div className="relative inline-block text-left pr-10">
@@ -152,7 +161,7 @@ function StudentNavbar({ onSearch, isLoading }) {
                 className="flex items-center border-[1.5px] border-black focus:border-[#37AFE1] rounded-md px-2 py-1 text-gray-700 focus:outline-none"
               >
                 {selectedOption}
-                <ArrowDropDownIcon />
+                {showMenu ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />}
               </button>
             </div>
             {showMenu && (

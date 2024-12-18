@@ -8,6 +8,7 @@ import dayjs from 'dayjs';
 import axios from 'axios';
 import { VITE_BACKEND_BASE_API } from '../../helper/envConfig/envConfig.js';
 import './css/ArchivedGatepassNavbar.css';
+import DrawerBasic from '../commonCustomComponents/DrawerBasic.jsx';
 
 function ArchivedGatepassNavbar({ onSearch, isLoading }) {
   const [gatepassData, setGatepassData] = useState([]);
@@ -80,6 +81,9 @@ function ArchivedGatepassNavbar({ onSearch, isLoading }) {
     <div className="w-full colour-white p-[15px]">
       <div className="h-16 bg-[#ffffff] flex items-center px-4 rounded-md justify-between">
         <div>
+          <DrawerBasic />
+        </div>
+        <div>
           <span className="text-[25px] font-bold">Gatepass</span>
           <span className="text-[18px]">{`  (${noOfGatepass})`}</span>
         </div>
@@ -120,7 +124,7 @@ function ArchivedGatepassNavbar({ onSearch, isLoading }) {
                 className="search-input"
                 onChange={(e) => setSearchQuery(e.target.value)}
                 onFocus={(e) => {
-                  e.target.placeholder = 'Search Pin / Gatepass / Name';
+                  e.target.placeholder = 'Search Pin / Name / GID';
                   e.target.classList.add('focused');
                 }}
                 onBlur={(e) => {

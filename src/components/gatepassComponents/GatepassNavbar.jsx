@@ -1,15 +1,23 @@
 import React, { useEffect, useState } from 'react';
 import SearchIcon from '@mui/icons-material/Search';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
 import axios from 'axios';
 import { VITE_BACKEND_BASE_API } from '../../helper/envConfig/envConfig.js';
 import './css/GatepassNavbar.css';
+import DrawerBasic from '../commonCustomComponents/DrawerBasic.jsx';
 
-function GatepassNavbar({ onSearch, isLoading }) {
-  const [gatepassData, setGatepassData] = useState([]);
-  const [noOfGatepass, setNoOfGatepass] = useState(0);
-  const [selectedParentOption, setSelectedParentOption] = useState('Approved');
-  const [selectedAdminOption, setSelectedAdminOption] = useState('Pending');
+function GatepassNavbar({
+  selectedParentOption,
+  setSelectedParentOption,
+  selectedAdminOption,
+  setSelectedAdminOption,
+  gatepasses,
+  setGatepasses,
+  isLoading,
+}) {
+  // const [selectedParentOption, setSelectedParentOption] = useState('Approved');
+  // const [selectedAdminOption, setSelectedAdminOption] = useState('Pending');
   const [showParentMenu, setShowParentMenu] = useState(false);
   const [showAdminMenu, setShowAdminMenu] = useState(false);
   const [pinNumber, setPinNumber] = useState('');
@@ -53,9 +61,9 @@ function GatepassNavbar({ onSearch, isLoading }) {
         },
       );
       const results = data.data;
-      setGatepassData(results);
-      setNoOfGatepass(results.length);
-      onSearch(results); // Update the parent state
+      // setGatepassData(results);
+      // setNoOfGatepass(results.length);
+      setGatepasses(results);
     } catch (error) {
       console.error('Error fetching gatepass data', error);
     } finally {
@@ -71,37 +79,6 @@ function GatepassNavbar({ onSearch, isLoading }) {
     setSearchQuery(e.target.value);
   };
 
-  // const searchGatepasses = async () => {
-  //   try {
-  //     let results;
-  //     const query = searchQuery.trim();
-  //     if (!query) {
-  //       const { data } = await axios.get(
-  //         `${VITE_BACKEND_BASE_API}/gatepass/getGatepassForAdminApproval?page=1&limit=10`,
-  //       );
-  //       results = data.data;
-  //     } else {
-  //       try {
-  //         const { data } = await axios.get(
-  //           `${VITE_BACKEND_BASE_API}/gatepass/getGatepassForAdminApproval`,
-  //           {
-  //             params: {
-  //               query_number: query,
-  //             },
-  //           },
-  //         );
-  //         results = data.data;
-  //       } catch (error) {
-  //         res.status(500).send('Error fetching gatepass data');
-  //       }
-  //     }
-  //     setGatepassData(results);
-  //     onSearch(results); // Update the parent state
-  //   } catch (err) {
-  //     console.error('Error fetching gatepass data:', err);
-  //   }
-  // };
-
   useEffect(() => {
     const getData = async () => {
       isLoading(true);
@@ -109,8 +86,9 @@ function GatepassNavbar({ onSearch, isLoading }) {
         const { data } = await axios.get(
           `${VITE_BACKEND_BASE_API}/gatepass/getGatepassForAdminApproval?parent_approval_status=approved&admin_approval_status=pending`,
         );
-        // setGatepassData(data.data);
-        setNoOfGatepass(data.data.length);
+        // // setGatepassData(data.data);
+        // setNoOfGatepass(data.data.length);
+        setGatepasses(data.data);
       } catch (error) {
         console.log(error);
       } finally {
@@ -124,8 +102,11 @@ function GatepassNavbar({ onSearch, isLoading }) {
     <div className="w-full colour-white p-[15px]">
       <div className="h-16 bg-[#ffffff] flex items-center px-4 rounded-md justify-between ">
         <div>
+          <DrawerBasic />
+        </div>
+        <div>
           <span className="text-[25px] font-bold">Gatepass</span>
-          <span className="text-[18px]">{`  (${noOfGatepass})`}</span>
+          <span className="text-[18px]">{`  (${gatepasses.length})`}</span>
         </div>
         <div className="flex flex-row mr-3">
           {/* -------------Parent Status Filter start------------- */}
@@ -137,7 +118,7 @@ function GatepassNavbar({ onSearch, isLoading }) {
                 className="flex items-center border-[1.5px] border-black focus:border-[#37AFE1] rounded-md px-2 py-1 text-gray-700 focus:outline-none"
               >
                 {selectedParentOption}
-                <ArrowDropDownIcon />
+                {showParentMenu ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />}
               </button>
             </div>
             {showParentMenu && (
@@ -172,7 +153,7 @@ function GatepassNavbar({ onSearch, isLoading }) {
                 className="flex items-center border-[1.5px] border-black focus:border-[#37AFE1] rounded-md px-2 py-1 text-gray-700 focus:outline-none"
               >
                 {selectedAdminOption}
-                <ArrowDropDownIcon />
+                {showAdminMenu ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />}
               </button>
             </div>
             {showAdminMenu && (

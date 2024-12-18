@@ -20,6 +20,13 @@ const ActionDropdown = ({ onActionSelect, gatepass }) => {
   const isReentryEnabled =
     gatepass.parent_approval_status === 'approved' &&
     gatepass.admin_approval_status === 'approved';
+  const isGenerateEnabled =
+    gatepass.parent_approval_status === 'approved' &&
+    gatepass.admin_approval_status === 'approved';
+  const isApproveEnabled =
+    gatepass.parent_approval_status === 'approved' &&
+    gatepass.admin_approval_status !== 'approved';
+  const isDisApproveEnabled = gatepass.admin_approval_status !== 'disapproved';
 
   return (
     <>
@@ -41,23 +48,49 @@ const ActionDropdown = ({ onActionSelect, gatepass }) => {
       >
         <ul>
           <p className="text-gray-700 hover:bg-[#37AFE1] hover:text-white transition duration-300 cursor-pointer">
-            <MenuItem onClick={() => handleClose('Approve')}>Approve</MenuItem>
+            <MenuItem onClick={() => handleClose('View')}>View</MenuItem>
           </p>
-          <p className="text-gray-700 hover:bg-[#37AFE1] hover:text-white transition duration-300 cursor-pointer">
-            <MenuItem onClick={() => handleClose('Disapprove')}>
-              Disapprove
-            </MenuItem>
-          </p>
-          <p
-            className={`text-gray-700 hover:bg-[#37AFE1] hover:text-white cursor-pointer transition duration-300`}
-          >
-            <MenuItem
-              onClick={() => isReentryEnabled && handleClose('Re-entry')}
-              disabled={!isReentryEnabled}
+          {isApproveEnabled && (
+            <p className="text-gray-700 hover:bg-[#37AFE1] hover:text-white transition duration-300 cursor-pointer">
+              <MenuItem
+                onClick={() => isApproveEnabled && handleClose('Approve')}
+                // disabled={!isApproveEnabled}
+              >
+                Approve
+              </MenuItem>
+            </p>
+          )}
+          {isGenerateEnabled && (
+            <p className="text-gray-700 hover:bg-[#37AFE1] hover:text-white transition duration-300 cursor-pointer">
+              <MenuItem
+                onClick={() => isGenerateEnabled && handleClose('Generate')}
+                // disabled={!isGenerateEnabled}
+              >
+                Generate
+              </MenuItem>
+            </p>
+          )}
+          {isDisApproveEnabled && (
+            <p className="text-gray-700 hover:bg-[#37AFE1] hover:text-white transition duration-300 cursor-pointer">
+              <MenuItem
+                onClick={() => isDisApproveEnabled && handleClose('Disapprove')}
+              >
+                Disapprove
+              </MenuItem>
+            </p>
+          )}
+          {isReentryEnabled && (
+            <p
+              className={`text-gray-700 hover:bg-[#37AFE1] hover:text-white cursor-pointer transition duration-300`}
             >
-              Re-entry
-            </MenuItem>
-          </p>
+              <MenuItem
+                onClick={() => isReentryEnabled && handleClose('Re-entry')}
+                // disabled={!isReentryEnabled}
+              >
+                Re-entry
+              </MenuItem>
+            </p>
+          )}
         </ul>
       </Menu>
     </>

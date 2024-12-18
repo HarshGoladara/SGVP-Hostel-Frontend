@@ -3,6 +3,8 @@ import TempStudentNavbar from './TempStudentNavbar';
 import TempStudentBody from './TempStudentBody';
 
 function TempStudentLayout() {
+  const [students, setStudents] = useState([]);
+  const [selectedOption, setSelectedOption] = useState('All');
   const [searchResults, setSearchResults] = useState([]);
   const [loading, setLoading] = useState(false);
 
@@ -16,9 +18,18 @@ function TempStudentLayout() {
 
   return (
     <div className="h-full flex flex-col">
-      <TempStudentNavbar onSearch={handleSearch} isLoading={handleLoading} />
+      <TempStudentNavbar
+        students={students}
+        setStudents={setStudents}
+        selectedOption={selectedOption}
+        setSelectedOption={setSelectedOption}
+        isLoading={handleLoading}
+      />
       <TempStudentBody
-        searchResults={searchResults}
+        students={students}
+        setStudents={setStudents}
+        selectedOption={selectedOption}
+        setSelectedOption={setSelectedOption}
         loading={loading}
         className="flex-grow"
       />

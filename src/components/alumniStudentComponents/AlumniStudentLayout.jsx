@@ -3,6 +3,8 @@ import AlumniStudentNavbar from './AlumniStudentNavbar';
 import AlumniStudentBody from './AlumniStudentBody';
 
 function AlumniStudentLayout() {
+  const [students, setStudents] = useState([]);
+  const [selectedOption, setSelectedOption] = useState('All');
   const [searchResults, setSearchResults] = useState([]);
   const [loading, setLoading] = useState(false);
 
@@ -16,9 +18,18 @@ function AlumniStudentLayout() {
 
   return (
     <div className="h-full flex flex-col">
-      <AlumniStudentNavbar onSearch={handleSearch} isLoading={handleLoading} />
+      <AlumniStudentNavbar
+        students={students}
+        setStudents={setStudents}
+        selectedOption={selectedOption}
+        setSelectedOption={setSelectedOption}
+        isLoading={handleLoading}
+      />
       <AlumniStudentBody
-        searchResults={searchResults}
+        students={students}
+        setStudents={setStudents}
+        selectedOption={selectedOption}
+        setSelectedOption={setSelectedOption}
         loading={loading}
         className="flex-grow"
       />

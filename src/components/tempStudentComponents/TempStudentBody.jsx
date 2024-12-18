@@ -8,13 +8,32 @@ import ActionDropdown from './ActionDropdown.jsx';
 import { CircularProgress } from '@mui/material';
 import CustomCircularLoader from '../commonCustomComponents/CustomCircularLoader.jsx';
 import HairballSpinner from '../commonCustomComponents/HairballSpinner.jsx';
+import toast from 'react-hot-toast';
+import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
+import PendingIcon from '@mui/icons-material/Pending';
+import HighlightOffIcon from '@mui/icons-material/HighlightOff';
 
-const TempStudentTable = ({ searchResults, loading }) => {
-  const [students, setStudents] = useState([]);
+const TempStudentTable = ({
+  students,
+  setStudents,
+  selectedOption,
+  loading,
+}) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [selectedStudent, setSelectedStudent] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
+
+  const statusColor = (status) => {
+    switch (status) {
+      case 'confirmed':
+        return 'green';
+      case 'cancelled':
+        return 'red';
+      default:
+        return 'orange';
+    }
+  };
 
   const fetchStudentData = async (page) => {
     try {
@@ -31,18 +50,100 @@ const TempStudentTable = ({ searchResults, loading }) => {
 
   useEffect(() => {
     // console.log("searchResults in body:", searchResults);
-    if (searchResults) {
-      setStudents(searchResults);
+    if (students) {
+      setStudents(students);
       setTotalPages(1); // Adjust pagination for search results
       setCurrentPage(1);
     } else {
       fetchStudentData(currentPage);
     }
-  }, [searchResults, currentPage]);
+  }, [students, currentPage]);
 
   useEffect(() => {
     fetchStudentData(currentPage);
   }, []);
+
+  const handleConfirmAction = async (student) => {
+    try {
+      const confirmationBody = {
+        entry_number: student.entry_number,
+      };
+      const response = await axios.post(
+        `${VITE_BACKEND_BASE_API}/admission/confirmAdmission`,
+        confirmationBody,
+      );
+      if (response.status === 200) {
+        if (selectedOption === 'Cancelled') {
+          setStudents((prevStudents) =>
+            prevStudents.filter((s) => s.entry_number !== student.entry_number),
+          );
+        } else {
+          const filteredStudents = [];
+          const confirmedStudentBody = {
+            ...student,
+            admission_status: 'confirmed',
+          };
+          students.map((s) => {
+            if (s.entry_number === student.entry_number) {
+              filteredStudents.push(confirmedStudentBody);
+            } else {
+              filteredStudents.push(s);
+            }
+          });
+          setStudents(filteredStudents);
+        }
+        toast.success('Student Admission Confirmed by Admin.');
+      } else {
+        toast.error('Admission Confirmation Error');
+      }
+    } catch (error) {
+      console.log('error while confirming the admission', error);
+      toast.error('Admission Confirmation Error');
+    } finally {
+      //
+    }
+  };
+
+  const handleCancelAction = async (student) => {
+    try {
+      const confirmationBody = {
+        entry_number: student.entry_number,
+      };
+      const response = await axios.post(
+        `${VITE_BACKEND_BASE_API}/admission/cancelAdmission`,
+        confirmationBody,
+      );
+      if (response.status === 200) {
+        if (selectedOption === 'Confirmed') {
+          setStudents((prevStudents) =>
+            prevStudents.filter((s) => s.entry_number !== student.entry_number),
+          );
+        } else {
+          const filteredStudents = [];
+          const cancelledStudentBody = {
+            ...student,
+            admission_status: 'cancelled',
+          };
+          students.map((s) => {
+            if (s.entry_number === student.entry_number) {
+              filteredStudents.push(cancelledStudentBody);
+            } else {
+              filteredStudents.push(s);
+            }
+          });
+          setStudents(filteredStudents);
+        }
+        toast.success('Student Admission Cancelled by Admin.');
+      } else {
+        toast.error('Admission Cancellation Error');
+      }
+    } catch (error) {
+      console.log('error while cancelling the admission', error);
+      toast.error('Admission Cancellation Error');
+    } finally {
+      //
+    }
+  };
 
   const handleShowDetails = (student) => {
     setSelectedStudent(student);
@@ -141,8 +242,11 @@ const TempStudentTable = ({ searchResults, loading }) => {
                 <td colSpan="6">
                   <div className="relative py-8">
                     <div className="absolute inset-0 flex justify-center items-center h-auto">
-                      {/* <CustomCircularLoader size={50} logoSrc="/images/logo.jpg" /> */}
-                      <HairballSpinner
+                      <CustomCircularLoader
+                        size={50}
+                        logoSrc="/images/logo.jpg"
+                      />
+                      {/* <HairballSpinner
                         colors={{
                           fillColor1: '#c0392b',
                           fillColor2: '#d35400',
@@ -155,7 +259,7 @@ const TempStudentTable = ({ searchResults, loading }) => {
                         height={90}
                         logoSrc="/images/logo.jpg"
                         logoSize={45}
-                      />
+                      /> */}
                     </div>
                   </div>
                 </td>
@@ -193,7 +297,30 @@ const TempStudentTable = ({ searchResults, loading }) => {
                   <td className="py-2 px-4">
                     {student.student_contact_number}
                   </td>
-                  <td className="py-2 px-4">{student.admission_status}</td>
+                  {/* <td className="py-2 px-4">
+                    {student.admission_status}
+                  </td> */}
+                  <td className="py-2 px-4 flex items-center space-x-2 pt-5">
+                    {student.admission_status === 'confirmed' && (
+                      <CheckCircleOutlineIcon
+                        style={{ color: statusColor('confirmed') }}
+                      />
+                    )}
+                    {student.admission_status === 'cancelled' && (
+                      <HighlightOffIcon
+                        style={{ color: statusColor('cancelled') }}
+                      />
+                    )}
+                    {student.admission_status === 'pending' && (
+                      <PendingIcon style={{ color: statusColor('pending') }} />
+                    )}
+                    <span
+                      style={{ color: statusColor(student.admission_status) }}
+                      className="capitalize font-bold"
+                    >
+                      {student.admission_status}
+                    </span>
+                  </td>
                   <td className="py-2 px-4">
                     Action
                     <ActionDropdown
@@ -201,9 +328,9 @@ const TempStudentTable = ({ searchResults, loading }) => {
                         if (action === 'Show') {
                           handleShowDetails(student);
                         } else if (action === 'Confirm') {
-                          //
+                          handleConfirmAction(student);
                         } else if (action === 'Cancel') {
-                          //
+                          handleCancelAction(student);
                         }
                       }}
                       student={student}

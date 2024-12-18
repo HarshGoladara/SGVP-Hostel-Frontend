@@ -1,21 +1,72 @@
-/* const [animationDirection, setAnimationDirection] = useState('');
+/* Define the keyframes for slide-in animation */
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
 
-    const gotoNextPage = () => {
-        if (currentPage < totalPages) {
-            setAnimationDirection('slide-out'); // Set to slide out
-            setTimeout(() => {
-                setCurrentPage(currentPage + 1);
-                setAnimationDirection('slide-in'); // Set to slide in
-            }, 300); // Duration of the animation
-        }
-    };
+/* Define the keyframes for slide-out animation */
+@keyframes slideOut {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+}
 
-    const gotoPreviousPage = () => {
-        if (currentPage > 1) {
-            setAnimationDirection('slide-out'); // Set to slide out
-            setTimeout(() => {
-                setCurrentPage(currentPage - 1);
-                setAnimationDirection('slide-in'); // Set to slide in
-            }, 300); // Duration of the animation
-        }
-    }; */
+/* Apply the slide-in animation */
+.slide-in {
+  animation: slideIn 0.3s ease-out forwards;
+}
+
+/* Apply the slide-out animation */
+.slide-out {
+  animation: slideOut 0.3s ease-in forwards;
+}
+
+/* Define the keyframes for glide-in animation */
+@keyframes glideIn {
+  from {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* Define the keyframes for glide-out animation */
+@keyframes glideOut {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+}
+
+/* Apply the glide-in animation */
+.glide-in {
+  animation: glideIn 0.3s ease-out forwards;
+}
+
+/* Apply the glide-out animation */
+.glide-out {
+  animation: glideOut 0.3s ease-in forwards;
+}
+
+/* Hidden state to prevent elements from being visible during transitions */
+.hidden {
+  display: none;
+}

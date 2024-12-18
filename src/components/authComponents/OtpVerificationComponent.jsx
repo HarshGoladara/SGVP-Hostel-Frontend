@@ -12,12 +12,15 @@ import { useNavigate } from 'react-router-dom';
 import { VITE_BACKEND_BASE_API } from '../../helper/envConfig/envConfig';
 import { useLocation } from 'react-router-dom';
 import toast from 'react-hot-toast';
+import { useCookies } from 'react-cookie';
+import { v4 as uuid } from 'uuid';
 
 export default function OtpVerificationComponent() {
   const location = useLocation(); // To access the state passed from the login component
   const [otp, setOtp] = useState('');
   const [loading, setLoading] = useState(false); // Loading state
   const navigate = useNavigate(); // To navigate to home page after successful OTP verification
+  const [cookies, setCookie] = useCookies(['token']);
 
   const mobileNumber = location.state?.mobileNumber; // Access the mobile number
 
@@ -47,6 +50,13 @@ export default function OtpVerificationComponent() {
           userRole.role_name === 'rector' ||
           userRole.role_name === 'chief rector'
         ) {
+          const unique_id = uuid();
+          setCookie('token', unique_id, {
+            // path: "/",        // Cookie available across the entire site
+            days: 1,
+            Secure: true, // Ensures the cookie is sent over HTTPS
+            SameSite: 'Strict', // Prevents cross-site request forgery
+          });
           navigate('/dashboard', { state: { userRole: userRole } });
         } else {
           navigate('/welcome', { state: { userRole: userRole } });

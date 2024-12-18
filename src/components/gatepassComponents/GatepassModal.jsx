@@ -2,7 +2,15 @@ import React, { useState, useEffect } from 'react';
 import DetailsCard from './DetailsCard';
 import './css/ModalStyle.css';
 
-const GatepassModal = ({ gatepass, open, onClose }) => {
+const GatepassModal = ({
+  gatepasses,
+  setGatepasses,
+  selectedParentOption,
+  selectedAdminOption,
+  gatepass,
+  open,
+  onClose,
+}) => {
   const [showGatepass, setShowGatepass] = useState(true);
   const [isVisible, setIsVisible] = useState(open);
 
@@ -21,13 +29,18 @@ const GatepassModal = ({ gatepass, open, onClose }) => {
   return (
     <div
       className={`fixed inset-0 flex items-center justify-center z-50 ${open ? 'card-enter' : 'card-exit'}`}
+      style={{
+        backdropFilter: 'blur(5px)',
+        WebkitBackdropFilter: 'blur(5px)',
+      }}
     >
       {/* Background Blur */}
-      <div
-        className="fixed inset-0 bg-black opacity-50 backdrop-blur-sm"
-        onClick={onClose}
-      />
+      <div className="fixed inset-0 bg-black opacity-50" onClick={onClose} />
       <DetailsCard
+        gatepasses={gatepasses}
+        setGatepasses={setGatepasses}
+        selectedParentOption={selectedParentOption}
+        selectedAdminOption={selectedAdminOption}
         gatepass={gatepass}
         onClose={() => {
           onClose();

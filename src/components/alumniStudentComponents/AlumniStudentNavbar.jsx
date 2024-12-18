@@ -4,11 +4,16 @@ import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import axios from 'axios';
 import { VITE_BACKEND_BASE_API } from '../../helper/envConfig/envConfig.js';
 import './css/AlumniStudentNavbar.css';
+import DrawerBasic from '../commonCustomComponents/DrawerBasic.jsx';
+import toast from 'react-hot-toast';
 
-function AlumniStudentNavbar({ onSearch, isLoading }) {
-  const [studentData, setStudentData] = useState([]);
-  const [noOfStudent, setNoOfStudent] = useState(0);
-  const [selectedOption, setSelectedOption] = useState('All');
+function AlumniStudentNavbar({
+  students,
+  setStudents,
+  selectedOption,
+  setSelectedOption,
+  isLoading,
+}) {
   const [showMenu, setShowMenu] = useState(false);
   const [pinNumber, setPinNumber] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
@@ -63,14 +68,15 @@ function AlumniStudentNavbar({ onSearch, isLoading }) {
             results = data.data;
           }
         } catch (error) {
-          res.status(500).send('Error fetching student data');
+          console.error('Error fetching student data');
         }
       }
-      setStudentData(results);
-      setNoOfStudent(results.length);
-      onSearch(results); // Update the parent state
+      // setStudentData(results);
+      // setNoOfStudent(results.length);
+      setStudents(results);
     } catch (err) {
       console.error('Error fetching student data:', err);
+      toast.error('Error Try Again');
     } finally {
       isLoading(false);
     }
@@ -83,10 +89,12 @@ function AlumniStudentNavbar({ onSearch, isLoading }) {
         const { data } = await axios.get(
           `${VITE_BACKEND_BASE_API}/student/getAlumni`,
         );
-        // setStudentData(data.data);
-        setNoOfStudent(data.data.length);
+        // // setStudentData(data.data);
+        // setNoOfStudent(data.data.length);
+        setStudents(data.data);
       } catch (error) {
         console.log(error);
+        toast.error('Error Try Again');
       } finally {
         isLoading(false);
       }
@@ -98,8 +106,11 @@ function AlumniStudentNavbar({ onSearch, isLoading }) {
     <div className="w-full colour-white p-[15px]">
       <div className="h-16 bg-[#ffffff] flex items-center px-4 rounded-md justify-between ">
         <div>
+          <DrawerBasic />
+        </div>
+        <div>
           <span className="text-[25px] font-bold">Student</span>
-          <span className="text-[18px]">{`  (${noOfStudent})`}</span>
+          <span className="text-[18px]">{`  (${students.length})`}</span>
         </div>
         <div className="flex flex-row mr-3">
           <div className="relative inline-block text-left pr-10">

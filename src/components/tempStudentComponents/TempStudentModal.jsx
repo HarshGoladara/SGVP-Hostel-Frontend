@@ -21,12 +21,13 @@ const TempStudentModal = ({ student, open, onClose }) => {
   return (
     <div
       className={`fixed inset-0 flex items-center justify-center z-50 ${open ? 'card-enter' : 'card-exit'}`}
+      style={{
+        backdropFilter: 'blur(5px)',
+        WebkitBackdropFilter: 'blur(5px)',
+      }}
     >
       {/* Background Blur */}
-      <div
-        className="fixed inset-0 bg-black opacity-50 backdrop-blur-sm"
-        onClick={onClose}
-      />
+      <div className="fixed inset-0 bg-black opacity-50" onClick={onClose} />
       <DetailsCard
         student={student}
         onClose={() => {

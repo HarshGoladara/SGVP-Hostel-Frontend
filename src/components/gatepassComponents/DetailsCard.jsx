@@ -1,397 +1,476 @@
-import React, { useState } from 'react';
+import React from 'react';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  Typography,
+  IconButton,
+  Divider,
+  Box,
+  Grid2,
+  Menu,
+  MenuItem,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  TextField,
+  Button,
+} from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
-import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
+import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
+import PendingIcon from '@mui/icons-material/Pending';
+import HighlightOffIcon from '@mui/icons-material/HighlightOff';
+import EditIcon from '@mui/icons-material/Edit';
+import { useState, useEffect } from 'react';
+import { VITE_BACKEND_BASE_API } from '../../helper/envConfig/envConfig';
+import axios from 'axios';
+import toast from 'react-hot-toast';
 
-const DetailsCard = ({ student, onClose }) => {
-  const totalPages = 4;
-  const [currentPage, setCurrentPage] = useState(1);
-  const [animationDirection, setAnimationDirection] = useState('');
-  const gotoNextPage = () => {
-    if (currentPage < totalPages) {
-      setAnimationDirection('slide-out'); // Set to slide out
-      setTimeout(() => {
-        setCurrentPage(currentPage + 1);
-        setAnimationDirection('slide-in'); // Set to slide in
-      }, 300); // Duration of the animation
+const DetailsCard = ({
+  gatepasses,
+  setGatepasses,
+  selectedParentOption,
+  selectedAdminOption,
+  gatepass,
+  onClose,
+}) => {
+  const [selectedGatepass, setSelectedGatepass] = useState(gatepass);
+  const [anchorElParent, setAnchorElParent] = useState(null);
+  const [anchorElAdmin, setAnchorElAdmin] = useState(null);
+  const [parentOptions, setParentOptions] = useState([]);
+  const [adminOptions, setAdminOptions] = useState([]);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [remarksInput, setRemarksInput] = useState('');
+
+  useEffect(() => {
+    if (selectedGatepass.parent_approval_status === 'pending') {
+      setParentOptions(['approved', 'disapproved']);
+    } else if (selectedGatepass.parent_approval_status === 'approved') {
+      setParentOptions(['pending', 'disapproved']);
+    } else if (selectedGatepass.parent_approval_status === 'disapproved') {
+      setParentOptions(['pending', 'approved']);
+    }
+  }, [selectedGatepass.parent_approval_status]);
+
+  useEffect(() => {
+    if (selectedGatepass.admin_approval_status === 'pending') {
+      setAdminOptions(['approved', 'disapproved']);
+    } else if (selectedGatepass.admin_approval_status === 'approved') {
+      setAdminOptions(['pending', 'disapproved']);
+    } else if (selectedGatepass.admin_approval_status === 'disapproved') {
+      setAdminOptions(['pending', 'approved']);
+    }
+  }, [selectedGatepass.admin_approval_status]);
+
+  const statusColor = (status) => {
+    switch (status) {
+      case 'approved':
+        return 'green';
+      case 'disapproved':
+        return 'red';
+      default:
+        return 'orange';
     }
   };
 
-  const gotoPreviousPage = () => {
-    if (currentPage > 1) {
-      setAnimationDirection('slide-out'); // Set to slide out
-      setTimeout(() => {
-        setCurrentPage(currentPage - 1);
-        setAnimationDirection('slide-in'); // Set to slide in
-      }, 300); // Duration of the animation
+  const handleMenuOpen = (event, type) => {
+    if (type === 'parent') {
+      setAnchorElParent(event.currentTarget);
+    } else {
+      setAnchorElAdmin(event.currentTarget);
+    }
+  };
+
+  const handleMenuClose = (type) => {
+    if (type === 'parent') {
+      setAnchorElParent(null);
+    } else {
+      setAnchorElAdmin(null);
+    }
+  };
+
+  const filterGatepassFromList = (
+    selectedParentOption,
+    selectedAdminOption,
+    updatedBody,
+  ) => {
+    const filteredGatepasses = gatepasses.filter(
+      (gp) => gp.gatepass_number !== updatedBody.gatepass_number,
+    );
+    if (
+      updatedBody.parent_approval_status === selectedParentOption &&
+      updatedBody.admin_approval_status === selectedAdminOption
+    ) {
+      filteredGatepasses.push(updatedBody);
+      filteredGatepasses.sort(function (a, b) {
+        return b.gatepass_number - a.gatepass_number;
+      });
+    }
+    setGatepasses(filteredGatepasses);
+  };
+
+  const handleStatusChange = async (status, type) => {
+    if (type === 'parent') {
+      try {
+        const updatedBody = {
+          ...selectedGatepass,
+          parent_approval_status: status,
+        };
+        const response = await axios.put(
+          `${VITE_BACKEND_BASE_API}/gatepass/updateParentApproval`,
+          {
+            gatepass_number: updatedBody.gatepass_number,
+            parent_approval_status: updatedBody.parent_approval_status,
+            remarks: updatedBody.remarks,
+          },
+        );
+        if (response.status === 200) {
+          toast.success(`Admin Changed Parent Status to ${status}`);
+          setSelectedGatepass(updatedBody);
+          filterGatepassFromList(
+            selectedParentOption,
+            selectedAdminOption,
+            updatedBody,
+          );
+        } else {
+          console.error('Error in parent status update:');
+          toast.error('Error! Try Again');
+        }
+      } catch (error) {
+        console.error('Error in parent status update:', error);
+        toast.error('Error! Try Again');
+      } finally {
+        handleMenuClose(type);
+      }
+    } else {
+      try {
+        const updatedBody = {
+          ...selectedGatepass,
+          admin_approval_status: status,
+        };
+        const response = await axios.put(
+          `${VITE_BACKEND_BASE_API}/gatepass/updateAdminApproval`,
+          {
+            gatepass_number: updatedBody.gatepass_number,
+            admin_approval_status: updatedBody.admin_approval_status,
+            remarks: updatedBody.remarks,
+          },
+        );
+        if (response.status === 200) {
+          toast.success(`Changed Admin Status to ${status}`);
+          setSelectedGatepass(updatedBody);
+          filterGatepassFromList(
+            selectedParentOption,
+            selectedAdminOption,
+            updatedBody,
+          );
+        } else {
+          toast.error('Error Try Again');
+        }
+      } catch (error) {
+        console.log('Error in admin status update:', error);
+        toast.error('Error! Try Again');
+      } finally {
+        handleMenuClose(type);
+      }
+    }
+  };
+
+  const handleDialogToggle = () => setIsDialogOpen(!isDialogOpen);
+
+  const handleSaveRemarks = async () => {
+    try {
+      const updatedBody = {
+        ...selectedGatepass,
+        remarks: remarksInput.trim(),
+      };
+      const response = await axios.put(
+        `${VITE_BACKEND_BASE_API}/gatepass/updateAdminApproval`,
+        {
+          gatepass_number: updatedBody.gatepass_number,
+          remarks: updatedBody.remarks,
+        },
+      );
+      if (response.status === 200) {
+        toast.success('Remarks updated successfully!');
+        setSelectedGatepass(updatedBody);
+      } else {
+        toast.error('Error updating remarks.');
+      }
+    } catch (error) {
+      console.log('Error updating remarks:', error);
+      toast.error('Error updating remarks.');
+    } finally {
+      handleDialogToggle();
     }
   };
 
   return (
-    <div className="bg-white rounded-xl shadow-lg p-6 h-[57%] w-3/4 md:w-2/3 lg:w-1/2 transform transition-transform duration-300 scale-100 relative">
-      {/* --------------------------page-1----------------------------- */}
-      <div
-        className={`flex flex-col ${currentPage === 1 ? animationDirection : 'hidden'}`}
+    <Card
+      sx={{
+        maxWidth: 700,
+        minWidth: 400,
+        margin: 'auto',
+        padding: 2,
+        boxShadow: '0 4px 10px rgba(0, 0, 0, 0.2)',
+        borderRadius: 3,
+        position: 'relative',
+      }}
+    >
+      <Box
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+        }}
       >
-        <div className="flex justify-between" onClick={onClose}>
-          <div className="text-lg font-bold">Student Details</div>
-          <CloseIcon style={{ cursor: 'pointer' }} />
-        </div>
-        <div className="flex mt-[10px]">
-          <div className="h-[180px] md:h-[250px] w-[30%] flex-shrink-0 mr-4">
-            {' '}
-            {/* Fixed 30% width for the image */}
-            {student.student_photo_url ? (
-              <img
-                src={
-                  student.student_photo_url ||
-                  `https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQVrNIrc_GMNFCWvfIVx-5-1jI0YMf-3a6yyg&s`
-                }
-                alt={student.student_full_name}
-                className="h-full w-full object-cover rounded-lg"
-              />
-            ) : (
-              <div className="flex items-center justify-center h-full w-full bg-blue-500 text-white text-lg font-bold rounded-lg">
-                {student.student_full_name.charAt(0)}
-              </div>
-            )}
-          </div>
-          <div className="flex-grow ml-[10px] flex flex-col">
-            <span className="text-2xl font-bold block">
-              {student.student_full_name}
-            </span>
-            <span className="text-gray-600 text-[15px] block mt-1">
-              {student.pin_number}
-            </span>
-            <div className="bg-[#e2e8f0] flex-grow w-full h-full mt-2 rounded-xl">
-              <div className="my-2 mx-5 flex flex-row justify-between">
-                <div className="flex flex-col">
-                  <div className="text-[12px] text-gray-600">Mobile Number</div>
-                  <div>{student.student_contact_number}</div>
-                </div>
-                <div className="flex flex-col">
-                  <div className="text-[12px] text-gray-600">Room Number</div>
-                  <div>{student.room_number}</div>
-                </div>
-                <div className="flex flex-col">
-                  <div className="text-[12px] text-gray-600">Bed Number</div>
-                  <div>{student.bed_number}</div>
-                </div>
-                <div className="flex flex-col">
-                  <div className="text-[12px] text-gray-600 ">Home Town</div>
-                  <div>{student.city}</div>
-                </div>
-              </div>
-              <div className="my-2 mx-5 flex flex-row justify-between">
-                <div className="flex flex-col">
-                  <div className="text-[12px] text-gray-600">Email</div>
-                  <div>{student.student_email}</div>
-                </div>
-                <div className="flex flex-col">
-                  <div className="text-[12px] text-gray-600 ">
-                    Date Of Birth
-                  </div>
-                  <div>
-                    {student.dob.substr(8, 2)}-{student.dob.substr(5, 2)}-
-                    {student.dob.substr(0, 4)}
-                  </div>
-                </div>
-                <div className="flex flex-col">
-                  <div className="text-[12px] text-gray-600 ">Nationality</div>
-                  <div>{student.nationality}</div>
-                </div>
-              </div>
-              <div className="my-2 mx-5 flex flex-row justify-between">
-                <div className="flex flex-col">
-                  <div className="text-[12px] text-gray-600">Address</div>
-                  <div className="text-[13px]">{student.address}</div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      {/* --------------------------page-2----------------------------- */}
-      <div
-        className={`flex flex-col ${currentPage == 2 ? animationDirection : 'hidden'}`}
-      >
-        <div className="flex justify-between" onClick={onClose}>
-          <div className="text-lg font-bold">Student Education</div>
-          <CloseIcon style={{ cursor: 'pointer' }} />
-        </div>
-        <div className="flex mt-[10px]">
-          <div className="h-[180px] md:h-[250px] w-[30%] flex-shrink-0 mr-4">
-            {' '}
-            {/* Fixed 30% width for the image */}
-            {student.student_photo_url ? (
-              <img
-                src={student.student_photo_url}
-                alt={student.student_full_name}
-                className="h-full w-full object-cover rounded-lg"
-              />
-            ) : (
-              <div className="flex items-center justify-center h-full w-full bg-blue-500 text-white text-lg font-bold rounded-lg">
-                {student.student_full_name.charAt(0)}
-              </div>
-            )}
-          </div>
-          <div className="flex-grow ml-[10px] flex flex-col">
-            <span className="text-2xl font-bold block">
-              {student.student_full_name}
-            </span>
-            <span className="text-gray-600 text-[15px] block mt-1">
-              {student.pin_number}
-            </span>
-            <div className="bg-[#e2e8f0] flex-grow w-full h-full mt-2 rounded-xl">
-              <div className="my-2 mx-5 flex flex-row justify-between ">
-                <div className="flex flex-col">
-                  <div className="text-[12px] text-gray-600">
-                    University Name
-                  </div>
-                  <div className="">{student.name_of_university}</div>
-                </div>
-                <div className="flex flex-col">
-                  <div className="text-[12px] text-gray-600">Collage Name</div>
-                  <div>{student.name_of_collage}</div>
-                </div>
-              </div>
-              <div className="my-2 mx-5 flex flex-row justify-between">
-                <div className="flex flex-col ">
-                  <div className="text-[12px] text-gray-600">Course</div>
-                  <div>{student.course}</div>
-                </div>
-                <div className="flex flex-col">
-                  <div className="text-[12px] text-gray-600 ">Branch</div>
-                  <div>{student.branch}</div>
-                </div>
-                <div className="flex flex-col">
-                  <div className="text-[12px] text-gray-600 ">
-                    Student Qualification
-                  </div>
-                  <div>{student.student_qualification}</div>
-                </div>
-              </div>
-              <div className="my-2 mx-5 flex flex-row justify-between">
-                <div className="flex flex-col">
-                  <div className="text-[12px] text-gray-600 ">Current Year</div>
-                  <div>{student.current_year}</div>
-                </div>
-                <div className="flex flex-col">
-                  <div className="text-[12px] text-gray-600 ">Current Sem</div>
-                  <div>{student.current_sem}</div>
-                </div>
-                <div className="flex flex-col">
-                  <div className="text-[12px] text-gray-600 ">
-                    {`Total Course Duration`}
-                  </div>
-                  <div>{student.course_duration_years}</div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      {/* --------------------------page-3----------------------------- */}
-      <div
-        className={`flex flex-col ${currentPage == 3 ? animationDirection : 'hidden'}`}
-      >
-        <div className="flex justify-between" onClick={onClose}>
-          <div className="text-lg font-bold">Parent Details</div>
-          <CloseIcon style={{ cursor: 'pointer' }} />
-        </div>
-        <div className="flex mt-[10px]">
-          <div>
-            <div className="h-[90px] md:h-[125px] w-full flex-shrink-0 mr-4 mb-1">
-              {' '}
-              {/* Fixed 30% width for the image */}
-              {student.father_photo_url ? (
-                <img
-                  src={student.father_photo_url}
-                  alt={student.father_name}
-                  className="h-full w-full object-cover rounded-lg"
-                />
-              ) : (
-                <div className="flex items-center justify-center h-full w-[150px] bg-blue-500 text-white text-lg font-bold rounded-lg">
-                  {student.father_name.charAt(0)}
-                </div>
-              )}
-            </div>
-            <div className="h-[90px] md:h-[125px] w-full flex-shrink-0 mr-4">
-              {' '}
-              {/* Fixed 30% width for the image */}
-              {student.mother_photo_url ? (
-                <img
-                  src={student.mother_photo_url}
-                  alt={student.mother_name}
-                  className="h-full w-full object-cover rounded-lg"
-                />
-              ) : (
-                <div className="flex items-center justify-center h-full w-[150px] bg-blue-500 text-white text-lg font-bold rounded-lg">
-                  {student.mother_name.charAt(0)}
-                </div>
-              )}
-            </div>
-          </div>
-          <div className="flex-grow ml-[10px] flex flex-col">
-            <span className="text-2xl font-bold block">
-              {student.student_full_name}
-            </span>
-            <span className="text-gray-600 text-[15px] block mt-1">
-              {student.pin_number}
-            </span>
-            <div className="bg-[#e2e8f0] flex-grow w-full h-full mt-2 rounded-xl">
-              <div className="my-2 mx-5 flex flex-row justify-between ">
-                <div className="flex flex-col">
-                  <div className="text-[12px] text-gray-600">Father Name</div>
-                  <div className="">{student.father_name}</div>
-                </div>
-                <div className="flex flex-col">
-                  <div className="text-[12px] text-gray-600">
-                    Father Mobile No
-                  </div>
-                  <div>{student.father_contact_number}</div>
-                </div>
-                <div className="flex flex-col">
-                  <div className="text-[12px] text-gray-600">Father Email</div>
-                  <div>{student.father_email}</div>
-                </div>
-              </div>
-              <div className="my-1 mx-5 flex flex-row justify-between">
-                <div className="flex flex-col ">
-                  <div className="text-[12px] text-gray-600">Mother_name</div>
-                  <div>{student.mother_name}</div>
-                </div>
-                <div className="flex flex-col">
-                  <div className="text-[12px] text-gray-600 ">
-                    Mother Mobile Number
-                  </div>
-                  <div>{student.mother_contact_number}</div>
-                </div>
-                <div className="flex flex-col">
-                  <div className="text-[12px] text-gray-600 ">Mother Email</div>
-                  <div>{}</div>
-                </div>
-              </div>
-              <div className="my-1 mx-5 flex flex-row justify-between">
-                <div className="flex flex-col">
-                  <div className="text-[12px] text-gray-600 ">
-                    Relative Name
-                  </div>
-                  <div>{student.relative_name}</div>
-                </div>
-                <div className="flex flex-col">
-                  <div className="text-[12px] text-gray-600 ">
-                    Relative Contact Number
-                  </div>
-                  <div>{student.relative_contact_number}</div>
-                </div>
+        <img
+          src="/images/logo.jpg"
+          alt="Logo"
+          style={{ width: 50, height: 50, marginLeft: 8 }}
+        />
+        {/* Card Header */}
+        <CardHeader
+          title={`SGVP HOSTEL`}
+          subheader={`College Student Gatepass`}
+          sx={{ textAlign: 'center' }}
+        />
+        {/* Close Icon */}
+        <IconButton onClick={onClose}>
+          <CloseIcon />
+        </IconButton>
+      </Box>
 
-                <div className="flex flex-col">
-                  <div className="text-[12px] text-gray-600 ">Relation</div>
-                  <div>{student.relation}</div>
-                </div>
-              </div>
-              <div className="my-1 mx-5 flex flex-row justify-between">
-                <div className="flex flex-col">
-                  <div className="text-[12px] text-gray-600 ">
-                    Relative Address
-                  </div>
-                  <div className="text-[13px]">{student.relative_address}</div>
-                </div>
-              </div>
-            </div>
-          </div>
+      {/* Card Content */}
+      <CardContent>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4">
+          <Grid2 item xs={12}>
+            <Typography variant="body2" color="textSecondary">
+              Gatepass Number:
+            </Typography>
+            <Typography>{selectedGatepass.gatepass_number}</Typography>
+          </Grid2>
+          {/* PIN Number */}
+          <Grid2 item xs={12}>
+            <Typography variant="body2" color="textSecondary">
+              PIN Number:
+            </Typography>
+            <Typography>{selectedGatepass.pin_number}</Typography>
+          </Grid2>
+
+          {/* Outgoing Time */}
+          <Grid2 item xs={6}>
+            <Typography variant="body2" color="textSecondary">
+              Outgoing Time:
+            </Typography>
+            <Typography variant="body1">
+              {new Date(selectedGatepass.outgoing_timestamp).toLocaleString()}
+            </Typography>
+          </Grid2>
+
+          {/* Permission Upto */}
+          <Grid2 item xs={6}>
+            <Typography variant="body2" color="textSecondary">
+              Permission Upto:
+            </Typography>
+            <Typography variant="body1">
+              {new Date(
+                selectedGatepass.permission_upto_timestamp,
+              ).toLocaleString()}
+            </Typography>
+          </Grid2>
+
+          {/* Created Time */}
+          <Grid2 item xs={12}>
+            <Typography variant="body2" color="textSecondary">
+              Created On:
+            </Typography>
+            <Typography variant="body1">
+              {new Date(selectedGatepass.gatepass_created).toLocaleString()}
+            </Typography>
+          </Grid2>
+
+          {/* Reason */}
+          <Grid2 item xs={12}>
+            <Typography variant="body2" color="textSecondary">
+              Reason:
+            </Typography>
+            <Typography variant="body1">{selectedGatepass.reason}</Typography>
+          </Grid2>
         </div>
-      </div>
-      {/* --------------------------page-4----------------------------- */}
-      <div
-        className={`flex flex-col ${currentPage == 4 ? animationDirection : 'hidden'}`}
-      >
-        <div className="flex justify-between" onClick={onClose}>
-          <div className="text-lg font-bold">Reference Details</div>
-          <CloseIcon style={{ cursor: 'pointer' }} />
-        </div>
-        <div className="flex mt-[10px]">
-          <div className="h-[180px] md:h-[250px] w-[30%] flex-shrink-0 mr-4">
-            {' '}
-            {/* Fixed 30% width for the image */}
-            {student.student_photo_url ? (
-              <img
-                src={student.student_photo_url}
-                alt={student.student_full_name}
-                className="h-full w-full object-cover rounded-lg"
-              />
-            ) : (
-              <div className="flex items-center justify-center h-full w-full bg-blue-500 text-white text-lg font-bold rounded-lg">
-                {student.student_full_name.charAt(0)}
-              </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4 mt-4">
+          {/* Parent Approval Status */}
+          <Grid2
+            item
+            xs={6}
+            sx={{
+              display: 'flex',
+            }}
+          >
+            <Grid2>
+              <Typography variant="body2" color="textSecondary">
+                Parent Approval:
+              </Typography>
+              <Typography
+                variant="body1"
+                sx={{
+                  color: statusColor(selectedGatepass.parent_approval_status),
+                  display: 'flex',
+                  alignItems: 'center',
+                }}
+                className="capitalize"
+              >
+                {selectedGatepass.parent_approval_status === 'approved' && (
+                  <CheckCircleOutlineIcon sx={{ marginRight: 1 }} />
+                )}
+                {selectedGatepass.parent_approval_status === 'pending' && (
+                  <PendingIcon sx={{ marginRight: 1 }} />
+                )}
+                {selectedGatepass.parent_approval_status === 'disapproved' && (
+                  <HighlightOffIcon sx={{ marginRight: 1 }} />
+                )}
+                {selectedGatepass.parent_approval_status}
+              </Typography>
+            </Grid2>
+            <Grid2>
+              <IconButton onClick={(e) => handleMenuOpen(e, 'parent')}>
+                <EditIcon />
+              </IconButton>
+              <Menu
+                anchorEl={anchorElParent}
+                open={Boolean(anchorElParent)}
+                onClose={() => handleMenuClose('parent')}
+              >
+                {parentOptions.map((status) => (
+                  <MenuItem
+                    key={status}
+                    onClick={() => handleStatusChange(status, 'parent')}
+                    className="capitalize"
+                  >
+                    {status}
+                  </MenuItem>
+                ))}
+              </Menu>
+            </Grid2>
+          </Grid2>
+
+          {/* Admin Approval Status */}
+          <Grid2
+            item
+            xs={6}
+            sx={{
+              display: 'flex',
+            }}
+          >
+            <Grid2>
+              <Typography variant="body2" color="textSecondary">
+                Admin Approval:
+              </Typography>
+              <Typography
+                variant="body1"
+                sx={{
+                  color: statusColor(selectedGatepass.admin_approval_status),
+                  display: 'flex',
+                  alignItems: 'center',
+                }}
+                className="capitalize"
+              >
+                {selectedGatepass.admin_approval_status === 'approved' && (
+                  <CheckCircleOutlineIcon sx={{ marginRight: 1 }} />
+                )}
+                {selectedGatepass.admin_approval_status === 'pending' && (
+                  <PendingIcon sx={{ marginRight: 1 }} />
+                )}
+                {selectedGatepass.admin_approval_status === 'disapproved' && (
+                  <HighlightOffIcon sx={{ marginRight: 1 }} />
+                )}
+                {selectedGatepass.admin_approval_status}
+              </Typography>
+            </Grid2>
+            <Grid2>
+              <IconButton onClick={(e) => handleMenuOpen(e, 'admin')}>
+                <EditIcon />
+              </IconButton>
+              <Menu
+                anchorEl={anchorElAdmin}
+                open={Boolean(anchorElAdmin)}
+                onClose={() => handleMenuClose('admin')}
+                className="capitalize"
+              >
+                {adminOptions.map((status) => (
+                  <MenuItem
+                    key={status}
+                    onClick={() => handleStatusChange(status, 'admin')}
+                  >
+                    {status}
+                  </MenuItem>
+                ))}
+              </Menu>
+            </Grid2>
+          </Grid2>
+
+          {/* Remarks */}
+          {/* {selectedGatepass.remarks && <Grid2 item xs={12}>
+            <Typography variant="body2" color="textSecondary">
+              Remarks:
+            </Typography>
+            <Typography variant="body1">
+              {selectedGatepass.remarks || "No remarks provided"}
+            </Typography>
+          </Grid2>} */}
+
+          {/* Remarks */}
+          <Grid2 item xs={12}>
+            {selectedGatepass.remarks && (
+              <Typography variant="body2" color="textSecondary">
+                Remarks:
+              </Typography>
             )}
-          </div>
-          <div className="flex-grow ml-[10px] flex flex-col">
-            <span className="text-2xl font-bold block">
-              {student.student_full_name}
-            </span>
-            <span className="text-gray-600 text-[15px] block mt-1">
-              {student.pin_number}
-            </span>
-            <div className="bg-[#e2e8f0] flex-grow w-full h-full mt-2 rounded-xl">
-              <div className="my-2 mx-5 flex flex-row justify-between ">
-                <div className="flex flex-col">
-                  <div className="text-[12px] text-gray-600">
-                    Relative Full Name
-                  </div>
-                  <div className="">{student.reference_relative_full_name}</div>
-                </div>
-                <div className="flex flex-col">
-                  <div className="text-[12px] text-gray-600">Relation</div>
-                  <div>{student.reference_relative_relation}</div>
-                </div>
-                <div className="flex flex-col">
-                  <div className="text-[12px] text-gray-600">
-                    Relative Mobile Number
-                  </div>
-                  <div>{student.reference_relative_mobile}</div>
-                </div>
-              </div>
-              <div className="my-2 mx-5 flex flex-row justify-between">
-                <div className="flex flex-col ">
-                  <div className="text-[12px] text-gray-600">Sant Name</div>
-                  <div>{student.name_of_sant}</div>
-                </div>
-                <div className="flex flex-col">
-                  <div className="text-[12px] text-gray-600 ">
-                    Sant Mobile Number
-                  </div>
-                  <div>{student.sant_phone_number}</div>
-                </div>
-              </div>
-            </div>
-          </div>
+            {selectedGatepass.remarks && (
+              <Typography variant="body1">
+                {selectedGatepass.remarks || 'No remarks available'}
+              </Typography>
+            )}
+            <Button
+              variant="contained"
+              color="primary"
+              size="small"
+              sx={{ mt: 1 }}
+              onClick={handleDialogToggle}
+            >
+              {selectedGatepass.remarks ? 'Update Remarks' : 'Add Remarks'}
+            </Button>
+          </Grid2>
         </div>
-      </div>
-      {/*........................ page logic ends her.............. */}
-      <div className="flex flex-row justify-end my-2">
-        <div>{currentPage} - 4</div>
-        <div className="cursor-pointer">
-          <button
-            disabled={currentPage == 1 ? true : false}
-            className="disabled:text-gray-400"
-            onClick={gotoPreviousPage}
-          >
-            <ChevronLeftIcon />
-          </button>
-        </div>
-        <div className="cursor-pointer">
-          <button
-            disabled={currentPage == 4 ? true : false}
-            className="disabled:text-gray-400"
-            onClick={gotoNextPage}
-          >
-            <ChevronRightIcon />
-          </button>
-        </div>
-      </div>
-    </div>
+      </CardContent>
+      {/* Dialog for Adding/Updating Remarks */}
+      <Dialog open={isDialogOpen} onClose={handleDialogToggle}>
+        <DialogTitle>
+          {selectedGatepass.remarks ? 'Update Remarks' : 'Add Remarks'}
+        </DialogTitle>
+        <DialogContent className="mt-2">
+          <TextField
+            label="Remarks"
+            multiline
+            fullWidth
+            rows={4}
+            value={remarksInput}
+            onChange={(e) => setRemarksInput(e.target.value)}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleDialogToggle} color="secondary">
+            Cancel
+          </Button>
+          <Button onClick={handleSaveRemarks} color="primary">
+            Save
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </Card>
   );
 };
+
 export default DetailsCard;

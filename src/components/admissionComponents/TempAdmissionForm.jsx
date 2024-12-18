@@ -15,6 +15,7 @@ import {
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import './css/GuidePopInOut.css';
+import { useNavigate } from 'react-router-dom';
 
 const TempAdmissionForm = () => {
   const {
@@ -34,6 +35,7 @@ const TempAdmissionForm = () => {
   const [errorMessage, setErrorMessage] = useState('');
   const [isGuideVisible, setIsGuideVisible] = useState(false); // State for the guide pop-up
   const [isExiting, setIsExiting] = useState(false); // Tracks exit animation
+  const navigate = useNavigate();
 
   const toggleGuide = () => {
     if (isGuideVisible) {
@@ -293,7 +295,8 @@ const TempAdmissionForm = () => {
       );
       console.log('Student data added successfully:', response.data);
       setSuccessMessage('Student data added successfully!');
-      toast.success('Student data added successfully!');
+      toast.success('Student data Submitted successfully!');
+      navigate('/');
     } catch (error) {
       console.error('Error submitting student data:', error);
       setErrorMessage('Error, Try again!');
@@ -324,6 +327,10 @@ const TempAdmissionForm = () => {
       <button
         onClick={toggleGuide}
         className={`absolute top-4 right-4 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition`}
+        style={{
+          backdropFilter: 'blur(5px)',
+          WebkitBackdropFilter: 'blur(5px)',
+        }}
       >
         Guide Me
       </button>
@@ -360,7 +367,7 @@ const TempAdmissionForm = () => {
               If Data is Not Available
             </h2>
             <p>{`For email enter:- noemail@gmail.com.`}</p>
-            <p>{`For name and relations enter:- NA.`}</p>
+            <p>{`For name,address and relations enter:- NA.`}</p>
             <p>{`For contact numbers enter:- 0.`}</p>
           </div>
         </div>

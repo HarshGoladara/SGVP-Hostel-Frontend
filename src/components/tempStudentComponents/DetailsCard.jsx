@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import CloseIcon from '@mui/icons-material/Close';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
+import { Divider, Box, IconButton } from '@mui/material';
+import './css/DetailsCard.css';
 
 const DetailsCard = ({ student, onClose }) => {
   const totalPages = 4;
@@ -19,28 +21,46 @@ const DetailsCard = ({ student, onClose }) => {
 
   const gotoPreviousPage = () => {
     if (currentPage > 1) {
-      setAnimationDirection('slide-out'); // Set to slide out
+      setAnimationDirection('glide-out'); // Set to glide out
       setTimeout(() => {
         setCurrentPage(currentPage - 1);
-        setAnimationDirection('slide-in'); // Set to slide in
+        setAnimationDirection('glide-in'); // Set to glide in
       }, 300); // Duration of the animation
     }
   };
 
   return (
-    <div className="bg-white rounded-xl shadow-lg p-6 h-[57%] w-3/4 md:w-2/3 lg:w-1/2 transform transition-transform duration-300 scale-100 relative">
+    <Box
+      sx={{
+        position: 'absolute',
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+        // width: 800,
+        bgcolor: 'background.paper',
+        boxShadow: 24,
+        borderRadius: 3,
+        p: 4,
+      }}
+      className="bg-white rounded-xl shadow-lg min-w-[800px] min-h-[400px] p-6 h-[57%] w-[75%] transform transition-transform duration-300 scale-100 relative"
+    >
+      <IconButton
+        sx={{ position: 'absolute', top: 16, right: 16 }}
+        onClick={onClose}
+      >
+        <CloseIcon />
+      </IconButton>
       {/* --------------------------page-1----------------------------- */}
       <div
         className={`flex flex-col ${currentPage === 1 ? animationDirection : 'hidden'}`}
       >
-        <div className="flex justify-between" onClick={onClose}>
-          <div className="text-lg font-bold">Student Details</div>
-          <CloseIcon style={{ cursor: 'pointer' }} />
+        <div className="flex justify-between">
+          <div className="text-3xl font-bold">Student Details</div>
         </div>
         <div className="flex mt-[10px]">
-          <div className="h-[180px] md:h-[250px] w-[30%] flex-shrink-0 mr-4">
+          <div className="h-[180px] md:h-[250px] w-[20%] flex-shrink-0 mr-4">
             {' '}
-            {/* Fixed 30% width for the image */}
+            {/* Fixed 20% width for the image */}
             {student.student_photo_url ? (
               <img
                 src={
@@ -64,7 +84,7 @@ const DetailsCard = ({ student, onClose }) => {
               {student.entry_number}
             </span>
             <div className="bg-[#e2e8f0] flex-grow w-full h-full mt-2 rounded-xl">
-              <div className="my-2 mx-5 flex flex-row justify-between">
+              <div className="my-2 mx-5 grid grid-flow-col justify-stretch">
                 <div className="flex flex-col">
                   <div className="text-[12px] text-gray-600">Mobile Number</div>
                   <div>{student.student_contact_number}</div>
@@ -74,7 +94,7 @@ const DetailsCard = ({ student, onClose }) => {
                   <div>{student.religion}</div>
                 </div>
                 <div className="flex flex-col">
-                  <div className="text-[12px] text-gray-600">caste</div>
+                  <div className="text-[12px] text-gray-600">Caste</div>
                   <div>{student.caste}</div>
                 </div>
                 <div className="flex flex-col">
@@ -82,7 +102,8 @@ const DetailsCard = ({ student, onClose }) => {
                   <div>{student.city}</div>
                 </div>
               </div>
-              <div className="my-2 mx-5 flex flex-row justify-between">
+              <Divider />
+              <div className="my-2 mx-5 grid grid-flow-col justify-stretch">
                 <div className="flex flex-col">
                   <div className="text-[12px] text-gray-600">Email</div>
                   <div>{student.student_email}</div>
@@ -91,10 +112,6 @@ const DetailsCard = ({ student, onClose }) => {
                   <div className="text-[12px] text-gray-600 ">
                     Date Of Birth
                   </div>
-                  {/* <div>
-                    {student.dob.substr(8, 2)}-{student.dob.substr(5, 2)}-
-                    {student.dob.substr(0, 4)}
-                  </div> */}
                   <div>
                     {new Date(student.dob).toLocaleDateString('en-GB', {
                       day: '2-digit',
@@ -108,7 +125,8 @@ const DetailsCard = ({ student, onClose }) => {
                   <div>{student.nationality}</div>
                 </div>
               </div>
-              <div className="my-2 mx-5 flex flex-row justify-between">
+              <Divider />
+              <div className="my-2 mx-5 grid grid-flow-col justify-stretch">
                 <div className="flex flex-col">
                   <div className="text-[12px] text-gray-600">Address</div>
                   <div className="text-[13px]">{student.address}</div>
@@ -118,18 +136,18 @@ const DetailsCard = ({ student, onClose }) => {
           </div>
         </div>
       </div>
+
       {/* --------------------------page-2----------------------------- */}
       <div
         className={`flex flex-col ${currentPage == 2 ? animationDirection : 'hidden'}`}
       >
-        <div className="flex justify-between" onClick={onClose}>
-          <div className="text-lg font-bold">Student Education</div>
-          <CloseIcon style={{ cursor: 'pointer' }} />
+        <div className="flex justify-between">
+          <div className="text-3xl font-bold">Student Education</div>
         </div>
         <div className="flex mt-[10px]">
-          <div className="h-[180px] md:h-[250px] w-[30%] flex-shrink-0 mr-4">
+          <div className="h-[180px] md:h-[250px] w-[20%] flex-shrink-0 mr-4">
             {' '}
-            {/* Fixed 30% width for the image */}
+            {/* Fixed 20% width for the image */}
             {student.student_photo_url ? (
               <img
                 src={student.student_photo_url}
@@ -150,7 +168,7 @@ const DetailsCard = ({ student, onClose }) => {
               {student.entry_number}
             </span>
             <div className="bg-[#e2e8f0] flex-grow w-full h-full mt-2 rounded-xl">
-              <div className="my-2 mx-5 flex flex-row justify-between ">
+              <div className="my-2 mx-5 grid grid-flow-col justify-stretch">
                 <div className="flex flex-col">
                   <div className="text-[12px] text-gray-600">
                     University Name
@@ -162,7 +180,8 @@ const DetailsCard = ({ student, onClose }) => {
                   <div>{student.name_of_collage}</div>
                 </div>
               </div>
-              <div className="my-2 mx-5 flex flex-row justify-between">
+              <Divider />
+              <div className="my-2 mx-5 grid grid-flow-col justify-stretch">
                 <div className="flex flex-col ">
                   <div className="text-[12px] text-gray-600">Course</div>
                   <div>{student.course}</div>
@@ -178,7 +197,8 @@ const DetailsCard = ({ student, onClose }) => {
                   <div>{student.student_qualification}</div>
                 </div>
               </div>
-              <div className="my-2 mx-5 flex flex-row justify-between">
+              <Divider />
+              <div className="my-2 mx-5 grid grid-flow-col justify-stretch">
                 <div className="flex flex-col">
                   <div className="text-[12px] text-gray-600 ">Current Year</div>
                   <div>{student.current_year}</div>
@@ -198,13 +218,13 @@ const DetailsCard = ({ student, onClose }) => {
           </div>
         </div>
       </div>
+
       {/* --------------------------page-3----------------------------- */}
       <div
         className={`flex flex-col ${currentPage == 3 ? animationDirection : 'hidden'}`}
       >
-        <div className="flex justify-between" onClick={onClose}>
-          <div className="text-lg font-bold">Parent Details</div>
-          <CloseIcon style={{ cursor: 'pointer' }} />
+        <div className="flex justify-between">
+          <div className="text-3xl font-bold">Parent Details</div>
         </div>
         <div className="flex mt-[10px]">
           <div>
@@ -247,7 +267,7 @@ const DetailsCard = ({ student, onClose }) => {
               {student.entry_number}
             </span>
             <div className="bg-[#e2e8f0] flex-grow w-full h-full mt-2 rounded-xl">
-              <div className="my-2 mx-5 flex flex-row justify-between ">
+              <div className="my-2 mx-5 grid grid-flow-col justify-stretch">
                 <div className="flex flex-col">
                   <div className="text-[12px] text-gray-600">Father Name</div>
                   <div className="">{student.father_name}</div>
@@ -263,9 +283,10 @@ const DetailsCard = ({ student, onClose }) => {
                   <div>{student.father_email}</div>
                 </div>
               </div>
-              <div className="my-1 mx-5 flex flex-row justify-between">
+              <Divider />
+              <div className="my-1 mx-5 grid grid-flow-col justify-stretch">
                 <div className="flex flex-col ">
-                  <div className="text-[12px] text-gray-600">Mother_name</div>
+                  <div className="text-[12px] text-gray-600">Mother name</div>
                   <div>{student.mother_name}</div>
                 </div>
                 <div className="flex flex-col">
@@ -275,7 +296,8 @@ const DetailsCard = ({ student, onClose }) => {
                   <div>{student.mother_contact_number}</div>
                 </div>
               </div>
-              <div className="my-1 mx-5 flex flex-row justify-between">
+              <Divider />
+              <div className="my-1 mx-5 grid grid-flow-col justify-stretch">
                 <div className="flex flex-col">
                   <div className="text-[12px] text-gray-600 ">
                     Relative Name
@@ -294,7 +316,7 @@ const DetailsCard = ({ student, onClose }) => {
                   <div>{student.relative_relation}</div>
                 </div>
               </div>
-              <div className="my-1 mx-5 flex flex-row justify-between">
+              <div className="my-1 mx-5 grid grid-flow-col justify-stretch">
                 <div className="flex flex-col">
                   <div className="text-[12px] text-gray-600 ">
                     Relative Address
@@ -306,16 +328,16 @@ const DetailsCard = ({ student, onClose }) => {
           </div>
         </div>
       </div>
+
       {/* --------------------------page-4----------------------------- */}
       <div
         className={`flex flex-col ${currentPage == 4 ? animationDirection : 'hidden'}`}
       >
-        <div className="flex justify-between" onClick={onClose}>
-          <div className="text-lg font-bold">Reference Details</div>
-          <CloseIcon style={{ cursor: 'pointer' }} />
+        <div className="flex justify-between">
+          <div className="text-3xl font-bold">Reference Details</div>
         </div>
         <div className="flex mt-[10px]">
-          <div className="h-[180px] md:h-[250px] w-[30%] flex-shrink-0 mr-4">
+          <div className="h-[180px] md:h-[250px] w-[20%] flex-shrink-0 mr-4">
             {' '}
             {/* Fixed 30% width for the image */}
             {student.student_photo_url ? (
@@ -338,7 +360,7 @@ const DetailsCard = ({ student, onClose }) => {
               {student.entry_number}
             </span>
             <div className="bg-[#e2e8f0] flex-grow w-full h-full mt-2 rounded-xl">
-              <div className="my-2 mx-5 flex flex-row justify-between ">
+              <div className="my-2 mx-5 grid grid-flow-col justify-stretch">
                 <div className="flex flex-col">
                   <div className="text-[12px] text-gray-600">
                     Relative Full Name
@@ -356,7 +378,8 @@ const DetailsCard = ({ student, onClose }) => {
                   <div>{student.reference_relative_mobile}</div>
                 </div>
               </div>
-              <div className="my-2 mx-5 flex flex-row justify-between">
+              <Divider />
+              <div className="my-2 mx-5 grid grid-flow-col justify-stretch">
                 <div className="flex flex-col ">
                   <div className="text-[12px] text-gray-600">Sant Name</div>
                   <div>{student.name_of_sant}</div>
@@ -373,7 +396,14 @@ const DetailsCard = ({ student, onClose }) => {
         </div>
       </div>
       {/*........................ page logic ends her.............. */}
-      <div className="flex flex-row justify-end my-2">
+      <div
+        className="flex flex-row justify-end my-2 mx-2"
+        style={{
+          position: 'absolute',
+          bottom: 10,
+          right: 10,
+        }}
+      >
         <div>{currentPage} - 4</div>
         <div className="cursor-pointer">
           <button
@@ -394,7 +424,7 @@ const DetailsCard = ({ student, onClose }) => {
           </button>
         </div>
       </div>
-    </div>
+    </Box>
   );
 };
 export default DetailsCard;

@@ -18,6 +18,8 @@ import StudentNavbar from './StudentNavbar';
 import StudentBody from './StudentBody';
 
 function StudentLayout() {
+  const [students, setStudents] = useState([]);
+  const [selectedOption, setSelectedOption] = useState('All');
   const [searchResults, setSearchResults] = useState([]);
   const [loading, setLoading] = useState(false);
 
@@ -31,9 +33,18 @@ function StudentLayout() {
 
   return (
     <div className="h-full flex flex-col">
-      <StudentNavbar onSearch={handleSearch} isLoading={handleLoading} />
+      <StudentNavbar
+        students={students}
+        setStudents={setStudents}
+        selectedOption={selectedOption}
+        setSelectedOption={setSelectedOption}
+        isLoading={handleLoading}
+      />
       <StudentBody
-        searchResults={searchResults}
+        students={students}
+        setStudents={setStudents}
+        selectedOption={selectedOption}
+        setSelectedOption={setSelectedOption}
         loading={loading}
         className="flex-grow"
       />

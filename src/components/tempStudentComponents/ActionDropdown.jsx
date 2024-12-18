@@ -18,6 +18,7 @@ const ActionDropdown = ({ onActionSelect, student }) => {
   };
 
   const isConfirmEnabled = student.admission_status !== 'confirmed';
+  const isCancelEnabled = student.admission_status !== 'cancelled';
 
   return (
     <>
@@ -50,7 +51,12 @@ const ActionDropdown = ({ onActionSelect, student }) => {
             </MenuItem>
           </p>
           <p className="text-gray-700 hover:bg-[#37AFE1] hover:text-white transition duration-300 cursor-pointer">
-            <MenuItem onClick={() => handleClose('Cancel')}>Cancel</MenuItem>
+            <MenuItem
+              onClick={() => isCancelEnabled && handleClose('Cancel')}
+              disabled={!isCancelEnabled}
+            >
+              Cancel
+            </MenuItem>
           </p>
         </ul>
       </Menu>

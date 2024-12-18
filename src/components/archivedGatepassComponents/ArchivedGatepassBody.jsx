@@ -126,7 +126,7 @@ const ArchivedGatepassTable = ({ searchResults, loading }) => {
               {' '}
               {/* Apply rounded corners to the entire row */}
               {/* Rounded left side */}
-              <th className="py-2 px-4 text-left font-bold">Gatepass</th>
+              <th className="py-2 px-4 text-left font-bold">GID</th>
               <th className="py-2 px-4 text-left font-bold">Pin</th>
               <th className="py-2 px-4 text-left font-bold">Name</th>
               <th className="py-2 px-4 text-left font-bold">Out Going</th>
@@ -142,8 +142,11 @@ const ArchivedGatepassTable = ({ searchResults, loading }) => {
                 <td colSpan="8">
                   <div className="relative py-8">
                     <div className="absolute inset-0 flex justify-center items-center h-auto">
-                      {/* <CustomCircularLoader size={50} logoSrc="/images/logo.jpg" /> */}
-                      <HairballSpinner
+                      <CustomCircularLoader
+                        size={50}
+                        logoSrc="/images/logo.jpg"
+                      />
+                      {/* <HairballSpinner
                         colors={{
                           fillColor1: '#c0392b',
                           fillColor2: '#d35400',
@@ -156,7 +159,7 @@ const ArchivedGatepassTable = ({ searchResults, loading }) => {
                         height={90}
                         logoSrc="/images/logo.jpg"
                         logoSize={45}
-                      />
+                      /> */}
                     </div>
                   </div>
                 </td>

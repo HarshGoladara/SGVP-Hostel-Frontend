@@ -3,6 +3,9 @@ import GatepassNavbar from './GatepassNavbar';
 import GatepassBody from './GatepassBody';
 
 function GatepassLayout() {
+  const [gatepasses, setGatepasses] = useState([]);
+  const [selectedParentOption, setSelectedParentOption] = useState('Approved');
+  const [selectedAdminOption, setSelectedAdminOption] = useState('Pending');
   const [searchResults, setSearchResults] = useState([]);
   const [loading, setLoading] = useState(false);
 
@@ -16,9 +19,22 @@ function GatepassLayout() {
 
   return (
     <div className="h-full flex flex-col">
-      <GatepassNavbar onSearch={handleSearch} isLoading={handleLoading} />
+      <GatepassNavbar
+        gatepasses={gatepasses}
+        setGatepasses={setGatepasses}
+        selectedParentOption={selectedParentOption}
+        setSelectedParentOption={setSelectedParentOption}
+        selectedAdminOption={selectedAdminOption}
+        setSelectedAdminOption={setSelectedAdminOption}
+        isLoading={handleLoading}
+      />
       <GatepassBody
-        searchResults={searchResults}
+        gatepasses={gatepasses}
+        setGatepasses={setGatepasses}
+        selectedParentOption={selectedParentOption}
+        setSelectedParentOption={setSelectedParentOption}
+        selectedAdminOption={selectedAdminOption}
+        setSelectedAdminOption={setSelectedAdminOption}
         loading={loading}
         className="flex-grow"
       />

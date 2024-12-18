@@ -8,9 +8,9 @@ import ActionDropdown from './ActionDropdown.jsx';
 import { CircularProgress } from '@mui/material';
 import CustomCircularLoader from '../commonCustomComponents/CustomCircularLoader.jsx';
 import HairballSpinner from '../commonCustomComponents/HairballSpinner.jsx';
+import toast from 'react-hot-toast';
 
-const StudentTable = ({ searchResults, loading }) => {
-  const [students, setStudents] = useState([]);
+const StudentTable = ({ students, setStudents, loading }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [selectedStudent, setSelectedStudent] = useState(null);
@@ -31,18 +31,44 @@ const StudentTable = ({ searchResults, loading }) => {
 
   useEffect(() => {
     // console.log("searchResults in body:", searchResults);
-    if (searchResults) {
-      setStudents(searchResults);
+    if (students) {
+      setStudents(students);
       setTotalPages(1); // Adjust pagination for search results
       setCurrentPage(1);
     } else {
       fetchStudentData(currentPage);
     }
-  }, [searchResults, currentPage]);
+  }, [students, currentPage]);
 
   useEffect(() => {
     fetchStudentData(currentPage);
   }, []);
+
+  const handleMoveToAlumniAction = async (student) => {
+    try {
+      const moveFromToAlumniBody = {
+        pin_number: student.pin_number,
+        is_alumni: true,
+      };
+      const response = await axios.put(
+        `${VITE_BACKEND_BASE_API}/student/moveFromToAlumni`,
+        moveFromToAlumniBody,
+      );
+      if (response.status === 200) {
+        toast.success('Data Moved to Alumni');
+        setStudents((prevStudents) =>
+          prevStudents.filter((s) => s.pin_number !== student.pin_number),
+        );
+      } else {
+        toast.error('Error Try Again');
+      }
+    } catch (error) {
+      console.log('Error moving data to alumni', error);
+      toast.error('Error Moving Data to Alumni');
+    } finally {
+      //
+    }
+  };
 
   const handleShowDetails = (student) => {
     setSelectedStudent(student);
@@ -140,8 +166,11 @@ const StudentTable = ({ searchResults, loading }) => {
                 <td colSpan="6">
                   <div className="relative py-8">
                     <div className="absolute inset-0 flex justify-center items-center h-auto">
-                      {/* <CustomCircularLoader size={50} logoSrc="/images/logo.jpg" /> */}
-                      <HairballSpinner
+                      <CustomCircularLoader
+                        size={50}
+                        logoSrc="/images/logo.jpg"
+                      />
+                      {/* <HairballSpinner
                         colors={{
                           fillColor1: '#c0392b',
                           fillColor2: '#d35400',
@@ -154,7 +183,7 @@ const StudentTable = ({ searchResults, loading }) => {
                         height={90}
                         logoSrc="/images/logo.jpg"
                         logoSize={45}
-                      />
+                      /> */}
                     </div>
                   </div>
                 </td>
@@ -201,7 +230,7 @@ const StudentTable = ({ searchResults, loading }) => {
                         if (action === 'Show') {
                           handleShowDetails(student);
                         } else if (action === 'Move To Alumni') {
-                          //
+                          handleMoveToAlumniAction(student);
                         }
                       }}
                     />
@@ -212,6 +241,8 @@ const StudentTable = ({ searchResults, loading }) => {
           </tbody>
         </table>
         <StudentModal
+          students={students}
+          setStudents={setStudents}
           student={selectedStudent}
           open={modalOpen}
           onClose={handleCloseModal}
