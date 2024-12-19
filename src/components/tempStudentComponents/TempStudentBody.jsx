@@ -67,12 +67,14 @@ const TempStudentTable = ({
     try {
       const confirmationBody = {
         entry_number: student.entry_number,
+        pin_number: student.pin_number ? student.pin_number : -1,
       };
       const response = await axios.post(
         `${VITE_BACKEND_BASE_API}/admission/confirmAdmission`,
         confirmationBody,
       );
       if (response.status === 200) {
+        console.log(response);
         if (selectedOption === 'Cancelled') {
           setStudents((prevStudents) =>
             prevStudents.filter((s) => s.entry_number !== student.entry_number),
@@ -82,6 +84,7 @@ const TempStudentTable = ({
           const confirmedStudentBody = {
             ...student,
             admission_status: 'confirmed',
+            pin_number: response.data.pin_number,
           };
           students.map((s) => {
             if (s.entry_number === student.entry_number) {
@@ -106,12 +109,13 @@ const TempStudentTable = ({
 
   const handleCancelAction = async (student) => {
     try {
-      const confirmationBody = {
+      const concellationBody = {
         entry_number: student.entry_number,
+        pin_number: student.pin_number ? student.pin_number : -1,
       };
       const response = await axios.post(
         `${VITE_BACKEND_BASE_API}/admission/cancelAdmission`,
-        confirmationBody,
+        concellationBody,
       );
       if (response.status === 200) {
         if (selectedOption === 'Confirmed') {
@@ -225,6 +229,7 @@ const TempStudentTable = ({
                 Photo
               </th>{' '}
               {/* Rounded left side */}
+              <th className="py-2 px-4 text-left font-bold">Form No.</th>
               <th className="py-2 px-4 text-left font-bold">Name</th>
               <th className="py-2 px-4 text-left font-bold">Mobile Number</th>
               <th className="py-2 px-4 text-left font-bold">
@@ -283,13 +288,14 @@ const TempStudentTable = ({
                       </div>
                     )}
                   </td>
+                  <td className="py-2 px-4">{student.entry_number}</td>
                   <td className="py-2 px-4">
                     <div className="flex flex-col">
                       <span className="font-bold">
                         {student.student_full_name}
                       </span>
                       <span className="text-gray-500 text-sm">
-                        {student.entry_number}
+                        {student.pin_number}
                       </span>{' '}
                       {/* Pin number in light font */}
                     </div>

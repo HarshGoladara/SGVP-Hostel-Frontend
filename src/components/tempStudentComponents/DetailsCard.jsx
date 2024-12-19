@@ -81,7 +81,7 @@ const DetailsCard = ({ student, onClose }) => {
               {student.student_full_name}
             </span>
             <span className="text-gray-600 text-[15px] block mt-1">
-              {student.entry_number}
+              {student.pin_number}
             </span>
             <div className="bg-[#e2e8f0] flex-grow w-full h-full mt-2 rounded-xl">
               <div className="my-2 mx-5 grid grid-flow-col justify-stretch">
@@ -165,7 +165,7 @@ const DetailsCard = ({ student, onClose }) => {
               {student.student_full_name}
             </span>
             <span className="text-gray-600 text-[15px] block mt-1">
-              {student.entry_number}
+              {student.pin_number}
             </span>
             <div className="bg-[#e2e8f0] flex-grow w-full h-full mt-2 rounded-xl">
               <div className="my-2 mx-5 grid grid-flow-col justify-stretch">
@@ -264,7 +264,7 @@ const DetailsCard = ({ student, onClose }) => {
               {student.student_full_name}
             </span>
             <span className="text-gray-600 text-[15px] block mt-1">
-              {student.entry_number}
+              {student.pin_number}
             </span>
             <div className="bg-[#e2e8f0] flex-grow w-full h-full mt-2 rounded-xl">
               <div className="my-2 mx-5 grid grid-flow-col justify-stretch">
@@ -357,7 +357,7 @@ const DetailsCard = ({ student, onClose }) => {
               {student.student_full_name}
             </span>
             <span className="text-gray-600 text-[15px] block mt-1">
-              {student.entry_number}
+              {student.pin_number}
             </span>
             <div className="bg-[#e2e8f0] flex-grow w-full h-full mt-2 rounded-xl">
               <div className="my-2 mx-5 grid grid-flow-col justify-stretch">

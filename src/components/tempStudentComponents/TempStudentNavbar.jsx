@@ -89,13 +89,13 @@ function TempStudentNavbar({
         results = data.data;
       } else {
         try {
-          const isPin = /^\d+$/.test(query);
-          if (isPin) {
+          const isNum = /^\d+$/.test(query);
+          if (isNum) {
             const { data } = await axios.get(
               `${VITE_BACKEND_BASE_API}/admission/getTempStudentDetails`,
               {
                 params: {
-                  entry_number: query,
+                  search_query: query,
                 },
               },
             );
@@ -201,7 +201,7 @@ function TempStudentNavbar({
                 className="search-input"
                 onChange={handleSearchInput}
                 onFocus={(e) => {
-                  e.target.placeholder = 'Search Pin Number / Name';
+                  e.target.placeholder = 'Search Name/Pin/Form No.';
                   e.target.classList.add('focused');
                 }}
                 onBlur={(e) => {
