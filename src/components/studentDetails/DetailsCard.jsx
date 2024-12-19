@@ -5,12 +5,14 @@ import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import { Divider, Box, IconButton } from '@mui/material';
 import './css/DetailsCard.css';
 import { UpdateDialog } from './UpdateDialog.jsx';
+import { useCookies } from 'react-cookie';
 
 const DetailsCard = ({ students, setStudents, student, onClose }) => {
   const totalPages = 4;
   const [selectedStudent, setSelectedStudent] = useState(student);
   const [currentPage, setCurrentPage] = useState(1);
   const [animationDirection, setAnimationDirection] = useState('');
+  const [cookies] = useCookies(['token']);
   const gotoNextPage = () => {
     if (currentPage < totalPages) {
       setAnimationDirection('slide-out'); // Set to slide out
@@ -30,6 +32,8 @@ const DetailsCard = ({ students, setStudents, student, onClose }) => {
       }, 300); // Duration of the animation
     }
   };
+
+  const isUpdateDialogEnabled = cookies.token.update_data_credentials;
 
   return (
     <Box
@@ -58,13 +62,15 @@ const DetailsCard = ({ students, setStudents, student, onClose }) => {
       >
         <div className="flex justify-stretch">
           <div className="text-3xl font-bold">Student Details</div>
-          <UpdateDialog
-            students={students}
-            setStudents={setStudents}
-            selectedStudent={selectedStudent}
-            setSelectedStudent={setSelectedStudent}
-            currentPage={currentPage}
-          />
+          {isUpdateDialogEnabled && (
+            <UpdateDialog
+              students={students}
+              setStudents={setStudents}
+              selectedStudent={selectedStudent}
+              setSelectedStudent={setSelectedStudent}
+              currentPage={currentPage}
+            />
+          )}
         </div>
         <div className="flex mt-[10px]">
           <div className="h-[180px] md:h-[250px] w-[20%] flex-shrink-0 mr-4">
@@ -152,13 +158,15 @@ const DetailsCard = ({ students, setStudents, student, onClose }) => {
       >
         <div className="flex justify-stretch">
           <div className="text-3xl font-bold">Student Education</div>
-          <UpdateDialog
-            students={students}
-            setStudents={setStudents}
-            selectedStudent={selectedStudent}
-            setSelectedStudent={setSelectedStudent}
-            currentPage={currentPage}
-          />
+          {isUpdateDialogEnabled && (
+            <UpdateDialog
+              students={students}
+              setStudents={setStudents}
+              selectedStudent={selectedStudent}
+              setSelectedStudent={setSelectedStudent}
+              currentPage={currentPage}
+            />
+          )}
         </div>
         <div className="flex mt-[10px]">
           <div className="h-[180px] md:h-[250px] w-[20%] flex-shrink-0 mr-4">
@@ -241,13 +249,15 @@ const DetailsCard = ({ students, setStudents, student, onClose }) => {
       >
         <div className="flex justify-stretch">
           <div className="text-3xl font-bold">Parent Details</div>
-          <UpdateDialog
-            students={students}
-            setStudents={setStudents}
-            selectedStudent={selectedStudent}
-            setSelectedStudent={setSelectedStudent}
-            currentPage={currentPage}
-          />
+          {isUpdateDialogEnabled && (
+            <UpdateDialog
+              students={students}
+              setStudents={setStudents}
+              selectedStudent={selectedStudent}
+              setSelectedStudent={setSelectedStudent}
+              currentPage={currentPage}
+            />
+          )}
         </div>
         <div className="flex mt-[10px]">
           <div>
@@ -360,13 +370,15 @@ const DetailsCard = ({ students, setStudents, student, onClose }) => {
       >
         <div className="flex justify-stretch">
           <div className="text-3xl font-bold">Reference Details</div>
-          <UpdateDialog
-            students={students}
-            setStudents={setStudents}
-            selectedStudent={selectedStudent}
-            setSelectedStudent={setSelectedStudent}
-            currentPage={currentPage}
-          />
+          {isUpdateDialogEnabled && (
+            <UpdateDialog
+              students={students}
+              setStudents={setStudents}
+              selectedStudent={selectedStudent}
+              setSelectedStudent={setSelectedStudent}
+              currentPage={currentPage}
+            />
+          )}
         </div>
         <div className="flex mt-[10px]">
           <div className="h-[180px] md:h-[250px] w-[20%] flex-shrink-0 mr-4">

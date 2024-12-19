@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import { Menu, MenuItem, IconButton } from '@mui/material';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+import { useCookies } from 'react-cookie';
 
 const ActionDropdown = ({ onActionSelect, student }) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
+  const [cookies] = useCookies(['token']);
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -17,8 +19,12 @@ const ActionDropdown = ({ onActionSelect, student }) => {
     }
   };
 
-  const isConfirmEnabled = student.admission_status !== 'confirmed';
-  const isCancelEnabled = student.admission_status !== 'cancelled';
+  const isConfirmEnabled =
+    student.admission_status !== 'confirmed' &&
+    cookies.token.admission_credential;
+  const isCancelEnabled =
+    student.admission_status !== 'cancelled' &&
+    cookies.token.admission_credential;
 
   return (
     <>
@@ -42,22 +48,26 @@ const ActionDropdown = ({ onActionSelect, student }) => {
           <p className="text-gray-700 hover:bg-[#37AFE1] hover:text-white transition duration-300 cursor-pointer">
             <MenuItem onClick={() => handleClose('Show')}>Show</MenuItem>
           </p>
-          <p className="text-gray-700 hover:bg-[#37AFE1] hover:text-white transition duration-300 cursor-pointer">
-            <MenuItem
-              onClick={() => isConfirmEnabled && handleClose('Confirm')}
-              disabled={!isConfirmEnabled}
-            >
-              Confirm
-            </MenuItem>
-          </p>
-          <p className="text-gray-700 hover:bg-[#37AFE1] hover:text-white transition duration-300 cursor-pointer">
-            <MenuItem
-              onClick={() => isCancelEnabled && handleClose('Cancel')}
-              disabled={!isCancelEnabled}
-            >
-              Cancel
-            </MenuItem>
-          </p>
+          {isConfirmEnabled && (
+            <p className="text-gray-700 hover:bg-[#37AFE1] hover:text-white transition duration-300 cursor-pointer">
+              <MenuItem
+                onClick={() => isConfirmEnabled && handleClose('Confirm')}
+                disabled={!isConfirmEnabled}
+              >
+                Confirm
+              </MenuItem>
+            </p>
+          )}
+          {isCancelEnabled && (
+            <p className="text-gray-700 hover:bg-[#37AFE1] hover:text-white transition duration-300 cursor-pointer">
+              <MenuItem
+                onClick={() => isCancelEnabled && handleClose('Cancel')}
+                disabled={!isCancelEnabled}
+              >
+                Cancel
+              </MenuItem>
+            </p>
+          )}
         </ul>
       </Menu>
     </>

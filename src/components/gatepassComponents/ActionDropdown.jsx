@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import { Menu, MenuItem, IconButton } from '@mui/material';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+import { useCookies } from 'react-cookie';
 
 const ActionDropdown = ({ onActionSelect, gatepass }) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
+  const [cookies] = useCookies(['token']);
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -19,14 +21,19 @@ const ActionDropdown = ({ onActionSelect, gatepass }) => {
 
   const isReentryEnabled =
     gatepass.parent_approval_status === 'approved' &&
-    gatepass.admin_approval_status === 'approved';
+    gatepass.admin_approval_status === 'approved' &&
+    cookies.token.gatepass_approval_credential;
   const isGenerateEnabled =
     gatepass.parent_approval_status === 'approved' &&
-    gatepass.admin_approval_status === 'approved';
+    gatepass.admin_approval_status === 'approved' &&
+    cookies.token.gatepass_approval_credential;
   const isApproveEnabled =
     gatepass.parent_approval_status === 'approved' &&
-    gatepass.admin_approval_status !== 'approved';
-  const isDisApproveEnabled = gatepass.admin_approval_status !== 'disapproved';
+    gatepass.admin_approval_status !== 'approved' &&
+    cookies.token.gatepass_approval_credential;
+  const isDisApproveEnabled =
+    gatepass.admin_approval_status !== 'disapproved' &&
+    cookies.token.gatepass_approval_credential;
 
   return (
     <>
@@ -54,7 +61,7 @@ const ActionDropdown = ({ onActionSelect, gatepass }) => {
             <p className="text-gray-700 hover:bg-[#37AFE1] hover:text-white transition duration-300 cursor-pointer">
               <MenuItem
                 onClick={() => isApproveEnabled && handleClose('Approve')}
-                // disabled={!isApproveEnabled}
+                disabled={!isApproveEnabled}
               >
                 Approve
               </MenuItem>
@@ -64,7 +71,7 @@ const ActionDropdown = ({ onActionSelect, gatepass }) => {
             <p className="text-gray-700 hover:bg-[#37AFE1] hover:text-white transition duration-300 cursor-pointer">
               <MenuItem
                 onClick={() => isGenerateEnabled && handleClose('Generate')}
-                // disabled={!isGenerateEnabled}
+                disabled={!isGenerateEnabled}
               >
                 Generate
               </MenuItem>
@@ -74,6 +81,7 @@ const ActionDropdown = ({ onActionSelect, gatepass }) => {
             <p className="text-gray-700 hover:bg-[#37AFE1] hover:text-white transition duration-300 cursor-pointer">
               <MenuItem
                 onClick={() => isDisApproveEnabled && handleClose('Disapprove')}
+                disabled={!isDisApproveEnabled}
               >
                 Disapprove
               </MenuItem>
@@ -85,7 +93,7 @@ const ActionDropdown = ({ onActionSelect, gatepass }) => {
             >
               <MenuItem
                 onClick={() => isReentryEnabled && handleClose('Re-entry')}
-                // disabled={!isReentryEnabled}
+                disabled={!isReentryEnabled}
               >
                 Re-entry
               </MenuItem>

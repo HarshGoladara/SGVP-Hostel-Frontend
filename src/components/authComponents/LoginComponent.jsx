@@ -71,7 +71,11 @@ const LoginComponent = () => {
             userRole.role_name === 'chief rector'
           ) {
             const unique_id = uuid();
-            setCookie('token', unique_id, {
+            const token = {
+              ...userRole,
+              unique_id: unique_id,
+            };
+            setCookie('token', token, {
               // path: "/",        // Cookie available across the entire site
               days: 1,
               Secure: true, // Ensures the cookie is sent over HTTPS

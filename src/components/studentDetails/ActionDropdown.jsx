@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import { Menu, MenuItem, IconButton } from '@mui/material';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+import { useCookies } from 'react-cookie';
 
 const ActionDropdown = ({ onActionSelect, student }) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
+  const [cookies] = useCookies(['token']);
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -16,6 +18,8 @@ const ActionDropdown = ({ onActionSelect, student }) => {
       onActionSelect(action); // Pass the selected action to the parent
     }
   };
+
+  const isMoveToAlumniEnabled = cookies.token.update_data_credentials;
 
   return (
     <>
@@ -39,11 +43,18 @@ const ActionDropdown = ({ onActionSelect, student }) => {
           <p className="text-gray-700 hover:bg-[#37AFE1] hover:text-white transition duration-300 cursor-pointer">
             <MenuItem onClick={() => handleClose('Show')}>Show</MenuItem>
           </p>
-          <p className="text-gray-700 hover:bg-[#37AFE1] hover:text-white transition duration-300 cursor-pointer">
-            <MenuItem onClick={() => handleClose('Move To Alumni')}>
-              Move To Alumni
-            </MenuItem>
-          </p>
+          {isMoveToAlumniEnabled && (
+            <p className="text-gray-700 hover:bg-[#37AFE1] hover:text-white transition duration-300 cursor-pointer">
+              <MenuItem
+                onClick={() =>
+                  isMoveToAlumniEnabled && handleClose('Move To Alumni')
+                }
+                disabled={!isMoveToAlumniEnabled}
+              >
+                Move To Alumni
+              </MenuItem>
+            </p>
+          )}
         </ul>
       </Menu>
     </>

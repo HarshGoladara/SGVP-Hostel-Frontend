@@ -30,8 +30,8 @@ const GatepassTable = ({
           params: {
             page: page,
             limit: 10,
-            parent_approval_status: 'approved',
-            admin_approval_status: 'pending',
+            parent_approval_status: selectedParentOption.toLowerCase(),
+            admin_approval_status: selectedAdminOption.toLowerCase(),
           },
         },
       );
@@ -223,9 +223,133 @@ const GatepassTable = ({
     }
   };
 
-  const handleGenerateAction = (gatepass) => {
-    // printing logic
-    console.log(gatepass.gatepass_number);
+  const handleGenerateAction = (selectedGatepass) => {
+    // Create a new window for printing
+    const printWindow = window.open('', '_blank');
+    if (!printWindow) {
+      console.error('Could not open print window');
+      return;
+    }
+
+    const content = `
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+          <meta charset="UTF-8">
+          <title>SGVP Hostel Gatepass</title>
+          <style>
+              body {
+                  font-family: Arial, sans-serif;
+                  display: flex;
+                  justify-content: center;
+                  align-items: center;
+                  height: 100vh;
+                  margin: 0;
+                  background-color: #f4f4f4;
+              }
+              .card {
+                  width: 500px;
+                  border: 1px solid #ddd;
+                  border-radius: 10px;
+                  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+                  padding: 20px;
+                  background-color: white;
+              }
+              .card-header {
+                  display: flex;
+                  align-items: center;
+                  justify-content: space-between;
+                  margin-bottom: 20px;
+              }
+              .logo {
+                  width: 50px;
+                  height: 50px;
+              }
+              .header-text {
+                  text-align: center;
+              }
+              .grid {
+                  display: grid;
+                  grid-template-columns: 1fr 1fr;
+                  gap: 10px;
+              }
+              .grid-item {
+                  margin-bottom: 10px;
+              }
+              .label {
+                  color: #666;
+                  font-size: 0.8em;
+              }
+              .value {
+                  font-weight: bold;
+              }
+          </style>
+      </head>
+      <body>
+          <div class="card">
+              <div class="card-header">
+                  <img src="/images/logo.jpg" alt="Logo" class="logo">
+                  <div class="header-text">
+                      <h2>SGVP HOSTEL</h2>
+                      <p>College Student Gatepass</p>
+                  </div>
+              </div>
+
+              <div class="grid">
+                  <div class="grid-item">
+                      <div class="label">Gatepass Number:</div>
+                      <div class="value">${selectedGatepass.gatepass_number}</div>
+                  </div>
+
+                  <div class="grid-item">
+                      <div class="label">PIN Number:</div>
+                      <div class="value">${selectedGatepass.pin_number}</div>
+                  </div>
+
+                  <div class="grid-item">
+                      <div class="label">Student Name:</div>
+                      <div class="value">${selectedGatepass.student_full_name}</div>
+                  </div>
+
+                  <div class="grid-item">
+                      <div class="label">Created On:</div>
+                      <div class="value">${new Date(selectedGatepass.gatepass_created).toLocaleString()}</div>
+                  </div>
+
+                  <div class="grid-item">
+                      <div class="label">Outgoing Time:</div>
+                      <div class="value">${new Date(selectedGatepass.outgoing_timestamp).toLocaleString()}</div>
+                  </div>
+
+                  <div class="grid-item">
+                      <div class="label">Permission Upto:</div>
+                      <div class="value">${new Date(selectedGatepass.permission_upto_timestamp).toLocaleString()}</div>
+                  </div>
+
+                  <div class="grid-item">
+                      <div class="label">Generated On:</div>
+                      <div class="value">${new Date().toLocaleString()}</div>
+                  </div>
+
+                  <div class="grid-item">
+                      <div class="label">Authorized Signature:</div>
+                  </div>
+              </div>
+          </div>
+      </body>
+      </html>
+    `;
+
+    // Write the content to the new window
+    printWindow.document.open();
+    printWindow.document.write(content);
+    printWindow.document.close();
+
+    // Wait for the content to load before triggering the print dialog
+    printWindow.onload = () => {
+      printWindow.print();
+      printWindow.close();
+    };
   };
 
   // return (

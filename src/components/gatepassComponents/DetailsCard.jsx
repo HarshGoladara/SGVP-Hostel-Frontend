@@ -26,6 +26,7 @@ import { useState, useEffect } from 'react';
 import { VITE_BACKEND_BASE_API } from '../../helper/envConfig/envConfig';
 import axios from 'axios';
 import toast from 'react-hot-toast';
+import { useCookies } from 'react-cookie';
 
 const DetailsCard = ({
   gatepasses,
@@ -42,6 +43,9 @@ const DetailsCard = ({
   const [adminOptions, setAdminOptions] = useState([]);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [remarksInput, setRemarksInput] = useState('');
+  const [cookies] = useCookies(['token']);
+
+  const isUpdateDialogEnabled = cookies.token.gatepass_approval_credential;
 
   useEffect(() => {
     if (selectedGatepass.parent_approval_status === 'pending') {
@@ -210,7 +214,7 @@ const DetailsCard = ({
     <Card
       sx={{
         maxWidth: 700,
-        minWidth: 400,
+        minWidth: 500,
         margin: 'auto',
         padding: 2,
         boxShadow: '0 4px 10px rgba(0, 0, 0, 0.2)',
@@ -258,6 +262,21 @@ const DetailsCard = ({
             </Typography>
             <Typography>{selectedGatepass.pin_number}</Typography>
           </Grid2>
+          {/* Name */}
+          <Grid2 item xs={12}>
+            <Typography variant="body2" color="textSecondary">
+              Student Name:
+            </Typography>
+            <Typography>{selectedGatepass.student_full_name}</Typography>
+          </Grid2>
+
+          {/* Reason */}
+          <Grid2 item xs={12}>
+            <Typography variant="body2" color="textSecondary">
+              Reason:
+            </Typography>
+            <Typography variant="body1">{selectedGatepass.reason}</Typography>
+          </Grid2>
 
           {/* Outgoing Time */}
           <Grid2 item xs={6}>
@@ -289,14 +308,6 @@ const DetailsCard = ({
             <Typography variant="body1">
               {new Date(selectedGatepass.gatepass_created).toLocaleString()}
             </Typography>
-          </Grid2>
-
-          {/* Reason */}
-          <Grid2 item xs={12}>
-            <Typography variant="body2" color="textSecondary">
-              Reason:
-            </Typography>
-            <Typography variant="body1">{selectedGatepass.reason}</Typography>
           </Grid2>
         </div>
 
@@ -334,26 +345,28 @@ const DetailsCard = ({
                 {selectedGatepass.parent_approval_status}
               </Typography>
             </Grid2>
-            <Grid2>
-              <IconButton onClick={(e) => handleMenuOpen(e, 'parent')}>
-                <EditIcon />
-              </IconButton>
-              <Menu
-                anchorEl={anchorElParent}
-                open={Boolean(anchorElParent)}
-                onClose={() => handleMenuClose('parent')}
-              >
-                {parentOptions.map((status) => (
-                  <MenuItem
-                    key={status}
-                    onClick={() => handleStatusChange(status, 'parent')}
-                    className="capitalize"
-                  >
-                    {status}
-                  </MenuItem>
-                ))}
-              </Menu>
-            </Grid2>
+            {isUpdateDialogEnabled && (
+              <Grid2>
+                <IconButton onClick={(e) => handleMenuOpen(e, 'parent')}>
+                  <EditIcon />
+                </IconButton>
+                <Menu
+                  anchorEl={anchorElParent}
+                  open={Boolean(anchorElParent)}
+                  onClose={() => handleMenuClose('parent')}
+                >
+                  {parentOptions.map((status) => (
+                    <MenuItem
+                      key={status}
+                      onClick={() => handleStatusChange(status, 'parent')}
+                      className="capitalize"
+                    >
+                      {status}
+                    </MenuItem>
+                  ))}
+                </Menu>
+              </Grid2>
+            )}
           </Grid2>
 
           {/* Admin Approval Status */}
@@ -389,26 +402,28 @@ const DetailsCard = ({
                 {selectedGatepass.admin_approval_status}
               </Typography>
             </Grid2>
-            <Grid2>
-              <IconButton onClick={(e) => handleMenuOpen(e, 'admin')}>
-                <EditIcon />
-              </IconButton>
-              <Menu
-                anchorEl={anchorElAdmin}
-                open={Boolean(anchorElAdmin)}
-                onClose={() => handleMenuClose('admin')}
-                className="capitalize"
-              >
-                {adminOptions.map((status) => (
-                  <MenuItem
-                    key={status}
-                    onClick={() => handleStatusChange(status, 'admin')}
-                  >
-                    {status}
-                  </MenuItem>
-                ))}
-              </Menu>
-            </Grid2>
+            {isUpdateDialogEnabled && (
+              <Grid2>
+                <IconButton onClick={(e) => handleMenuOpen(e, 'admin')}>
+                  <EditIcon />
+                </IconButton>
+                <Menu
+                  anchorEl={anchorElAdmin}
+                  open={Boolean(anchorElAdmin)}
+                  onClose={() => handleMenuClose('admin')}
+                  className="capitalize"
+                >
+                  {adminOptions.map((status) => (
+                    <MenuItem
+                      key={status}
+                      onClick={() => handleStatusChange(status, 'admin')}
+                    >
+                      {status}
+                    </MenuItem>
+                  ))}
+                </Menu>
+              </Grid2>
+            )}
           </Grid2>
 
           {/* Remarks */}
@@ -422,53 +437,57 @@ const DetailsCard = ({
           </Grid2>} */}
 
           {/* Remarks */}
-          <Grid2 item xs={12}>
-            {selectedGatepass.remarks && (
-              <Typography variant="body2" color="textSecondary">
-                Remarks:
-              </Typography>
-            )}
-            {selectedGatepass.remarks && (
-              <Typography variant="body1">
-                {selectedGatepass.remarks || 'No remarks available'}
-              </Typography>
-            )}
-            <Button
-              variant="contained"
-              color="primary"
-              size="small"
-              sx={{ mt: 1 }}
-              onClick={handleDialogToggle}
-            >
-              {selectedGatepass.remarks ? 'Update Remarks' : 'Add Remarks'}
-            </Button>
-          </Grid2>
+          {isUpdateDialogEnabled && (
+            <Grid2 item xs={12}>
+              {selectedGatepass.remarks && (
+                <Typography variant="body2" color="textSecondary">
+                  Remarks:
+                </Typography>
+              )}
+              {selectedGatepass.remarks && (
+                <Typography variant="body1">
+                  {selectedGatepass.remarks || 'No remarks available'}
+                </Typography>
+              )}
+              <Button
+                variant="contained"
+                color="primary"
+                size="small"
+                sx={{ mt: 1 }}
+                onClick={handleDialogToggle}
+              >
+                {selectedGatepass.remarks ? 'Update Remarks' : 'Add Remarks'}
+              </Button>
+            </Grid2>
+          )}
         </div>
       </CardContent>
       {/* Dialog for Adding/Updating Remarks */}
-      <Dialog open={isDialogOpen} onClose={handleDialogToggle}>
-        <DialogTitle>
-          {selectedGatepass.remarks ? 'Update Remarks' : 'Add Remarks'}
-        </DialogTitle>
-        <DialogContent className="mt-2">
-          <TextField
-            label="Remarks"
-            multiline
-            fullWidth
-            rows={4}
-            value={remarksInput}
-            onChange={(e) => setRemarksInput(e.target.value)}
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleDialogToggle} color="secondary">
-            Cancel
-          </Button>
-          <Button onClick={handleSaveRemarks} color="primary">
-            Save
-          </Button>
-        </DialogActions>
-      </Dialog>
+      {isUpdateDialogEnabled && (
+        <Dialog open={isDialogOpen} onClose={handleDialogToggle}>
+          <DialogTitle>
+            {selectedGatepass.remarks ? 'Update Remarks' : 'Add Remarks'}
+          </DialogTitle>
+          <DialogContent className="mt-2">
+            <TextField
+              label="Remarks"
+              multiline
+              fullWidth
+              rows={4}
+              value={remarksInput}
+              onChange={(e) => setRemarksInput(e.target.value)}
+            />
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleDialogToggle} color="secondary">
+              Cancel
+            </Button>
+            <Button onClick={handleSaveRemarks} color="primary">
+              Save
+            </Button>
+          </DialogActions>
+        </Dialog>
+      )}
     </Card>
   );
 };

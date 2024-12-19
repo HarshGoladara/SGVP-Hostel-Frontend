@@ -84,7 +84,7 @@ function GatepassNavbar({
       isLoading(true);
       try {
         const { data } = await axios.get(
-          `${VITE_BACKEND_BASE_API}/gatepass/getGatepassForAdminApproval?parent_approval_status=approved&admin_approval_status=pending`,
+          `${VITE_BACKEND_BASE_API}/gatepass/getGatepassForAdminApproval?parent_approval_status=${selectedParentOption.toLowerCase()}&admin_approval_status=${selectedAdminOption.toLowerCase()}`,
         );
         // // setGatepassData(data.data);
         // setNoOfGatepass(data.data.length);
