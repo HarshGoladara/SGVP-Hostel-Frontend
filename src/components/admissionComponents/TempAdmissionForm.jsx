@@ -471,7 +471,9 @@ const TempAdmissionForm = () => {
                     ? 'Date of Birth is required and must be a valid date.'
                     : ''
                 }
-                InputLabelProps={{ shrink: true }}
+                slotProps={{
+                  inputLabel: { shrink: true },
+                }}
                 className="mt-1 block w-full p-2 border border-gray-600 rounded-md bg-white"
               />
             </div>

@@ -20,6 +20,7 @@ import CustomCircularLoader from './components/commonCustomComponents/CustomCirc
 import HairballSpinner from './components/commonCustomComponents/HairballSpinner.jsx';
 import BlocksLoader from './components/commonCustomComponents/BlocksLoader.jsx';
 import DrawerBasic from './components/commonCustomComponents/DrawerBasic.jsx';
+import DashboardLayout from './components/dashboardComponents/DashboardLayout.jsx';
 
 function App() {
   const router = createBrowserRouter([
@@ -87,8 +88,9 @@ function App() {
             <div className="app-container">
               {/* <Sidebar /> */}
               <div className="flex-grow">
-                <DrawerBasic />
-                <PhotoUpload />
+                {/* <DrawerBasic />
+                <PhotoUpload /> */}
+                <DashboardLayout />
               </div>
             </div>
           ),
