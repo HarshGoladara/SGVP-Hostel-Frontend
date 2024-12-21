@@ -12,6 +12,14 @@ function StudentNavbar({
   setStudents,
   selectedOption,
   setSelectedOption,
+  totalItems,
+  setTotalItems,
+  // currentPage,
+  setCurrentPage,
+  // totalPages,
+  setTotalPages,
+  // pageNumberList,
+  // setPageNumberList,
   isLoading,
 }) {
   const [showMenu, setShowMenu] = useState(false);
@@ -38,9 +46,10 @@ function StudentNavbar({
   const filterStudents = async (option) => {
     isLoading(true);
     try {
+      setCurrentPage(1);
       if (option === 'All') {
         const { data } = await axios.get(
-          `${VITE_BACKEND_BASE_API}/student/studentDetails`,
+          `${VITE_BACKEND_BASE_API}/student/getStudentDetails`,
           {
             params: {
               page: 1,
@@ -52,9 +61,20 @@ function StudentNavbar({
         // setStudentData(results);
         // setNoOfStudent(results.length);
         setStudents(results);
+
+        const response = await axios.get(
+          `${VITE_BACKEND_BASE_API}/pagination/getStudentPagination`,
+          {
+            params: {
+              limit: 10,
+            },
+          },
+        );
+        setTotalPages(response.data.pagination.totalPages);
+        setTotalItems(response.data.pagination.totalItems);
       } else {
         const { data } = await axios.get(
-          `${VITE_BACKEND_BASE_API}/student/studentDetails`,
+          `${VITE_BACKEND_BASE_API}/student/getStudentDetails`,
           {
             params: {
               page: 1,
@@ -67,6 +87,18 @@ function StudentNavbar({
         // setStudentData(results);
         // setNoOfStudent(results.length);
         setStudents(results);
+
+        const response = await axios.get(
+          `${VITE_BACKEND_BASE_API}/pagination/getStudentPagination`,
+          {
+            params: {
+              limit: 10,
+              category: option,
+            },
+          },
+        );
+        setTotalPages(response.data.pagination.totalPages);
+        setTotalItems(response.data.pagination.totalItems);
       }
     } catch (error) {
       console.log('Error fetching student data', error);
@@ -78,44 +110,79 @@ function StudentNavbar({
   const searchStudents = async () => {
     isLoading(true);
     try {
-      let results;
+      setCurrentPage(1);
       const query = searchQuery.trim();
       if (!query) {
         const { data } = await axios.get(
-          `${VITE_BACKEND_BASE_API}/student/studentDetails?page=1&limit=10`,
+          `${VITE_BACKEND_BASE_API}/student/getStudentDetails?page=1&limit=10`,
         );
-        results = data.data;
+
+        setStudents(data.data);
+
+        const response = await axios.get(
+          `${VITE_BACKEND_BASE_API}/pagination/getStudentPagination`,
+          {
+            params: {
+              limit: 10,
+            },
+          },
+        );
+        setTotalPages(response.data.pagination.totalPages);
+        setTotalItems(response.data.pagination.totalItems);
       } else {
         try {
           const isPin = /^\d+$/.test(query);
           if (isPin) {
             const { data } = await axios.get(
-              `${VITE_BACKEND_BASE_API}/student/studentDetailsByPinNumber`,
+              `${VITE_BACKEND_BASE_API}/student/getStudentDetails`,
               {
                 params: {
                   pin_number: query,
                 },
               },
             );
-            results = data.rows;
+
+            setStudents(data.data);
+
+            const response = await axios.get(
+              `${VITE_BACKEND_BASE_API}/pagination/getStudentPagination`,
+              {
+                params: {
+                  limit: 10,
+                  pin_number: query,
+                },
+              },
+            );
+            setTotalPages(response.data.pagination.totalPages);
+            setTotalItems(response.data.pagination.totalItems);
           } else {
             const { data } = await axios.get(
-              `${VITE_BACKEND_BASE_API}/student/studentDetailsByName`,
+              `${VITE_BACKEND_BASE_API}/student/getStudentDetails`,
               {
                 params: {
                   student_full_name: query,
                 },
               },
             );
-            results = data.rows;
+
+            setStudents(data.data);
+
+            const response = await axios.get(
+              `${VITE_BACKEND_BASE_API}/pagination/getStudentPagination`,
+              {
+                params: {
+                  limit: 10,
+                  student_full_name: query,
+                },
+              },
+            );
+            setTotalPages(response.data.pagination.totalPages);
+            setTotalItems(response.data.pagination.totalItems);
           }
         } catch (error) {
           console.log('Error fetching student data');
         }
       }
-      // setStudentData(results);
-      // setNoOfStudent(results.length);
-      setStudents(results);
     } catch (err) {
       console.error('Error fetching student data:', err);
     } finally {
@@ -127,12 +194,24 @@ function StudentNavbar({
     const getData = async () => {
       isLoading(true);
       try {
+        setCurrentPage(1);
         const { data } = await axios.get(
-          `${VITE_BACKEND_BASE_API}/student/studentDetails`,
+          `${VITE_BACKEND_BASE_API}/student/getStudentDetails`,
         );
         // // setStudentData(data.data);
         // setNoOfStudent(data.data.length);
         setStudents(data.data);
+
+        const response = await axios.get(
+          `${VITE_BACKEND_BASE_API}/pagination/getStudentPagination`,
+          {
+            params: {
+              limit: 10,
+            },
+          },
+        );
+        setTotalPages(response.data.pagination.totalPages);
+        setTotalItems(response.data.pagination.totalItems);
       } catch (error) {
         console.log(error);
       } finally {
@@ -150,7 +229,7 @@ function StudentNavbar({
         </div>
         <div>
           <span className="text-[25px] font-bold">Student</span>
-          <span className="text-[18px]">{`  (${students.length})`}</span>
+          <span className="text-[18px]">{`  (${totalItems})`}</span>
         </div>
         <div className="flex flex-row mr-3">
           <div className="relative inline-block text-left pr-10">
@@ -195,6 +274,7 @@ function StudentNavbar({
                 type="text"
                 placeholder="Search something..."
                 className="search-input"
+                value={searchQuery}
                 onChange={handleSearchInput}
                 onFocus={(e) => {
                   e.target.placeholder = 'Search Pin Number / Name';

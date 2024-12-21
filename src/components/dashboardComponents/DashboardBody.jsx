@@ -227,7 +227,7 @@ const DashboardBody = ({}) => {
                     paddingX: 4,
                     paddingY: 1,
                     borderRadius: '25px',
-                    backgroundColor: `${noOfStudents ? '#2196f3' : ''}`, // Blue background
+                    backgroundColor: `${noOfStudents !== null ? '#2196f3' : ''}`, // Blue background
                     color: '#fff', // White text
                     display: 'inline-block',
                     textAlign: 'center',
@@ -269,7 +269,7 @@ const DashboardBody = ({}) => {
                     paddingX: 4,
                     paddingY: 1,
                     borderRadius: '25px',
-                    backgroundColor: `${noOfPendingAdmissions ? '#2196f3' : ''}`, // Blue background
+                    backgroundColor: `${noOfPendingAdmissions !== null ? '#2196f3' : ''}`, // Blue background
                     color: '#fff', // White text
                     display: 'inline-block',
                     textAlign: 'center',
@@ -311,7 +311,7 @@ const DashboardBody = ({}) => {
                     paddingX: 4,
                     paddingY: 1,
                     borderRadius: '25px',
-                    backgroundColor: `${noOfActiveGatepasses ? '#2196f3' : ''}`, // Blue background
+                    backgroundColor: `${noOfActiveGatepasses !== null ? '#2196f3' : ''}`, // Blue background
                     color: '#fff', // White text
                     display: 'inline-block',
                     textAlign: 'center',
@@ -353,7 +353,7 @@ const DashboardBody = ({}) => {
                     paddingX: 4,
                     paddingY: 1,
                     borderRadius: '25px',
-                    backgroundColor: `${noOfIncomingStudents ? '#2196f3' : ''}`, // Blue background
+                    backgroundColor: `${noOfIncomingStudents !== null ? '#2196f3' : ''}`, // Blue background
                     color: '#fff', // White text
                     display: 'inline-block',
                     textAlign: 'center',
@@ -398,7 +398,7 @@ const DashboardBody = ({}) => {
                     paddingX: 4,
                     paddingY: 1,
                     borderRadius: '25px',
-                    backgroundColor: `${noOfOutgoingStudents ? '#2196f3' : ''}`, // Blue background
+                    backgroundColor: `${noOfOutgoingStudents !== null ? '#2196f3' : ''}`, // Blue background
                     color: '#fff', // White text
                     display: 'inline-block',
                     textAlign: 'center',
@@ -440,7 +440,7 @@ const DashboardBody = ({}) => {
                     paddingX: 4,
                     paddingY: 1,
                     borderRadius: '25px',
-                    backgroundColor: `${noOfPendingEntries ? '#2196f3' : ''}`, // Blue background
+                    backgroundColor: `${noOfPendingEntries !== null ? '#2196f3' : ''}`, // Blue background
                     color: '#fff', // White text
                     display: 'inline-block',
                     textAlign: 'center',

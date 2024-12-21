@@ -15,16 +15,22 @@ const GatepassTable = ({
   setGatepasses,
   selectedParentOption,
   selectedAdminOption,
+  currentPage,
+  setCurrentPage,
+  totalPages,
+  // setTotalPages,
+  pageNumberList,
+  setPageNumberList,
   loading,
+  isLoading,
 }) => {
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
   const [selectedGatepass, setSelectedGatepass] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
 
   const fetchGatepasses = async (page) => {
     try {
-      const { data } = await axios.get(
+      isLoading(true);
+      const response = await axios.get(
         `${VITE_BACKEND_BASE_API}/gatepass/getGatepassForAdminApproval`,
         {
           params: {
@@ -35,11 +41,18 @@ const GatepassTable = ({
           },
         },
       );
-      // console.log(data);
-      setGatepasses(data.data);
-      setTotalPages(data.pagination.totalPages);
+      if (response.status === 200) {
+        const { data } = response;
+        // console.log(data);
+        setGatepasses(data.data);
+        // console.log(data.pagination.totalPages, data.pagination.currentPage);
+      } else {
+        console.error('Error fetching gatepass data');
+      }
     } catch (error) {
       console.error('Error fetching gatepass data', error);
+    } finally {
+      isLoading(false);
     }
   };
 
@@ -47,16 +60,14 @@ const GatepassTable = ({
     if (gatepasses) {
       // console.log("searchResults in body:", searchResults);
       setGatepasses(gatepasses);
-      setTotalPages(1); // Adjust pagination for search results
-      setCurrentPage(1);
     } else {
       fetchGatepasses(currentPage);
     }
-  }, [gatepasses, currentPage]);
+  }, [gatepasses]);
 
   useEffect(() => {
     fetchGatepasses(currentPage);
-  }, []);
+  }, [currentPage]);
 
   const handleShowDetails = (gatepass) => {
     setSelectedGatepass(gatepass);
@@ -118,6 +129,10 @@ const GatepassTable = ({
     }
     return pageNumbers;
   };
+
+  useEffect(() => {
+    setPageNumberList(getPageNumbers());
+  }, [totalPages]);
 
   const removeGatepassFromList = (gatepassNumber) => {
     setGatepasses((prevGatepasses) =>
@@ -360,12 +375,10 @@ const GatepassTable = ({
   return (
     <div className=" mx-4 mb-4 bg-white shadow-md rounded-lg">
       <div className="mt-4 mx-2">
-        {' '}
         {/* Added horizontal margin with mx-2 */}
         <table className="min-w-full border-collapse text-s">
           <thead className="">
             <tr className="bg-gray-200 rounded-2xl">
-              {' '}
               {/* Apply rounded corners to the entire row */}
               {/* Rounded left side */}
               <th className="py-2 px-4 text-left font-bold">GID</th>
@@ -377,7 +390,7 @@ const GatepassTable = ({
               <th className="py-2 px-4 text-left font-bold">Reason</th>
               <th className="py-2 px-4 text-left font-bold rounded-tr-2xl rounded-br-2xl">
                 Actions
-              </th>{' '}
+              </th>
               {/* Rounded right side */}
             </tr>
           </thead>
@@ -487,9 +500,8 @@ const GatepassTable = ({
             <ArrowBack />
           </IconButton>
           <div className="flex items-center mx-2">
-            {' '}
             {/* Center the page numbers */}
-            {getPageNumbers().map((number, index) => (
+            {pageNumberList.map((number, index) => (
               <button
                 key={index}
                 onClick={() =>

@@ -13,6 +13,14 @@ function TempStudentNavbar({
   setStudents,
   selectedOption,
   setSelectedOption,
+  totalItems,
+  setTotalItems,
+  // currentPage,
+  setCurrentPage,
+  // totalPages,
+  setTotalPages,
+  // pageNumberList,
+  // setPageNumberList,
   isLoading,
 }) {
   const [showMenu, setShowMenu] = useState(false);
@@ -39,6 +47,7 @@ function TempStudentNavbar({
   const filterStudents = async (option) => {
     isLoading(true);
     try {
+      setCurrentPage(1);
       if (option === 'All') {
         const { data } = await axios.get(
           `${VITE_BACKEND_BASE_API}/admission/getTempStudentDetails`,
@@ -53,6 +62,17 @@ function TempStudentNavbar({
         // setStudentData(results);
         // setNoOfStudent(results.length);
         setStudents(results);
+
+        const response = await axios.get(
+          `${VITE_BACKEND_BASE_API}/pagination/getTempStudentPagination`,
+          {
+            params: {
+              limit: 10,
+            },
+          },
+        );
+        setTotalPages(response.data.pagination.totalPages);
+        setTotalItems(response.data.pagination.totalItems);
       } else {
         const { data } = await axios.get(
           `${VITE_BACKEND_BASE_API}/admission/getTempStudentDetails`,
@@ -68,6 +88,18 @@ function TempStudentNavbar({
         // setStudentData(results);
         // setNoOfStudent(results.length);
         setStudents(results);
+
+        const response = await axios.get(
+          `${VITE_BACKEND_BASE_API}/pagination/getTempStudentPagination`,
+          {
+            params: {
+              limit: 10,
+              admission_status: option.toLowerCase(),
+            },
+          },
+        );
+        setTotalPages(response.data.pagination.totalPages);
+        setTotalItems(response.data.pagination.totalItems);
       }
     } catch (error) {
       console.log('Error fetching student data', error);
@@ -80,13 +112,24 @@ function TempStudentNavbar({
   const searchStudents = async () => {
     isLoading(true);
     try {
-      let results;
+      setCurrentPage(1);
       const query = searchQuery.trim();
       if (!query) {
         const { data } = await axios.get(
           `${VITE_BACKEND_BASE_API}/admission/getTempStudentDetails?page=1&limit=10`,
         );
-        results = data.data;
+        setStudents(data.data);
+
+        const response = await axios.get(
+          `${VITE_BACKEND_BASE_API}/pagination/getTempStudentPagination`,
+          {
+            params: {
+              limit: 10,
+            },
+          },
+        );
+        setTotalPages(response.data.pagination.totalPages);
+        setTotalItems(response.data.pagination.totalItems);
       } else {
         try {
           const isNum = /^\d+$/.test(query);
@@ -99,7 +142,19 @@ function TempStudentNavbar({
                 },
               },
             );
-            results = data.data;
+            setStudents(data.data);
+
+            const response = await axios.get(
+              `${VITE_BACKEND_BASE_API}/pagination/getTempStudentPagination`,
+              {
+                params: {
+                  limit: 10,
+                  search_query: query,
+                },
+              },
+            );
+            setTotalPages(response.data.pagination.totalPages);
+            setTotalItems(response.data.pagination.totalItems);
           } else {
             const { data } = await axios.get(
               `${VITE_BACKEND_BASE_API}/admission/getTempStudentDetails`,
@@ -109,7 +164,19 @@ function TempStudentNavbar({
                 },
               },
             );
-            results = data.data;
+            setStudents(data.data);
+
+            const response = await axios.get(
+              `${VITE_BACKEND_BASE_API}/pagination/getTempStudentPagination`,
+              {
+                params: {
+                  limit: 10,
+                  student_full_name: query,
+                },
+              },
+            );
+            setTotalPages(response.data.pagination.totalPages);
+            setTotalItems(response.data.pagination.totalItems);
           }
         } catch (error) {
           res.status(500).send('Error fetching student data');
@@ -117,7 +184,6 @@ function TempStudentNavbar({
       }
       // setStudentData(results);
       // setNoOfStudent(results.length);
-      setStudents(results);
     } catch (err) {
       console.error('Error fetching student data:', err);
       toast.error('Error Try Again');
@@ -130,12 +196,24 @@ function TempStudentNavbar({
     const getData = async () => {
       isLoading(true);
       try {
+        setCurrentPage(1);
         const { data } = await axios.get(
           `${VITE_BACKEND_BASE_API}/admission/getTempStudentDetails`,
         );
         // // setStudentData(data.data);
         // setNoOfStudent(data.data.length);
         setStudents(data.data);
+
+        const response = await axios.get(
+          `${VITE_BACKEND_BASE_API}/pagination/getTempStudentPagination`,
+          {
+            params: {
+              limit: 10,
+            },
+          },
+        );
+        setTotalPages(response.data.pagination.totalPages);
+        setTotalItems(response.data.pagination.totalItems);
       } catch (error) {
         console.log(error);
         toast.error('Error!');
@@ -154,7 +232,7 @@ function TempStudentNavbar({
         </div>
         <div>
           <span className="text-[25px] font-bold">Student</span>
-          <span className="text-[18px]">{`  (${students.length})`}</span>
+          <span className="text-[18px]">{`  (${totalItems})`}</span>
         </div>
         <div className="flex flex-row mr-3">
           <div className="relative inline-block text-left pr-10">

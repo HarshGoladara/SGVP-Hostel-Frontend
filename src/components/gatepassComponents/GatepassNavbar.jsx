@@ -14,6 +14,14 @@ function GatepassNavbar({
   setSelectedAdminOption,
   gatepasses,
   setGatepasses,
+  totalItems,
+  setTotalItems,
+  // currentPage,
+  setCurrentPage,
+  // totalPages,
+  setTotalPages,
+  // pageNumberList,
+  // setPageNumberList,
   isLoading,
 }) {
   // const [selectedParentOption, setSelectedParentOption] = useState('Approved');
@@ -40,6 +48,7 @@ function GatepassNavbar({
   const filterGatepasses = async (parentOption, adminOption) => {
     isLoading(true);
     try {
+      setCurrentPage(1);
       let filterParams = {
         page: 1,
         limit: 10,
@@ -64,6 +73,27 @@ function GatepassNavbar({
       // setGatepassData(results);
       // setNoOfGatepass(results.length);
       setGatepasses(results);
+
+      let filterPaginationParams = {
+        limit: 10,
+        parent_approval_status: parentOption.toLowerCase(),
+        admin_approval_status: adminOption.toLowerCase(),
+      };
+      if (query) {
+        filterPaginationParams = {
+          ...filterPaginationParams,
+          query_number: query,
+        };
+      }
+
+      const response = await axios.get(
+        `${VITE_BACKEND_BASE_API}/pagination/getGatepassPagination`,
+        {
+          params: filterPaginationParams,
+        },
+      );
+      setTotalPages(response.data.pagination.totalPages);
+      setTotalItems(response.data.pagination.totalItems);
     } catch (error) {
       console.error('Error fetching gatepass data', error);
     } finally {
@@ -83,12 +113,26 @@ function GatepassNavbar({
     const getData = async () => {
       isLoading(true);
       try {
+        setCurrentPage(1);
         const { data } = await axios.get(
           `${VITE_BACKEND_BASE_API}/gatepass/getGatepassForAdminApproval?parent_approval_status=${selectedParentOption.toLowerCase()}&admin_approval_status=${selectedAdminOption.toLowerCase()}`,
         );
         // // setGatepassData(data.data);
         // setNoOfGatepass(data.data.length);
         setGatepasses(data.data);
+
+        const response = await axios.get(
+          `${VITE_BACKEND_BASE_API}/pagination/getGatepassPagination`,
+          {
+            params: {
+              limit: 10,
+              parent_approval_status: selectedParentOption.toLowerCase(),
+              admin_approval_status: selectedAdminOption.toLowerCase(),
+            },
+          },
+        );
+        setTotalPages(response.data.pagination.totalPages);
+        setTotalItems(response.data.pagination.totalItems);
       } catch (error) {
         console.log(error);
       } finally {
@@ -106,7 +150,7 @@ function GatepassNavbar({
         </div>
         <div>
           <span className="text-[25px] font-bold">Gatepass</span>
-          <span className="text-[18px]">{`  (${gatepasses.length})`}</span>
+          <span className="text-[18px]">{`  (${totalItems})`}</span>
         </div>
         <div className="flex flex-row mr-3">
           {/* -------------Parent Status Filter start------------- */}

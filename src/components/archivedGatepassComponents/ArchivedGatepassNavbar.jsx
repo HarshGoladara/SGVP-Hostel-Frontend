@@ -10,18 +10,30 @@ import { VITE_BACKEND_BASE_API } from '../../helper/envConfig/envConfig.js';
 import './css/ArchivedGatepassNavbar.css';
 import DrawerBasic from '../commonCustomComponents/DrawerBasic.jsx';
 
-function ArchivedGatepassNavbar({ onSearch, isLoading }) {
-  const [gatepassData, setGatepassData] = useState([]);
-  const [noOfGatepass, setNoOfGatepass] = useState(0);
-  const [pinNumber, setPinNumber] = useState('');
+function ArchivedGatepassNavbar({
+  gatepasses,
+  setGatepasses,
+  totalItems,
+  setTotalItems,
+  // currentPage,
+  setCurrentPage,
+  // totalPages,
+  setTotalPages,
+  // pageNumberList,
+  // setPageNumberList,
+  startDate,
+  setStartDate,
+  endDate,
+  setEndDate,
+  isLoading,
+}) {
   const [searchQuery, setSearchQuery] = useState('');
-  const [startDate, setStartDate] = useState(null);
-  const [endDate, setEndDate] = useState(null);
 
   const filterGatepasses = async () => {
     // console.log(new Date(startDate).toLocaleString(),new Date(endDate).toLocaleString());
     isLoading(true);
     try {
+      setCurrentPage(1);
       let filterParams = {
         page: 1,
         limit: 10,
@@ -50,9 +62,35 @@ function ArchivedGatepassNavbar({ onSearch, isLoading }) {
         { params: filterParams },
       );
       const results = data.data;
-      setGatepassData(results);
-      setNoOfGatepass(results.length);
-      onSearch(results); // Update the parent state
+      setGatepasses(results);
+
+      let filterPaginationParams = {
+        limit: 10,
+      };
+
+      if (query) {
+        if (/^\d+$/.test(query)) {
+          filterPaginationParams.query_number = query;
+        } else {
+          filterPaginationParams.student_full_name = query;
+        }
+      }
+
+      if (startDate) {
+        filterPaginationParams.startDate =
+          dayjs(startDate).format('YYYY-MM-DD');
+      }
+
+      if (endDate) {
+        filterPaginationParams.endDate = dayjs(endDate).format('YYYY-MM-DD');
+      }
+
+      const response = await axios.get(
+        `${VITE_BACKEND_BASE_API}/pagination/getArchivedGatepassPagination`,
+        { params: filterPaginationParams },
+      );
+      setTotalPages(response.data.pagination.totalPages);
+      setTotalItems(response.data.pagination.totalItems);
     } catch (error) {
       console.error('Error fetching gatepass data', error);
     } finally {
@@ -64,10 +102,22 @@ function ArchivedGatepassNavbar({ onSearch, isLoading }) {
     const getData = async () => {
       isLoading(true);
       try {
+        setCurrentPage(1);
         const { data } = await axios.get(
           `${VITE_BACKEND_BASE_API}/gatepass/getGatepassFromArchived`,
         );
-        setNoOfGatepass(data.data.length);
+        setGatepasses(data.data);
+
+        const response = await axios.get(
+          `${VITE_BACKEND_BASE_API}/pagination/getArchivedGatepassPagination`,
+          {
+            params: {
+              limit: 10,
+            },
+          },
+        );
+        setTotalPages(response.data.pagination.totalPages);
+        setTotalItems(response.data.pagination.totalItems);
       } catch (error) {
         console.error(error);
       } finally {
@@ -85,7 +135,7 @@ function ArchivedGatepassNavbar({ onSearch, isLoading }) {
         </div>
         <div>
           <span className="text-[25px] font-bold">Gatepass</span>
-          <span className="text-[18px]">{`  (${noOfGatepass})`}</span>
+          <span className="text-[18px]">{`  (${totalItems})`}</span>
         </div>
         <div className="flex flex-row mr-3 items-center">
           {/* Start Date Picker */}

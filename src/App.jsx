@@ -21,6 +21,7 @@ import HairballSpinner from './components/commonCustomComponents/HairballSpinner
 import BlocksLoader from './components/commonCustomComponents/BlocksLoader.jsx';
 import DrawerBasic from './components/commonCustomComponents/DrawerBasic.jsx';
 import DashboardLayout from './components/dashboardComponents/DashboardLayout.jsx';
+import Sidebar from './layouts/Sidebar.jsx';
 
 function App() {
   const router = createBrowserRouter([
@@ -88,8 +89,6 @@ function App() {
             <div className="app-container">
               {/* <Sidebar /> */}
               <div className="flex-grow">
-                {/* <DrawerBasic />
-                <PhotoUpload /> */}
                 <DashboardLayout />
               </div>
             </div>
@@ -175,6 +174,17 @@ function App() {
             </div>
           ),
         },
+        // {
+        //   path: '/a2',
+        //   element: (
+        //     <div className="app-container">
+        //       {/* <Sidebar /> */}
+        //       <div className="flex-grow">
+        //         <AlumniStudentLayout2 />
+        //       </div>
+        //     </div>
+        //   ),
+        // },
       ],
     },
     // ---------------------------protected route with cookie ends-------------------------------

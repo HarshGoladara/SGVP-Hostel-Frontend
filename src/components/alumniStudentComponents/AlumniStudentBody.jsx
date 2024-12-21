@@ -10,38 +10,46 @@ import CustomCircularLoader from '../commonCustomComponents/CustomCircularLoader
 import HairballSpinner from '../commonCustomComponents/HairballSpinner.jsx';
 import toast from 'react-hot-toast';
 
-const AlumniStudentTable = ({ students, setStudents, loading }) => {
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
+const AlumniStudentTable = ({
+  students,
+  setStudents,
+  currentPage,
+  setCurrentPage,
+  totalPages,
+  // setTotalPages,
+  pageNumberList,
+  setPageNumberList,
+  loading,
+  isLoading,
+}) => {
   const [selectedStudent, setSelectedStudent] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
 
   const fetchStudentData = async (page) => {
+    isLoading(true);
     try {
       const { data } = await axios.get(
         `${VITE_BACKEND_BASE_API}/student/getAlumni?page=${page}&limit=10`,
       );
       setStudents(data.data);
-      setTotalPages(data.pagination.totalPages);
     } catch (error) {
       console.error('Error fetching student data', error);
     } finally {
+      isLoading(false);
     }
   };
 
   useEffect(() => {
     if (students) {
       setStudents(students);
-      setTotalPages(1); // Adjust pagination for search results
-      setCurrentPage(1);
     } else {
       fetchStudentData(currentPage);
     }
-  }, [students, currentPage]);
+  }, [students]);
 
   useEffect(() => {
     fetchStudentData(currentPage);
-  }, []);
+  }, [currentPage]);
 
   const handleMoveBackToSGVPAction = async (student) => {
     try {
@@ -130,6 +138,10 @@ const AlumniStudentTable = ({ students, setStudents, loading }) => {
     return pageNumbers;
   };
 
+  useEffect(() => {
+    setPageNumberList(getPageNumbers());
+  }, [totalPages]);
+
   // return (
   //   <div className="mx-4 mb-4 bg-white shadow-md rounded-lg">
   //   </div>
@@ -138,22 +150,20 @@ const AlumniStudentTable = ({ students, setStudents, loading }) => {
   return (
     <div className=" mx-4 mb-4 bg-white shadow-md rounded-lg">
       <div className="mt-4 mx-2">
-        {' '}
         {/* Added horizontal margin with mx-2 */}
         <table className="min-w-full border-collapse text-s">
           <thead className="">
             <tr className="bg-gray-200 rounded-2xl">
-              {' '}
               {/* Apply rounded corners to the entire row */}
               <th className="py-2 px-4 text-left font-bold rounded-tl-2xl rounded-bl-2xl">
                 Photo
-              </th>{' '}
+              </th>
               {/* Rounded left side */}
               <th className="py-2 px-4 text-left font-bold">Name</th>
               <th className="py-2 px-4 text-left font-bold">Mobile Number</th>
               <th className="py-2 px-4 text-left font-bold rounded-tr-2xl rounded-br-2xl">
                 Actions
-              </th>{' '}
+              </th>
               {/* Rounded right side */}
             </tr>
           </thead>
@@ -211,7 +221,7 @@ const AlumniStudentTable = ({ students, setStudents, loading }) => {
                       </span>
                       <span className="text-gray-500 text-sm">
                         {student.pin_number}
-                      </span>{' '}
+                      </span>
                       {/* Pin number in light font */}
                     </div>
                   </td>
@@ -256,9 +266,8 @@ const AlumniStudentTable = ({ students, setStudents, loading }) => {
             <ArrowBack />
           </IconButton>
           <div className="flex items-center mx-2">
-            {' '}
             {/* Center the page numbers */}
-            {getPageNumbers().map((number, index) => (
+            {pageNumberList.map((number, index) => (
               <button
                 key={index}
                 onClick={() =>

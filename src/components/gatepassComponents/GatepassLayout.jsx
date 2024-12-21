@@ -8,6 +8,10 @@ function GatepassLayout() {
   const [selectedAdminOption, setSelectedAdminOption] = useState('Pending');
   const [searchResults, setSearchResults] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [totalItems, setTotalItems] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [pageNumberList, setPageNumberList] = useState([]);
 
   const handleSearch = (results) => {
     setSearchResults(results);
@@ -26,6 +30,14 @@ function GatepassLayout() {
         setSelectedParentOption={setSelectedParentOption}
         selectedAdminOption={selectedAdminOption}
         setSelectedAdminOption={setSelectedAdminOption}
+        totalItems={totalItems}
+        setTotalItems={setTotalItems}
+        currentPage={currentPage}
+        setCurrentPage={setCurrentPage}
+        totalPages={totalPages}
+        setTotalPages={setTotalPages}
+        pageNumberList={pageNumberList}
+        setPageNumberList={setPageNumberList}
         isLoading={handleLoading}
       />
       <GatepassBody
@@ -35,7 +47,16 @@ function GatepassLayout() {
         setSelectedParentOption={setSelectedParentOption}
         selectedAdminOption={selectedAdminOption}
         setSelectedAdminOption={setSelectedAdminOption}
+        totalItems={totalItems}
+        setTotalItems={setTotalItems}
+        currentPage={currentPage}
+        setCurrentPage={setCurrentPage}
+        totalPages={totalPages}
+        setTotalPages={setTotalPages}
+        pageNumberList={pageNumberList}
+        setPageNumberList={setPageNumberList}
         loading={loading}
+        isLoading={handleLoading}
         className="flex-grow"
       />
     </div>

@@ -9,15 +9,28 @@ import { CircularProgress } from '@mui/material';
 import CustomCircularLoader from '../commonCustomComponents/CustomCircularLoader.jsx';
 import HairballSpinner from '../commonCustomComponents/HairballSpinner.jsx';
 
-const ArchivedGatepassTable = ({ searchResults, loading }) => {
-  const [gatepasses, setGatepasses] = useState([]);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
+const ArchivedGatepassTable = ({
+  gatepasses,
+  setGatepasses,
+  currentPage,
+  setCurrentPage,
+  totalPages,
+  // setTotalPages,
+  pageNumberList,
+  setPageNumberList,
+  startDate,
+  setStartDate,
+  endDate,
+  setEndDate,
+  loading,
+  isLoading,
+}) => {
   const [selectedGatepass, setSelectedGatepass] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
 
   const fetchGatepasses = async (page) => {
     try {
+      isLoading(true);
       const { data } = await axios.get(
         `${VITE_BACKEND_BASE_API}/gatepass/getGatepassFromArchived`,
         {
@@ -28,26 +41,25 @@ const ArchivedGatepassTable = ({ searchResults, loading }) => {
         },
       );
       setGatepasses(data.data);
-      setTotalPages(data.pagination.totalPages);
     } catch (error) {
       console.error('Error fetching gatepass data', error);
+    } finally {
+      isLoading(false);
     }
   };
 
   useEffect(() => {
     // console.log("searchResults in body:", searchResults);
-    if (searchResults) {
-      setGatepasses(searchResults);
-      setTotalPages(1); // Adjust pagination for search results
-      setCurrentPage(1);
+    if (gatepasses) {
+      setGatepasses(gatepasses);
     } else {
       fetchGatepasses(currentPage);
     }
-  }, [searchResults, currentPage]);
+  }, [gatepasses]);
 
   useEffect(() => {
     fetchGatepasses(currentPage);
-  }, []);
+  }, [currentPage]);
 
   const handleShowDetails = (gatepass) => {
     setSelectedGatepass(gatepass);
@@ -110,6 +122,10 @@ const ArchivedGatepassTable = ({ searchResults, loading }) => {
     return pageNumbers;
   };
 
+  useEffect(() => {
+    setPageNumberList(getPageNumbers());
+  }, [totalPages]);
+
   // return (
   //   <div className="mx-4 mb-4 bg-white shadow-md rounded-lg">
   //   </div>
@@ -118,12 +134,10 @@ const ArchivedGatepassTable = ({ searchResults, loading }) => {
   return (
     <div className=" mx-4 mb-4 bg-white shadow-md rounded-lg">
       <div className="mt-4 mx-2">
-        {' '}
         {/* Added horizontal margin with mx-2 */}
         <table className="min-w-full border-collapse text-s">
           <thead className="">
             <tr className="bg-gray-200 rounded-2xl">
-              {' '}
               {/* Apply rounded corners to the entire row */}
               {/* Rounded left side */}
               <th className="py-2 px-4 text-left font-bold">GID</th>
@@ -132,7 +146,7 @@ const ArchivedGatepassTable = ({ searchResults, loading }) => {
               <th className="py-2 px-4 text-left font-bold">Out Going</th>
               <th className="py-2 px-4 text-left font-bold">Permission Upto</th>
               <th className="py-2 px-4 text-left font-bold">Entry</th>
-              <th className="py-2 px-4 text-left font-bold">Reason</th>{' '}
+              <th className="py-2 px-4 text-left font-bold">Reason</th>
               {/* Rounded right side */}
             </tr>
           </thead>
@@ -212,9 +226,8 @@ const ArchivedGatepassTable = ({ searchResults, loading }) => {
             <ArrowBack />
           </IconButton>
           <div className="flex items-center mx-2">
-            {' '}
             {/* Center the page numbers */}
-            {getPageNumbers().map((number, index) => (
+            {pageNumberList.map((number, index) => (
               <button
                 key={index}
                 onClick={() =>

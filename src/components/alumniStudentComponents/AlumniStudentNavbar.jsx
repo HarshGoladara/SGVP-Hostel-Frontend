@@ -12,6 +12,14 @@ function AlumniStudentNavbar({
   setStudents,
   selectedOption,
   setSelectedOption,
+  totalItems,
+  setTotalItems,
+  // currentPage,
+  setCurrentPage,
+  // totalPages,
+  setTotalPages,
+  // pageNumberList,
+  // setPageNumberList,
   isLoading,
 }) {
   const [showMenu, setShowMenu] = useState(false);
@@ -36,13 +44,24 @@ function AlumniStudentNavbar({
   const searchStudents = async () => {
     isLoading(true);
     try {
-      let results;
+      setCurrentPage(1);
       const query = searchQuery.trim();
       if (!query) {
         const { data } = await axios.get(
           `${VITE_BACKEND_BASE_API}/student/getAlumni?page=1&limit=10`,
         );
-        results = data.data;
+        setStudents(data.data);
+
+        const response = await axios.get(
+          `${VITE_BACKEND_BASE_API}/pagination/getAlumniPagination`,
+          {
+            params: {
+              limit: 10,
+            },
+          },
+        );
+        setTotalPages(response.data.pagination.totalPages);
+        setTotalItems(response.data.pagination.totalItems);
       } else {
         try {
           const isPin = /^\d+$/.test(query);
@@ -55,7 +74,19 @@ function AlumniStudentNavbar({
                 },
               },
             );
-            results = data.data;
+            setStudents(data.data);
+
+            const response = await axios.get(
+              `${VITE_BACKEND_BASE_API}/pagination/getAlumniPagination`,
+              {
+                params: {
+                  limit: 10,
+                  pin_number: query,
+                },
+              },
+            );
+            setTotalPages(response.data.pagination.totalPages);
+            setTotalItems(response.data.pagination.totalItems);
           } else {
             const { data } = await axios.get(
               `${VITE_BACKEND_BASE_API}/student/getAlumni`,
@@ -65,7 +96,19 @@ function AlumniStudentNavbar({
                 },
               },
             );
-            results = data.data;
+            setStudents(data.data);
+
+            const response = await axios.get(
+              `${VITE_BACKEND_BASE_API}/pagination/getAlumniPagination`,
+              {
+                params: {
+                  limit: 10,
+                  student_full_name: query,
+                },
+              },
+            );
+            setTotalPages(response.data.pagination.totalPages);
+            setTotalItems(response.data.pagination.totalItems);
           }
         } catch (error) {
           console.error('Error fetching student data');
@@ -73,7 +116,6 @@ function AlumniStudentNavbar({
       }
       // setStudentData(results);
       // setNoOfStudent(results.length);
-      setStudents(results);
     } catch (err) {
       console.error('Error fetching student data:', err);
       toast.error('Error Try Again');
@@ -86,12 +128,24 @@ function AlumniStudentNavbar({
     const getData = async () => {
       isLoading(true);
       try {
+        setCurrentPage(1);
         const { data } = await axios.get(
           `${VITE_BACKEND_BASE_API}/student/getAlumni`,
         );
         // // setStudentData(data.data);
         // setNoOfStudent(data.data.length);
         setStudents(data.data);
+
+        const response = await axios.get(
+          `${VITE_BACKEND_BASE_API}/pagination/getAlumniPagination`,
+          {
+            params: {
+              limit: 10,
+            },
+          },
+        );
+        setTotalPages(response.data.pagination.totalPages);
+        setTotalItems(response.data.pagination.totalItems);
       } catch (error) {
         console.log(error);
         toast.error('Error Try Again');
@@ -113,7 +167,8 @@ function AlumniStudentNavbar({
           <span className="text-[18px]">{`  (${students.length})`}</span>
         </div>
         <div className="flex flex-row mr-3">
-          <div className="relative inline-block text-left pr-10">
+          {/* filtering options start------- */}
+          {/* <div className="relative inline-block text-left pr-10">
             <div className="flex flex-row">
               <div className="mt-[4px] flex flex-row mr-2">Filter</div>
               <button
@@ -133,11 +188,10 @@ function AlumniStudentNavbar({
                     <button
                       key={option}
                       onClick={() => handleSelect(option)}
-                      className={`block px-2 py-1 w-full text-left text-sm text-gray-700 rounded-md  ${
-                        selectedOption === option
+                      className={`block px-2 py-1 w-full text-left text-sm text-gray-700 rounded-md  ${selectedOption === option
                           ? 'bg-[#37AFE1] text-white'
                           : ''
-                      } `}
+                        } `}
                     >
                       {option}
                     </button>
@@ -145,7 +199,8 @@ function AlumniStudentNavbar({
                 </div>
               </div>
             )}
-          </div>
+          </div> */}
+          {/* filtering options end------- */}
           <div className="flex justify-center">
             <div className="search-container">
               <span className="search-icon">
