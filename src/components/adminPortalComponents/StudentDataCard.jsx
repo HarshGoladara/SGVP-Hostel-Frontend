@@ -3,6 +3,7 @@ import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEdit, faSave } from '@fortawesome/free-solid-svg-icons'; // Import FontAwesome icons
 import toast from 'react-hot-toast';
+import { VITE_BACKEND_BASE_API } from '../../helper/envConfig/envConfig.js';
 
 const StudentDataCard = ({ student, index }) => {
   const [error, setError] = useState('');
@@ -250,7 +251,7 @@ const StudentDataCard = ({ student, index }) => {
         ['pin_number']: student.pin_number,
       });
       const response = await axios.put(
-        `http://localhost:5000/api/updateData/updateStudent`,
+        `${VITE_BACKEND_BASE_API}/updateData/updateStudent`,
         updatedStudent,
       );
       console.log(response.data); // Handle success response

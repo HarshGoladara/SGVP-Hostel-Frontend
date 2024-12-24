@@ -8,6 +8,7 @@ import {
   faChevronDown,
   faChevronUp,
 } from '@fortawesome/free-solid-svg-icons'; // Import FontAwesome icons
+import { VITE_BACKEND_BASE_API } from '../../helper/envConfig/envConfig.js';
 
 const AllStudentDetails = () => {
   const [studentData, setStudentData] = useState([]);
@@ -29,7 +30,7 @@ const AllStudentDetails = () => {
   const fetchStudentData = async () => {
     try {
       const response = await axios.get(
-        'http://localhost:5000/api/student/studentDetails',
+        `${VITE_BACKEND_BASE_API}/student/studentDetails`,
       ); // Replace with your API endpoint
       setStudentData(response.data);
     } catch (err) {
@@ -68,7 +69,7 @@ const AllStudentDetails = () => {
 
     try {
       const response = await axios.get(
-        'http://localhost:5000/api/student/studentDetailsByPinNumber',
+        `${VITE_BACKEND_BASE_API}/student/studentDetailsByPinNumber`,
         {
           params: {
             pin_number: pinNumber,

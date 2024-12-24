@@ -1,93 +1,211 @@
 import PhotoUpload from './pages/PhotoUpload.jsx';
-import StudentDataForm from './components/admissionComponents/StudentDataForm.jsx';
-import StudentEducationForm from './components/admissionComponents/StudentEducationForm.jsx';
-import ParentDetailForm from './components/admissionComponents/ParentDetailForm.jsx';
-import RelativeForm from './components/admissionComponents/RelativeForm.jsx';
-import SantReferenceForm from './components/admissionComponents/SantReferenceForm.jsx';
-import RelativeReferenceForm from './components/admissionComponents/RelativeReferenceForm.jsx';
 import { RouterProvider, createBrowserRouter } from 'react-router-dom';
-import AdmissionForm from './components/admissionComponents/AdmissionForm.jsx';
-import AllStudentDetails from './components/adminPortalComponents/AllStudentDetails.jsx';
-import HomePage from './pages/HomePage.jsx';
-import LoginPage from './pages/authentication/Login.jsx';
-import ForgotPasswordPage from './pages/authentication/ForgotPassword.jsx';
-import RegisterPage from './pages/authentication/Register.jsx';
-import ActivateAccountPage from './pages/authentication/ActivateAccount.jsx';
-import SetNewPasswordPage from './pages/authentication/SetNewPassword.jsx';
 import ProtectedRoute from './pages/authentication/ProtectedRoutes.jsx';
+import { Toaster } from 'react-hot-toast';
 
 import './assets/css/App.css';
-import Sidebar from './layouts/Sidebar.jsx';
 // import StudentInfo from './components/studentDetails/StudentInfo.jsx'
 import StudentNavbar from './components/studentDetails/StudentNavbar.jsx';
 import StudentLayout from './components/studentDetails/StudentLayout.jsx';
+import TempAdmissionForm from './components/admissionComponents/TempAdmissionForm.jsx';
+
+import LoginComponent from './components/authComponents/LoginComponent.jsx';
+import OtpVerificationComponent from './components/authComponents/OtpVerificationComponent.jsx';
+import WelcomeComponent from './components/authComponents/WelcomeComponent.jsx';
+import HomeComponent from './components/introComponents/HomeComponent.jsx';
+import { Dashboard, Photo } from '@mui/icons-material';
+import TempStudentLayout from './components/tempStudentComponents/TempStudentLayout.jsx';
+import AlumniStudentLayout from './components/alumniStudentComponents/AlumniStudentLayout.jsx';
+import GatepassLayout from './components/gatepassComponents/GatepassLayout.jsx';
+import ArchivedGatepassLayout from './components/archivedGatepassComponents/ArchivedGatepassLayout.jsx';
+import CustomCircularLoader from './components/commonCustomComponents/CustomCircularLoader.jsx';
+import HairballSpinner from './components/commonCustomComponents/HairballSpinner.jsx';
+import BlocksLoader from './components/commonCustomComponents/BlocksLoader.jsx';
+import DrawerBasic from './components/commonCustomComponents/DrawerBasic.jsx';
+import DashboardLayout from './components/dashboardComponents/DashboardLayout.jsx';
+import Sidebar from './layouts/Sidebar.jsx';
+import AttendanceLayout from './components/attendanceComponents/AttendanceLayout.jsx';
+import RoomAllotmentLayout from './components/roomAllotmentComponents/RoomAllotmentLayout.jsx';
 
 function App() {
   const router = createBrowserRouter([
     {
+      path: '/',
+      element: <HomeComponent />,
+    },
+    {
       path: '/login',
-      element: <LoginPage />,
+      element: <LoginComponent />,
     },
     {
-      path: '/forgotpassword',
-      element: <ForgotPasswordPage />,
+      path: '/otpVerification',
+      element: <OtpVerificationComponent />,
     },
     {
-      path: '/register',
-      element: <RegisterPage />,
+      path: '/welcome',
+      element: <WelcomeComponent />,
     },
     {
-      path: '/activateAccount',
-      element: <ActivateAccountPage />,
+      path: '/tempAddStudent',
+      element: <TempAdmissionForm />,
     },
     {
-      path: '/setNewPassword',
-      element: <SetNewPasswordPage />,
+      path: '/photo',
+      element: <PhotoUpload />,
     },
+    {
+      path: '/drawer',
+      element: <DrawerBasic />,
+    },
+    {
+      path: '/circle',
+      element: (
+        <div>
+          <CustomCircularLoader size={150} logoSrc="/images/logo.jpg" />
+          <div>
+            <HairballSpinner
+              colors={{
+                fillColor1: '#c0392b',
+                fillColor2: '#d35400',
+                fillColor3: '#f39c12',
+                fillColor4: '#16a085',
+              }}
+              backgroundColor="#fff"
+              speed={2}
+              width={200}
+              height={200}
+              logoSrc="/images/logo.jpg"
+              logoSize={115}
+            />
+          </div>
+          <BlocksLoader visible={true} logoSrc="/images/logo.jpg" />
+        </div>
+      ),
+    },
+
+    // ---------------------------protected route with cookie start-------------------------------
     {
       element: <ProtectedRoute />,
       children: [
         {
-          path: '/',
-          element: <HomePage />,
-          children: [
-            {
-              path: '/form',
-              element: (
-                <>
-                  <StudentDataForm />
-                  <StudentEducationForm />
-                  <ParentDetailForm />
-                  <RelativeForm />
-                  <SantReferenceForm />
-                  <RelativeReferenceForm />
-                </>
-              ),
-            },
-            {
-              path: '/student',
-              element: <StudentLayout />,
-            },
-            {
-              path: '/addStudent',
-              element: <AdmissionForm />,
-            },
-            {
-              path: '/photo',
-              element: <PhotoUpload />,
-            },
-            {
-              path: '/studentDetails',
-              element: <AllStudentDetails />,
-            },
-          ],
+          path: '/dashboard',
+          element: (
+            <div className="app-container">
+              {/* <Sidebar /> */}
+              <div className="flex-grow">
+                <DashboardLayout />
+              </div>
+            </div>
+          ),
         },
+        {
+          path: '/studentDetails',
+          element: (
+            <div className="app-container">
+              {/* <Sidebar /> */}
+              <div className="flex-grow">
+                <StudentLayout />
+              </div>
+            </div>
+          ),
+        },
+        {
+          path: '/tempStudentDetails',
+          element: (
+            <div className="app-container">
+              {/* <Sidebar /> */}
+              <div className="flex-grow">
+                <TempStudentLayout />
+              </div>
+            </div>
+          ),
+        },
+        {
+          path: '/attendence',
+          element: (
+            <div className="app-container">
+              {/* <Sidebar /> */}
+              <div className="flex-grow">
+                <AttendanceLayout />
+              </div>
+            </div>
+          ),
+        },
+        {
+          path: '/gatepass',
+          element: (
+            <div className="app-container">
+              {/* <Sidebar /> */}
+              <div className="flex-grow">
+                <GatepassLayout />
+                {/* <GatepassBodyTemp /> */}
+              </div>
+            </div>
+          ),
+        },
+        {
+          path: '/archivedGatepass',
+          element: (
+            <div className="app-container">
+              {/* <Sidebar /> */}
+              <div className="flex-grow">
+                <ArchivedGatepassLayout />
+              </div>
+            </div>
+          ),
+        },
+        {
+          path: '/roomAllotment',
+          element: (
+            <div className="app-container">
+              {/* <Sidebar /> */}
+              <div className="flex-grow">
+                <RoomAllotmentLayout />
+              </div>
+            </div>
+          ),
+        },
+        {
+          path: '/alumni',
+          element: (
+            <div className="app-container">
+              {/* <Sidebar /> */}
+              <div className="flex-grow">
+                <AlumniStudentLayout />
+              </div>
+            </div>
+          ),
+        },
+        // {
+        //   path: '/a2',
+        //   element: (
+        //     <div className="app-container">
+        //       {/* <Sidebar /> */}
+        //       <div className="flex-grow">
+        //         <AlumniStudentLayout2 />
+        //       </div>
+        //     </div>
+        //   ),
+        // },
       ],
     },
+    // ---------------------------protected route with cookie ends-------------------------------
   ]);
 
   return (
     <>
+      <div>
+        <Toaster
+          position="top-center"
+          toastOptions={{
+            success: {
+              theme: {
+                primary: '#4aed88',
+              },
+            },
+          }}
+        ></Toaster>
+      </div>
       <RouterProvider router={router} />
     </>
   );

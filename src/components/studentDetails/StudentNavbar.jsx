@@ -1,31 +1,223 @@
 import React, { useEffect, useState } from 'react';
 import SearchIcon from '@mui/icons-material/Search';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
 import axios from 'axios';
 import { VITE_BACKEND_BASE_API } from '../../helper/envConfig/envConfig.js';
 import '../../assets/css/studentDetails/StudentNavbar.css';
+import DrawerBasic from '../commonCustomComponents/DrawerBasic.jsx';
+import DrawerFilters from './DrawerFilters.jsx';
 
-function StudentNavbar() {
-  const [studentData, setStudentData] = useState([]);
-  const [selectedOption, setSelectedOption] = useState('All');
+function StudentNavbar({
+  students,
+  setStudents,
+  selectedOption,
+  setSelectedOption,
+  totalItems,
+  setTotalItems,
+  // currentPage,
+  setCurrentPage,
+  // totalPages,
+  setTotalPages,
+  // pageNumberList,
+  // setPageNumberList,
+  searchQuery,
+  setSearchQuery,
+  isLoading,
+}) {
   const [showMenu, setShowMenu] = useState(false);
+  const [pinNumber, setPinNumber] = useState('');
 
   const options = ['All', 'Wing3', 'Dome', 'Vishvambharam'];
 
   const handleSelect = (option) => {
     setSelectedOption(option);
-    setShowMenu(false); // Close dropdown after selection
+    setSearchQuery('');
+    setShowMenu(false);
+    filterStudents(option);
+  };
+
+  const handlePinInput = (e) => {
+    setPinNumber(e.target.value);
+  };
+
+  const handleSearchInput = (e) => {
+    setSearchQuery(e.target.value);
+  };
+
+  const filterStudents = async (option) => {
+    isLoading(true);
+    try {
+      setCurrentPage(1);
+      if (option === 'All') {
+        const { data } = await axios.get(
+          `${VITE_BACKEND_BASE_API}/student/getStudentDetails`,
+          {
+            params: {
+              page: 1,
+              limit: 10,
+            },
+          },
+        );
+        const results = data.data;
+        // setStudentData(results);
+        // setNoOfStudent(results.length);
+        setStudents(results);
+
+        const response = await axios.get(
+          `${VITE_BACKEND_BASE_API}/pagination/getStudentPagination`,
+          {
+            params: {
+              limit: 10,
+            },
+          },
+        );
+        setTotalPages(response.data.pagination.totalPages);
+        setTotalItems(response.data.pagination.totalItems);
+      } else {
+        const { data } = await axios.get(
+          `${VITE_BACKEND_BASE_API}/student/getStudentDetails`,
+          {
+            params: {
+              page: 1,
+              limit: 10,
+              category: option,
+            },
+          },
+        );
+        const results = data.data;
+        // setStudentData(results);
+        // setNoOfStudent(results.length);
+        setStudents(results);
+
+        const response = await axios.get(
+          `${VITE_BACKEND_BASE_API}/pagination/getStudentPagination`,
+          {
+            params: {
+              limit: 10,
+              category: option,
+            },
+          },
+        );
+        setTotalPages(response.data.pagination.totalPages);
+        setTotalItems(response.data.pagination.totalItems);
+      }
+    } catch (error) {
+      console.log('Error fetching student data', error);
+    } finally {
+      isLoading(false);
+    }
+  };
+
+  const searchStudents = async (searchQuery) => {
+    isLoading(true);
+    try {
+      setCurrentPage(1);
+      const query = searchQuery.trim();
+      if (!query) {
+        const { data } = await axios.get(
+          `${VITE_BACKEND_BASE_API}/student/getStudentDetails?page=1&limit=10`,
+        );
+
+        setStudents(data.data);
+
+        const response = await axios.get(
+          `${VITE_BACKEND_BASE_API}/pagination/getStudentPagination`,
+          {
+            params: {
+              limit: 10,
+            },
+          },
+        );
+        setTotalPages(response.data.pagination.totalPages);
+        setTotalItems(response.data.pagination.totalItems);
+      } else {
+        try {
+          const isPin = /^\d+$/.test(query);
+          if (isPin) {
+            const { data } = await axios.get(
+              `${VITE_BACKEND_BASE_API}/student/getStudentDetails`,
+              {
+                params: {
+                  pin_number: query,
+                },
+              },
+            );
+
+            setStudents(data.data);
+
+            const response = await axios.get(
+              `${VITE_BACKEND_BASE_API}/pagination/getStudentPagination`,
+              {
+                params: {
+                  limit: 10,
+                  pin_number: query,
+                },
+              },
+            );
+            setTotalPages(response.data.pagination.totalPages);
+            setTotalItems(response.data.pagination.totalItems);
+          } else {
+            const { data } = await axios.get(
+              `${VITE_BACKEND_BASE_API}/student/getStudentDetails`,
+              {
+                params: {
+                  student_full_name: query,
+                },
+              },
+            );
+
+            setStudents(data.data);
+
+            const response = await axios.get(
+              `${VITE_BACKEND_BASE_API}/pagination/getStudentPagination`,
+              {
+                params: {
+                  limit: 10,
+                  student_full_name: query,
+                },
+              },
+            );
+            setTotalPages(response.data.pagination.totalPages);
+            setTotalItems(response.data.pagination.totalItems);
+          }
+        } catch (error) {
+          console.log('Error fetching student data');
+        }
+      }
+    } catch (err) {
+      console.error('Error fetching student data:', err);
+    } finally {
+      isLoading(false);
+    }
   };
 
   useEffect(() => {
     const getData = async () => {
+      isLoading(true);
       try {
+        setCurrentPage(1);
         const { data } = await axios.get(
-          `${VITE_BACKEND_BASE_API}/student/studentDetails`,
+          `${VITE_BACKEND_BASE_API}/student/getStudentDetails`,
         );
-        setStudentData(data.data);
+        // // setStudentData(data.data);
+        // setNoOfStudent(data.data.length);
+        setStudents(data.data);
+
+        const response = await axios.get(
+          `${VITE_BACKEND_BASE_API}/pagination/getStudentPagination`,
+          {
+            params: {
+              limit: 10,
+            },
+          },
+        );
+        setTotalPages(response.data.pagination.totalPages);
+        setTotalItems(response.data.pagination.totalItems);
       } catch (error) {
         console.log(error);
+      } finally {
+        isLoading(false);
       }
     };
     getData();
@@ -34,23 +226,49 @@ function StudentNavbar() {
   return (
     <div className="w-full colour-white p-[15px]">
       <div className="h-16 bg-[#ffffff] flex items-center px-4 rounded-md justify-between ">
-        <div>
-          <span className="text-[25px] font-bold">Student</span>
-          <span className="text-[18px]">{`(${studentData?.length})`}</span>
+        <div className="flex-shrink-0">
+          <DrawerBasic />
         </div>
-        <div className="flex flex-row mr-3">
+
+        <div className="flex-grow flex justify-center items-center space-x-3">
+          <span className="text-[25px] font-bold">Student</span>
+          <span className="text-[18px]">{`  (${totalItems})`}</span>
+        </div>
+
+        <div className="flex-shrink-0">
+          <DrawerFilters
+            students={students}
+            setStudents={setStudents}
+            selectedOption={selectedOption}
+            setSelectedOption={setSelectedOption}
+            totalItems={totalItems}
+            setTotalItems={setTotalItems}
+            // currentPage={currentPage}
+            setCurrentPage={setCurrentPage}
+            // totalPages={totalPages}
+            setTotalPages={setTotalPages}
+            // pageNumberList={pageNumberList}
+            // setPageNumberList={setPageNumberList}
+            searchQuery={searchQuery}
+            setSearchQuery={setSearchQuery}
+            filterStudents={filterStudents}
+            searchStudents={searchStudents}
+          />
+        </div>
+
+        {/* <div className="flex flex-row mr-3">
           <div className="relative inline-block text-left pr-10">
             <div className="flex flex-row">
-              <div className="mt-[4px] flex flex-row mr-2">Filter</div>
+              <div className="mt-[4px] flex flex-row mr-2">Category:-</div>
               <button
-                onClick={() => setShowMenu(!showMenu)} // Toggle dropdown menu
+                onClick={() => setShowMenu(!showMenu)}
                 className="flex items-center border-[1.5px] border-black focus:border-[#37AFE1] rounded-md px-2 py-1 text-gray-700 focus:outline-none"
               >
                 {selectedOption}
-                <ArrowDropDownIcon />
+                {showMenu ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />}
               </button>
             </div>
-            {showMenu && ( // Conditional render for dropdown
+            {showMenu && (
               <div
                 className={`absolute right-0 z-10 mt-1  pl-2 pr-5 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5`}
               >
@@ -59,7 +277,11 @@ function StudentNavbar() {
                     <button
                       key={option}
                       onClick={() => handleSelect(option)}
-                      className={`block px-2 py-1 w-full text-left text-sm text-gray-700 rounded-md  ${selectedOption === option ? 'bg-[#37AFE1] text-white' : ''} `}
+                      className={`block px-2 py-1 w-full text-left text-sm text-gray-700 rounded-md  ${
+                        selectedOption === option
+                          ? 'bg-[#37AFE1] text-white'
+                          : ''
+                      } `}
                     >
                       {option}
                     </button>
@@ -77,6 +299,8 @@ function StudentNavbar() {
                 type="text"
                 placeholder="Search something..."
                 className="search-input"
+                value={searchQuery}
+                onChange={handleSearchInput}
                 onFocus={(e) => {
                   e.target.placeholder = 'Search Pin Number / Name';
                   e.target.classList.add('focused');
@@ -85,10 +309,15 @@ function StudentNavbar() {
                   e.target.placeholder = 'Search something...';
                   e.target.classList.remove('focused');
                 }}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    searchStudents(searchQuery);
+                  }
+                }}
               />
             </div>
           </div>
-        </div>
+        </div> */}
       </div>
     </div>
   );

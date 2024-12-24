@@ -1,39 +1,26 @@
 import React, { useState } from 'react';
+import { useForm } from 'react-hook-form';
 import axios from 'axios';
 import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import { storage } from '../../firebase_config/firebase'; // Adjust the import according to your file structure
 import toast from 'react-hot-toast';
+import { VITE_BACKEND_BASE_API } from '../../helper/envConfig/envConfig.js';
+import { TextField, Button, Grid, CircularProgress, Box } from '@mui/material';
 
 const ParentDetailForm = () => {
-  const [parentData, setParentData] = useState({
-    pin_number: '',
-    father_name: '',
-    father_contact_number: '',
-    father_email: '',
-    father_photo_url: '', // Change to hold file
-    mother_name: '',
-    mother_contact_number: '',
-    mother_photo_url: '', // Change to hold file
-    approval_person_name: '',
-    approval_person_contact: '',
-    approval_person_relation: '',
-    approval_person_email: '',
-  });
-
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    setValue,
+  } = useForm();
   const [photoFile, setPhotoFile] = useState({
     fatherPhotoFile: null,
     motherPhotoFile: null,
   });
-
   const [loading, setLoading] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
-
-  // Handle input change for text inputs
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setParentData({ ...parentData, [name]: value });
-  };
 
   const handleFileChange = (e) => {
     const { name, files } = e.target;
@@ -68,82 +55,70 @@ const ParentDetailForm = () => {
     });
   };
 
-  const validateForm = () => {
+  const validateForm = (data) => {
     const alphabetRegex = /^[A-Za-z\s]+$/;
     const emailRegex = /\S+@\S+\.\S+/; // Regular expression for email validation
 
-    if (!parentData.pin_number || isNaN(parentData.pin_number))
+    if (!data.pin_number || isNaN(data.pin_number))
       return 'Pin number is required and should be a number.';
-
     if (
-      !parentData.father_name.trim() ||
-      !alphabetRegex.test(parentData.father_name.trim())
+      !data.father_name.trim() ||
+      !alphabetRegex.test(data.father_name.trim())
     )
       return 'Father name is required.';
-
     if (
-      !parentData.father_contact_number ||
-      isNaN(parentData.father_contact_number) ||
-      parentData.father_contact_number.length !== 10
+      !data.father_contact_number ||
+      isNaN(data.father_contact_number) ||
+      data.father_contact_number.length !== 10
     )
       return 'Father contact number is required and should be a valid number of 10 digits.';
-
-    if (!parentData.father_email || !emailRegex.test(parentData.father_email))
+    if (!data.father_email || !emailRegex.test(data.father_email))
       return 'A valid father email is required.';
-
     if (!photoFile.fatherPhotoFile) return 'Father photo is required.';
-
     if (
-      !parentData.mother_name.trim() ||
-      !alphabetRegex.test(parentData.mother_name.trim())
+      !data.mother_name.trim() ||
+      !alphabetRegex.test(data.mother_name.trim())
     )
       return 'Mother name is required.';
-
     if (
-      !parentData.mother_contact_number ||
-      isNaN(parentData.mother_contact_number) ||
-      parentData.mother_contact_number.length !== 10
+      !data.mother_contact_number ||
+      isNaN(data.mother_contact_number) ||
+      data.mother_contact_number.length !== 10
     )
       return 'Mother contact number is required and should be a valid number of 10 digits.';
-
     if (!photoFile.motherPhotoFile) return 'Mother photo is required.';
-
     if (
-      !parentData.approval_person_name.trim() ||
-      !alphabetRegex.test(parentData.approval_person_name.trim())
+      !data.approval_person_name.trim() ||
+      !alphabetRegex.test(data.approval_person_name.trim())
     )
       return 'Approval person name is required.';
-
     if (
-      !parentData.approval_person_contact ||
-      isNaN(parentData.approval_person_contact) ||
-      parentData.approval_person_contact.length !== 10
+      !data.approval_person_contact ||
+      isNaN(data.approval_person_contact) ||
+      data.approval_person_contact.length !== 10
     )
       return 'Approval person contact number is required and should be a valid number of 10 digits.';
-
     if (
-      !parentData.approval_person_relation.trim() ||
-      !alphabetRegex.test(parentData.approval_person_name.trim())
+      !data.approval_person_relation.trim() ||
+      !alphabetRegex.test(data.approval_person_name.trim())
     )
       return 'Approval person relation is required.';
-
     if (
-      !parentData.approval_person_email ||
-      !emailRegex.test(parentData.approval_person_email)
+      !data.approval_person_email ||
+      !emailRegex.test(data.approval_person_email)
     )
       return 'A valid approval person email is required.';
 
     return null;
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const onSubmit = async (data) => {
     setLoading(true);
     setSuccessMessage('');
     setErrorMessage('');
 
     // Validate the form
-    const error = validateForm();
+    const error = validateForm(data);
     if (error) {
       toast.error(error);
       setErrorMessage(error);
@@ -157,7 +132,7 @@ const ParentDetailForm = () => {
       if (photoFile.fatherPhotoFile) {
         fatherPhotoUrl = await uploadImage(
           photoFile.fatherPhotoFile,
-          `students/${parentData.pin_number}/father_photo`,
+          `students/${data.pin_number}/father_photo`,
         );
       }
 
@@ -166,22 +141,20 @@ const ParentDetailForm = () => {
       if (photoFile.motherPhotoFile) {
         motherPhotoUrl = await uploadImage(
           photoFile.motherPhotoFile,
-          `students/${parentData.pin_number}/mother_photo`,
+          `students/${data.pin_number}/mother_photo`,
         );
       }
 
-      // console.log(fatherPhotoUrl, motherPhotoUrl);
-
       // Update form data with the URLs
       const updatedParentData = {
-        ...parentData,
+        ...data,
         father_photo_url: fatherPhotoUrl,
         mother_photo_url: motherPhotoUrl,
       };
 
       // Submit the form data along with image URLs to the server
       const response = await axios.post(
-        'http://localhost:5000/api/admission/addParentsdetails',
+        `${VITE_BACKEND_BASE_API}/admission/addParentsdetails`,
         updatedParentData,
       );
       console.log('Parent data added successfully:', response.data);
@@ -189,235 +162,229 @@ const ParentDetailForm = () => {
       toast.success('Parent data added successfully!');
     } catch (error) {
       console.error('Error submitting Parent data:', error);
-      setErrorMessage('Error, Try again!', error.response.data);
-      toast.error(`${error.response.data}`);
+      setErrorMessage('Error, Try again!');
+      toast.error('Error, Try again!');
     } finally {
       setLoading(false);
     }
   };
 
+  const handleReset = () => {
+    setValue('pin_number', '');
+    setValue('father_name', '');
+    setValue('father_contact_number', '');
+    setValue('father_email', '');
+    setValue('mother_name', '');
+    setValue('mother_contact_number', '');
+    setValue('approval_person_name', '');
+    setValue('approval_person_contact', '');
+    setValue('approval_person_relation', '');
+    setValue('approval_person_email', '');
+    setPhotoFile({ fatherPhotoFile: null, motherPhotoFile: null });
+  };
+
   return (
-    <>
-      <form
-        onSubmit={handleSubmit}
-        className="mb-10 max-w-2xl mx-auto bg-slate-300 p-8 rounded-lg shadow-lg space-y-6"
-      >
-        <h2 className="text-3xl font-bold text-gray-800 mb-6 text-center">
-          Add Parent Details
-        </h2>
+    <form
+      onSubmit={handleSubmit(onSubmit)}
+      className="mb-10 max-w-2xl mx-auto bg-slate-300 p-8 rounded-lg shadow-lg space-y-6"
+    >
+      <h2 className="text-3xl font-bold text-gray-800 mb-6 text-center">
+        Add Parent Details
+      </h2>
 
+      <Grid container spacing={3}>
         {/* Pin Number */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-          <div className="flex flex-col">
-            <label className="mb-1 text-gray-600 font-medium">
-              Pin Number:
-            </label>
-            <input
-              type="text"
-              name="pin_number"
-              value={parentData.pin_number}
-              onChange={handleChange}
-              className="px-4 py-2 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
-            />
-          </div>
+        <Grid item xs={12} sm={6}>
+          <TextField
+            label="Pin Number"
+            variant="outlined"
+            fullWidth
+            {...register('pin_number', { required: 'Pin number is required.' })}
+            error={!!errors.pin_number}
+            helperText={errors.pin_number?.message}
+            className="mt-1 block w-full p-2 border border-gray-600 rounded-md bg-white"
+          />
+        </Grid>
 
-          {/* Father Section */}
-          <div className="flex flex-col">
-            <label className="mb-1 text-gray-600 font-medium">
-              Father Name:
-            </label>
-            <input
-              type="text"
-              name="father_name"
-              value={parentData.father_name}
-              onChange={handleChange}
-              className="px-4 py-2 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
-            />
-          </div>
+        {/* Father Section */}
+        <Grid item xs={12} sm={6}>
+          <TextField
+            label="Father Name"
+            variant="outlined"
+            fullWidth
+            {...register('father_name', {
+              required: 'Father name is required.',
+            })}
+            error={!!errors.father_name}
+            helperText={errors.father_name?.message}
+            className="mt-1 block w-full p-2 border border-gray-600 rounded-md bg-white"
+          />
+        </Grid>
 
-          <div className="flex flex-col">
-            <label className="mb-1 text-gray-600 font-medium">
-              Father Contact Number:
-            </label>
-            <input
-              type="text"
-              name="father_contact_number"
-              value={parentData.father_contact_number}
-              onChange={handleChange}
-              className="px-4 py-2 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
-            />
-          </div>
+        <Grid item xs={12} sm={6}>
+          <TextField
+            label="Father Contact Number"
+            variant="outlined"
+            fullWidth
+            {...register('father_contact_number', {
+              required: 'Father contact number is required.',
+            })}
+            error={!!errors.father_contact_number}
+            helperText={errors.father_contact_number?.message}
+            className="mt-1 block w-full p-2 border border-gray-600 rounded-md bg-white"
+          />
+        </Grid>
 
-          <div className="flex flex-col">
-            <label className="mb-1 text-gray-600 font-medium">
-              Father Email:
-            </label>
-            <input
-              type="email"
-              name="father_email"
-              value={parentData.father_email}
-              onChange={handleChange}
-              className="px-4 py-2 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
-            />
-          </div>
+        <Grid item xs={12} sm={6}>
+          <TextField
+            label="Father Email"
+            variant="outlined"
+            fullWidth
+            {...register('father_email', {
+              required: 'Father email is required.',
+            })}
+            error={!!errors.father_email}
+            helperText={errors.father_email?.message}
+            className="mt-1 block w-full p-2 border border-gray-600 rounded-md bg-white"
+          />
+        </Grid>
 
-          {/* Father Photo URL */}
-          <div className="flex flex-col">
-            <label className="mb-1 text-gray-600 font-medium">
-              Father Photo:
-            </label>
-            <input
-              type="file"
-              name="fatherPhotoFile"
-              accept="image/*"
-              onChange={handleFileChange}
-              className="text-black px-4 py-2 bg-white border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
-            />
-          </div>
+        <Grid item xs={12} sm={6}>
+          <input
+            type="file"
+            name="fatherPhotoFile"
+            accept="image/*"
+            onChange={handleFileChange}
+            className="mt-1 block w-full p-2 border border-gray-600 rounded-md bg-white"
+          />
+        </Grid>
 
-          {/* Mother Section */}
-          <div className="flex flex-col">
-            <label className="mb-1 text-gray-600 font-medium">
-              Mother Name:
-            </label>
-            <input
-              type="text"
-              name="mother_name"
-              value={parentData.mother_name}
-              onChange={handleChange}
-              className="px-4 py-2 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
-            />
-          </div>
+        {/* Mother Section */}
+        <Grid item xs={12} sm={6}>
+          <TextField
+            label="Mother Name"
+            variant="outlined"
+            fullWidth
+            {...register('mother_name', {
+              required: 'Mother name is required.',
+            })}
+            error={!!errors.mother_name}
+            helperText={errors.mother_name?.message}
+            className="mt-1 block w-full p-2 border border-gray-600 rounded-md bg-white"
+          />
+        </Grid>
 
-          <div className="flex flex-col">
-            <label className="mb-1 text-gray-600 font-medium">
-              Mother Contact Number:
-            </label>
-            <input
-              type="text"
-              name="mother_contact_number"
-              value={parentData.mother_contact_number}
-              onChange={handleChange}
-              className="px-4 py-2 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
-            />
-          </div>
+        <Grid item xs={12} sm={6}>
+          <TextField
+            label="Mother Contact Number"
+            variant="outlined"
+            fullWidth
+            {...register('mother_contact_number', {
+              required: 'Mother contact number is required.',
+            })}
+            error={!!errors.mother_contact_number}
+            helperText={errors.mother_contact_number?.message}
+            className="mt-1 block w-full p-2 border border-gray-600 rounded-md bg-white"
+          />
+        </Grid>
 
-          {/* Mother Photo URL */}
-          <div className="flex flex-col">
-            <label className="mb-1 text-gray-600 font-medium">
-              Mother Photo:
-            </label>
-            <input
-              type="file"
-              name="motherPhotoFile"
-              accept="image/*"
-              onChange={handleFileChange}
-              className="text-black px-4 py-2 bg-white border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
-            />
-          </div>
-        </div>
+        <Grid item xs={12} sm={6}>
+          <input
+            type="file"
+            name="motherPhotoFile"
+            accept="image/*"
+            onChange={handleFileChange}
+            className="mt-1 block w-full p-2 border border-gray-600 rounded-md bg-white"
+          />
+        </Grid>
+      </Grid>
 
+      <h2 className="text-3xl font-bold text-gray-800 mb-6 text-center">
+        Add Parent Details
+      </h2>
+
+      <Grid container spacing={3}>
         {/* Approval Person Section */}
-        <h3 className="text-xl font-semibold text-gray-700 mt-6">
-          Approval Person Details
-        </h3>
+        <Grid item xs={12} sm={6}>
+          <TextField
+            label="Approval Person Name"
+            variant="outlined"
+            fullWidth
+            {...register('approval_person_name', {
+              required: 'Approval person name is required.',
+            })}
+            error={!!errors.approval_person_name}
+            helperText={errors.approval_person_name?.message}
+            className="mt-1 block w-full p-2 border border-gray-600 rounded-md bg-white"
+          />
+        </Grid>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-          <div className="flex flex-col">
-            <label className="mb-1 text-gray-600 font-medium">
-              Approval Person Name:
-            </label>
-            <input
-              type="text"
-              name="approval_person_name"
-              value={parentData.approval_person_name}
-              onChange={handleChange}
-              className="px-4 py-2 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
-            />
-          </div>
+        <Grid item xs={12} sm={6}>
+          <TextField
+            label="Approval Person Contact"
+            variant="outlined"
+            fullWidth
+            {...register('approval_person_contact', {
+              required: 'Approval person contact is required.',
+            })}
+            error={!!errors.approval_person_contact}
+            helperText={errors.approval_person_contact?.message}
+            className="mt-1 block w-full p-2 border border-gray-600 rounded-md bg-white"
+          />
+        </Grid>
 
-          <div className="flex flex-col">
-            <label className="mb-1 text-gray-600 font-medium">
-              Approval Person Contact:
-            </label>
-            <input
-              type="text"
-              name="approval_person_contact"
-              value={parentData.approval_person_contact}
-              onChange={handleChange}
-              className="px-4 py-2 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
-            />
-          </div>
+        <Grid item xs={12} sm={6}>
+          <TextField
+            label="Approval Person Relation"
+            variant="outlined"
+            fullWidth
+            {...register('approval_person_relation', {
+              required: 'Approval person relation is required.',
+            })}
+            error={!!errors.approval_person_relation}
+            helperText={errors.approval_person_relation?.message}
+            className="mt-1 block w-full p-2 border border-gray-600 rounded-md bg-white"
+          />
+        </Grid>
 
-          <div className="flex flex-col">
-            <label className="mb-1 text-gray-600 font-medium">
-              Approval Person Relation:
-            </label>
-            <input
-              type="text"
-              name="approval_person_relation"
-              value={parentData.approval_person_relation}
-              onChange={handleChange}
-              className="px-4 py-2 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
-            />
-          </div>
+        <Grid item xs={12} sm={6}>
+          <TextField
+            label="Approval Person Email"
+            variant="outlined"
+            fullWidth
+            {...register('approval_person_email', {
+              required: 'Approval person email is required.',
+            })}
+            error={!!errors.approval_person_email}
+            helperText={errors.approval_person_email?.message}
+            className="mt-1 block w-full p-2 border border-gray-600 rounded-md bg-white"
+          />
+        </Grid>
+      </Grid>
 
-          <div className="flex flex-col">
-            <label className="mb-1 text-gray-600 font-medium">
-              Approval Person Email:
-            </label>
-            <input
-              type="email"
-              name="approval_person_email"
-              value={parentData.approval_person_email}
-              onChange={handleChange}
-              className="px-4 py-2 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
-            />
-          </div>
-        </div>
-
-        <button
-          type="submit"
-          className="w-1/4 bg-blue-600 text-white font-bold py-2 rounded hover:bg-blue-700"
-          disabled={loading}
-        >
-          {loading ? 'Submitting...' : 'Submit'}
-        </button>
-        <button
-          type="button"
-          className="ml-10 w-1/4 bg-blue-600 text-white font-bold py-2 rounded hover:bg-blue-700"
-          onClick={() =>
-            setParentData({
-              // Parent Details
-              pin_number: '',
-              father_name: '',
-              father_contact_number: '',
-              father_email: '',
-              father_photo_url: '',
-              mother_name: '',
-              mother_contact_number: '',
-              mother_photo_url: '',
-              approval_person_name: '',
-              approval_person_contact: '',
-              approval_person_relation: '',
-              approval_person_email: '',
-            })
-          }
-        >
-          Cancel
-        </button>
-        {/* {successMessage && (
-                    <p className="bg-green-100 text-green-800 border border-green-200 rounded-md p-4 my-4 text-center font-medium shadow-md">
-                        {successMessage}
-                    </p>
-                )}
-                {errorMessage && (
-                    <p className="bg-red-100 text-red-800 border border-red-200 rounded-md p-4 my-4 text-center font-medium shadow-md">
-                        {errorMessage}
-                    </p>
-                )} */}
-      </form>
-    </>
+      <div className="flex justify-center mt-6">
+        <Box sx={{ display: 'flex', gap: 2 }}>
+          <Button
+            type="submit"
+            variant="contained"
+            color="primary"
+            disabled={loading}
+            sx={{ width: 150 }}
+          >
+            {loading ? <CircularProgress size={24} /> : 'Submit'}
+          </Button>
+          {/* <Button
+            type="button"
+            variant="outlined"
+            color="secondary"
+            onClick={handleReset}
+            sx={{ width: 150 }}
+          >
+            Cancel
+          </Button> */}
+        </Box>
+      </div>
+    </form>
   );
 };
 
