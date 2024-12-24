@@ -6,12 +6,26 @@ import { Divider, Box, IconButton } from '@mui/material';
 import './css/DetailsCard.css';
 import { UpdateDialog } from './UpdateDialog.jsx';
 import { useCookies } from 'react-cookie';
+import { storage } from '../../firebase_config/firebase.js';
+import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
+import axios from 'axios';
+import toast from 'react-hot-toast';
+import { VITE_BACKEND_BASE_API } from '../../helper/envConfig/envConfig.js';
+import { CircularProgress } from '@mui/material';
 
 const DetailsCard = ({ students, setStudents, student, onClose }) => {
   const totalPages = 4;
   const [selectedStudent, setSelectedStudent] = useState(student);
   const [currentPage, setCurrentPage] = useState(1);
   const [animationDirection, setAnimationDirection] = useState('');
+  const [studentLoading, setStudentLoading] = useState(false);
+  const [fatherLoading, setFatherLoading] = useState(false);
+  const [motherLoading, setMotherLoading] = useState(false);
+  const [photoFile, setPhotoFile] = useState({
+    studentPhotoFile: null,
+    fatherPhotoFile: null,
+    motherPhotoFile: null,
+  });
   const [cookies] = useCookies(['token']);
   const gotoNextPage = () => {
     if (currentPage < totalPages) {
@@ -33,6 +47,136 @@ const DetailsCard = ({ students, setStudents, student, onClose }) => {
     }
   };
 
+  const handleFileChange = (e) => {
+    const { name, files } = e.target;
+    setPhotoFile({ ...photoFile, [name]: files[0] }); // Store the file in state
+  };
+
+  const uploadImage = (file, path) => {
+    return new Promise((resolve, reject) => {
+      const storageRef = ref(storage, path);
+      const uploadTask = uploadBytesResumable(storageRef, file);
+
+      uploadTask.on(
+        'state_changed',
+        (snapshot) => {
+          // Optional: handle progress here if needed
+        },
+        (error) => {
+          console.error('Upload failed:', error);
+          setErrorMessage('Upload failed, please try again.');
+          toast.error('Upload failed, please try again.');
+          reject(error);
+        },
+        async () => {
+          try {
+            const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+            resolve(downloadURL);
+          } catch (error) {
+            reject(error);
+          }
+        },
+      );
+    });
+  };
+
+  const uploadStudentPhoto = async () => {
+    try {
+      setStudentLoading(true);
+      const studentPhotoUrl = await uploadImage(
+        photoFile.studentPhotoFile,
+        `students/${selectedStudent.student_full_name}/student_photo`,
+      );
+
+      const response = await axios.put(
+        `${VITE_BACKEND_BASE_API}/updateData/updateStudentData`,
+        {
+          pin_number: selectedStudent.pin_number,
+          student_photo_url: studentPhotoUrl,
+        },
+      );
+
+      if (response.status === 200) {
+        toast.success('Student Photo Updated Successfully.');
+        setSelectedStudent({
+          ...selectedStudent,
+          student_photo_url: studentPhotoUrl,
+        });
+      } else {
+        toast.error('Error Updating Student Photo');
+      }
+    } catch (error) {
+      console.log('Error photo upload:', error);
+      toast.error('Error Updating Student Photo');
+    } finally {
+      setStudentLoading(false);
+    }
+  };
+  const uploadFatherPhoto = async () => {
+    try {
+      setFatherLoading(true);
+      const fatherPhotoUrl = await uploadImage(
+        photoFile.fatherPhotoFile,
+        `students/${selectedStudent.student_full_name}/father_photo`,
+      );
+
+      const response = await axios.put(
+        `${VITE_BACKEND_BASE_API}/updateData/updateParentDetails`,
+        {
+          pin_number: selectedStudent.pin_number,
+          father_photo_url: fatherPhotoUrl,
+        },
+      );
+
+      if (response.status === 200) {
+        toast.success('Father Photo Updated Successfully.');
+        setSelectedStudent({
+          ...selectedStudent,
+          father_photo_url: fatherPhotoUrl,
+        });
+      } else {
+        toast.error('Error Updating Father Photo');
+      }
+    } catch (error) {
+      console.log('Error photo upload:', error);
+      toast.error('Error Updating Father Photo');
+    } finally {
+      setFatherLoading(false);
+    }
+  };
+  const uploadMotherPhoto = async () => {
+    try {
+      setMotherLoading(true);
+      const motherPhotoUrl = await uploadImage(
+        photoFile.motherPhotoFile,
+        `students/${selectedStudent.student_full_name}/student_photo`,
+      );
+
+      const response = await axios.put(
+        `${VITE_BACKEND_BASE_API}/updateData/updateParentDetails`,
+        {
+          pin_number: selectedStudent.pin_number,
+          mother_photo_url: motherPhotoUrl,
+        },
+      );
+
+      if (response.status === 200) {
+        toast.success('Mother Photo Updated Successfully.');
+        setSelectedStudent({
+          ...selectedStudent,
+          mother_photo_url: motherPhotoUrl,
+        });
+      } else {
+        toast.error('Error Updating Mother Photo');
+      }
+    } catch (error) {
+      console.log('Error photo upload:', error);
+      toast.error('Error Updating Mother Photo');
+    } finally {
+      setMotherLoading(false);
+    }
+  };
+
   const isUpdateDialogEnabled = cookies.token.update_data_credentials;
 
   return (
@@ -48,7 +192,7 @@ const DetailsCard = ({ students, setStudents, student, onClose }) => {
         borderRadius: 3,
         p: 4,
       }}
-      className="bg-white rounded-xl shadow-lg min-w-[800px] min-h-[400px] p-6 h-[57%] w-[75%] transform transition-transform duration-300 scale-100 relative"
+      className="bg-white rounded-xl shadow-lg min-w-[800px] min-h-[450px] p-6 h-[57%] w-[75%] transform transition-transform duration-300 scale-100 relative"
     >
       <IconButton
         sx={{ position: 'absolute', top: 16, right: 16 }}
@@ -88,6 +232,36 @@ const DetailsCard = ({ students, setStudents, student, onClose }) => {
             ) : (
               <div className="flex items-center justify-center h-full w-full bg-blue-500 text-white text-lg font-bold rounded-lg">
                 {selectedStudent.student_full_name.charAt(0)}
+              </div>
+            )}
+            {/* Upload Photo Button */}
+            {isUpdateDialogEnabled && (
+              <div className="mt-2 flex flex-row items-center gap-2">
+                <label
+                  htmlFor="upload-photo"
+                  className="cursor-pointer bg-blue-500 text-white text-sm px-4 py-2 rounded-lg hover:bg-blue-600"
+                >
+                  Upload
+                </label>
+                <input
+                  type="file"
+                  id="upload-photo"
+                  name="studentPhotoFile"
+                  className="hidden"
+                  accept="image/*"
+                  onChange={handleFileChange}
+                />
+                <button
+                  onClick={uploadStudentPhoto}
+                  className={`bg-green-500 text-black text-sm px-4 py-2 rounded-lg hover:bg-green-600 ${
+                    photoFile.studentPhotoFile
+                      ? ''
+                      : 'opacity-50 cursor-not-allowed'
+                  }`}
+                  disabled={!photoFile.studentPhotoFile}
+                >
+                  {studentLoading ? <CircularProgress size={16} /> : 'Save'}
+                </button>
               </div>
             )}
           </div>
@@ -261,9 +435,8 @@ const DetailsCard = ({ students, setStudents, student, onClose }) => {
         </div>
         <div className="flex mt-[10px]">
           <div>
+            {/* Father's Photo Section */}
             <div className="h-[90px] md:h-[125px] w-full flex-shrink-0 mr-4 mb-1">
-              {' '}
-              {/* Fixed 30% width for the image */}
               {selectedStudent.father_photo_url ? (
                 <img
                   src={selectedStudent.father_photo_url}
@@ -276,9 +449,38 @@ const DetailsCard = ({ students, setStudents, student, onClose }) => {
                 </div>
               )}
             </div>
-            <div className="h-[90px] md:h-[125px] w-full flex-shrink-0 mr-4">
-              {' '}
-              {/* Fixed 30% width for the image */}
+            {isUpdateDialogEnabled && (
+              <div className="mt-2 flex flex-row items-center gap-2">
+                <label
+                  htmlFor="upload-father-photo"
+                  className="cursor-pointer bg-blue-500 text-white text-sm px-4 py-2 rounded-lg hover:bg-blue-600"
+                >
+                  Upload
+                </label>
+                <input
+                  type="file"
+                  id="upload-father-photo"
+                  className="hidden"
+                  accept="image/*"
+                  name="fatherPhotoFile"
+                  onChange={handleFileChange}
+                />
+                <button
+                  onClick={uploadFatherPhoto}
+                  className={`bg-green-500 text-black text-sm px-4 py-2 rounded-lg hover:bg-green-600 ${
+                    photoFile.fatherPhotoFile
+                      ? ''
+                      : 'opacity-50 cursor-not-allowed'
+                  }`}
+                  disabled={!photoFile.fatherPhotoFile}
+                >
+                  {fatherLoading ? <CircularProgress size={16} /> : 'Save'}
+                </button>
+              </div>
+            )}
+
+            {/* Mother's Photo Section */}
+            <div className="h-[90px] md:h-[125px] w-full flex-shrink-0 mr-4 mt-4">
               {selectedStudent.mother_photo_url ? (
                 <img
                   src={selectedStudent.mother_photo_url}
@@ -291,7 +493,37 @@ const DetailsCard = ({ students, setStudents, student, onClose }) => {
                 </div>
               )}
             </div>
+            {isUpdateDialogEnabled && (
+              <div className="mt-2 flex flex-row items-center gap-2">
+                <label
+                  htmlFor="upload-mother-photo"
+                  className="cursor-pointer bg-blue-500 text-white text-sm px-4 py-2 rounded-lg hover:bg-blue-600"
+                >
+                  Upload
+                </label>
+                <input
+                  type="file"
+                  id="upload-mother-photo"
+                  className="hidden"
+                  accept="image/*"
+                  name="motherPhotoFile"
+                  onChange={handleFileChange}
+                />
+                <button
+                  onClick={uploadMotherPhoto}
+                  className={`bg-green-500 text-black text-sm px-4 py-2 rounded-lg hover:bg-green-600 ${
+                    photoFile.motherPhotoFile
+                      ? ''
+                      : 'opacity-50 cursor-not-allowed'
+                  }`}
+                  disabled={!photoFile.motherPhotoFile}
+                >
+                  {motherLoading ? <CircularProgress size={16} /> : 'Save'}
+                </button>
+              </div>
+            )}
           </div>
+
           <div className="flex-grow ml-[10px] flex flex-col">
             <span className="text-2xl font-bold block">
               {selectedStudent.student_full_name}
@@ -447,7 +679,7 @@ const DetailsCard = ({ students, setStudents, student, onClose }) => {
         style={{
           position: 'absolute',
           bottom: 10,
-          right: 10,
+          right: '50%',
         }}
       >
         <div>{currentPage} - 4</div>

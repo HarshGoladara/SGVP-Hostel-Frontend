@@ -7,6 +7,7 @@ import { VITE_BACKEND_BASE_API } from '../../helper/envConfig/envConfig.js';
 import './css/TempStudentNavbar.css';
 import DrawerBasic from '../commonCustomComponents/DrawerBasic.jsx';
 import toast from 'react-hot-toast';
+import DrawerFilters from './DrawerFilters.jsx';
 
 function TempStudentNavbar({
   students,
@@ -109,7 +110,7 @@ function TempStudentNavbar({
     }
   };
 
-  const searchStudents = async () => {
+  const searchStudents = async (searchQuery) => {
     isLoading(true);
     try {
       setCurrentPage(1);
@@ -227,14 +228,37 @@ function TempStudentNavbar({
   return (
     <div className="w-full colour-white p-[15px]">
       <div className="h-16 bg-[#ffffff] flex items-center px-4 rounded-md justify-between ">
-        <div>
+        <div className="flex-shrink-0">
           <DrawerBasic />
         </div>
-        <div>
+
+        <div className="flex-grow flex justify-center items-center space-x-3">
           <span className="text-[25px] font-bold">Student</span>
           <span className="text-[18px]">{`  (${totalItems})`}</span>
         </div>
-        <div className="flex flex-row mr-3">
+
+        <div className="flex-shrink-0">
+          <DrawerFilters
+            students={students}
+            setStudents={setStudents}
+            selectedOption={selectedOption}
+            setSelectedOption={setSelectedOption}
+            totalItems={totalItems}
+            setTotalItems={setTotalItems}
+            // currentPage={currentPage}
+            setCurrentPage={setCurrentPage}
+            // totalPages={totalPages}
+            setTotalPages={setTotalPages}
+            // pageNumberList={pageNumberList}
+            // setPageNumberList={setPageNumberList}
+            searchQuery={searchQuery}
+            setSearchQuery={setSearchQuery}
+            filterStudents={filterStudents}
+            searchStudents={searchStudents}
+          />
+        </div>
+
+        {/* <div className="flex flex-row mr-3">
           <div className="relative inline-block text-left pr-10">
             <div className="flex flex-row">
               <div className="mt-[4px] flex flex-row mr-2">Filter</div>
@@ -288,13 +312,13 @@ function TempStudentNavbar({
                 }}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter') {
-                    searchStudents();
+                    searchStudents(searchQuery);
                   }
                 }}
               />
             </div>
           </div>
-        </div>
+        </div> */}
       </div>
     </div>
   );

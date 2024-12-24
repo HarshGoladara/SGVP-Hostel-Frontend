@@ -220,7 +220,7 @@ const GatepassTable = ({
           `${VITE_BACKEND_BASE_API}/gatepass/addGatepassInArchived`,
           archivedGatepassBody,
         );
-        if (responsePost.status === 200) {
+        if (responsePost.status === 201) {
           // console.log('Gatepass Moved to Archived successfully:', responsePost);
           toast.success('Re-Entry Completed And Gatepass Archived');
           removeGatepassFromList(gatepass.gatepass_number);

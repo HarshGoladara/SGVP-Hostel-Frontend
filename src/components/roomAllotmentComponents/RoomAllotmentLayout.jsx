@@ -1,23 +1,8 @@
-// import React from 'react';
-// import StudentNavbar from './StudentNavbar';
-// import StudentBody from './StudentBody';
-
-// function StudentLayout() {
-//   return (
-//     <div className="h-full flex flex-col">
-//       <StudentNavbar />
-//       <StudentBody className="flex-grow" />
-//     </div>
-//   );
-// }
-
-// export default StudentLayout;
-
 import React, { useState } from 'react';
-import StudentNavbar from './StudentNavbar';
-import StudentBody from './StudentBody';
+import RoomAllotmentNavbar from './RoomAllotmentNavbar';
+import RoomAllotmentBody from './RoomAllotmentBody';
 
-function StudentLayout() {
+function RoomAllotmentLayout() {
   const [students, setStudents] = useState([]);
   const [selectedOption, setSelectedOption] = useState('All');
   const [searchResults, setSearchResults] = useState([]);
@@ -26,7 +11,6 @@ function StudentLayout() {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [pageNumberList, setPageNumberList] = useState([]);
-  const [searchQuery, setSearchQuery] = useState('');
 
   const handleSearch = (results) => {
     setSearchResults(results);
@@ -38,7 +22,7 @@ function StudentLayout() {
 
   return (
     <div className="h-full flex flex-col">
-      <StudentNavbar
+      <RoomAllotmentNavbar
         students={students}
         setStudents={setStudents}
         selectedOption={selectedOption}
@@ -51,11 +35,9 @@ function StudentLayout() {
         setTotalPages={setTotalPages}
         pageNumberList={pageNumberList}
         setPageNumberList={setPageNumberList}
-        searchQuery={searchQuery}
-        setSearchQuery={setSearchQuery}
         isLoading={handleLoading}
       />
-      <StudentBody
+      <RoomAllotmentBody
         students={students}
         setStudents={setStudents}
         selectedOption={selectedOption}
@@ -68,8 +50,6 @@ function StudentLayout() {
         setTotalPages={setTotalPages}
         pageNumberList={pageNumberList}
         setPageNumberList={setPageNumberList}
-        searchQuery={searchQuery}
-        setSearchQuery={setSearchQuery}
         loading={loading}
         isLoading={handleLoading}
         className="flex-grow"
@@ -78,4 +58,4 @@ function StudentLayout() {
   );
 }
 
-export default StudentLayout;
+export default RoomAllotmentLayout;

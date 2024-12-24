@@ -23,6 +23,8 @@ import timeGridPlugin from '@fullcalendar/timegrid';
 import { Box } from '@mui/material';
 import AddEventDialog from './AddEventDialog.jsx';
 import UpdateDeleteEventDialog from './UpdateDeleteEventDialog.jsx';
+import * as XLSX from 'xlsx'; // Import XLSX library
+import dayjs from 'dayjs';
 
 const DashboardBody = ({}) => {
   const [noOfStudents, setNoOfStudents] = useState(null);
@@ -31,6 +33,7 @@ const DashboardBody = ({}) => {
   const [noOfPendingAdmissions, setNoOfPendingAdmissions] = useState(null);
   const [noOfActiveGatepasses, setNoOfActiveGatepasses] = useState(null);
   const [noOfPendingEntries, setNoOfPendingEntries] = useState(null);
+  const [pendingEntries, setPendingEntries] = useState([]);
   const [events, setEvents] = useState([]);
   const [modalOpen, setModalOpen] = useState(false);
   const [newEvent, setNewEvent] = useState({
@@ -145,6 +148,7 @@ const DashboardBody = ({}) => {
         // console.log(response);
         if (response.status === 200) {
           setNoOfPendingEntries(response.data.total_pending_entries);
+          setPendingEntries(response.data.pending_entries);
         } else {
           toast.error('Error Loading no of pending entries');
         }
@@ -191,6 +195,40 @@ const DashboardBody = ({}) => {
     };
     loadEvents();
   }, []);
+
+  // Function to generate and download the Excel file
+  const generateReport = (pendingEntries) => {
+    let data = [];
+    pendingEntries.map((row) => {
+      data.push({
+        'Gatepass No': row.gatepass_number,
+        PIN: row.pin_number,
+        'Student Name': row.student_full_name,
+        'Created at': `${new Date(row.gatepass_created).toLocaleDateString()} ${new Date(row.gatepass_created).toLocaleTimeString()}`,
+        'Outgoing Time': `${new Date(row.outgoing_timestamp).toLocaleDateString()} ${new Date(row.outgoing_timestamp).toLocaleTimeString()}`,
+        'Pemission Upto Time': `${new Date(row.permission_upto_timestamp).toLocaleDateString()} ${new Date(row.permission_upto_timestamp).toLocaleTimeString()}`,
+        Reason: row.reason,
+        Remarks: row.remarks,
+      });
+    });
+    // Convert the data to a worksheet
+    const worksheet = XLSX.utils.json_to_sheet(data);
+    // Create a new workbook and append the worksheet
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Attendance Report');
+    // Generate a binary string
+    const excelBuffer = XLSX.write(workbook, {
+      bookType: 'xlsx',
+      type: 'array',
+    });
+    // Create a Blob from the buffer
+    const blob = new Blob([excelBuffer], { type: 'application/octet-stream' });
+    // Create a link to download the Blob
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = `Pending_Entries_Report_${new Date().toLocaleDateString()}.xlsx`;
+    link.click();
+  };
 
   // Handle event click for deletion
   const handleEventClick = (clickInfo) => {
@@ -458,6 +496,16 @@ const DashboardBody = ({}) => {
                   )}
                 </Box>
               </Typography>
+              {noOfPendingEntries !== null && (
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={() => generateReport(pendingEntries)}
+                  sx={{ marginTop: 2 }}
+                >
+                  Generate Report
+                </Button>
+              )}
             </CardContent>
           </Card>
         </div>

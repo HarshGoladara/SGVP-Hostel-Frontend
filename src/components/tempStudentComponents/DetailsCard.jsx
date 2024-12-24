@@ -401,7 +401,7 @@ const DetailsCard = ({ student, onClose }) => {
         style={{
           position: 'absolute',
           bottom: 10,
-          right: 10,
+          right: '50%',
         }}
       >
         <div>{currentPage} - 4</div>

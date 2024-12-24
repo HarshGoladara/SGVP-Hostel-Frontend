@@ -6,6 +6,7 @@ import axios from 'axios';
 import { VITE_BACKEND_BASE_API } from '../../helper/envConfig/envConfig.js';
 import './css/GatepassNavbar.css';
 import DrawerBasic from '../commonCustomComponents/DrawerBasic.jsx';
+import DrawerFilters from './DrawerFilters.jsx';
 
 function GatepassNavbar({
   selectedParentOption,
@@ -37,15 +38,15 @@ function GatepassNavbar({
   const handleParentSelect = (option) => {
     setSelectedParentOption(option);
     setShowParentMenu(false);
-    filterGatepasses(option, selectedAdminOption);
+    filterGatepasses(option, selectedAdminOption, searchQuery);
   };
   const handleAdminSelect = (option) => {
     setSelectedAdminOption(option);
     setShowAdminMenu(false);
-    filterGatepasses(selectedParentOption, option);
+    filterGatepasses(selectedParentOption, option, searchQuery);
   };
 
-  const filterGatepasses = async (parentOption, adminOption) => {
+  const filterGatepasses = async (parentOption, adminOption, searchQuery) => {
     isLoading(true);
     try {
       setCurrentPage(1);
@@ -145,15 +146,39 @@ function GatepassNavbar({
   return (
     <div className="w-full colour-white p-[15px]">
       <div className="h-16 bg-[#ffffff] flex items-center px-4 rounded-md justify-between ">
-        <div>
+        <div className="flex-shrink-0">
           <DrawerBasic />
         </div>
-        <div>
+
+        <div className="flex-grow flex justify-center items-center space-x-3">
           <span className="text-[25px] font-bold">Gatepass</span>
           <span className="text-[18px]">{`  (${totalItems})`}</span>
         </div>
-        <div className="flex flex-row mr-3">
-          {/* -------------Parent Status Filter start------------- */}
+
+        <div className="flex-shrink-0">
+          <DrawerFilters
+            gatepasses={gatepasses}
+            setGatepasses={setGatepasses}
+            selectedParentOption={selectedParentOption}
+            setSelectedParentOption={setSelectedParentOption}
+            selectedAdminOption={selectedAdminOption}
+            setSelectedAdminOption={setSelectedAdminOption}
+            totalItems={totalItems}
+            setTotalItems={setTotalItems}
+            // currentPage={currentPage}
+            setCurrentPage={setCurrentPage}
+            // totalPages={totalPages}
+            setTotalPages={setTotalPages}
+            // pageNumberList={pageNumberList}
+            // setPageNumberList={setPageNumberList}
+            isLoading={isLoading}
+            searchQuery={searchQuery}
+            setSearchQuery={setSearchQuery}
+            filterGatepasses={filterGatepasses}
+          />
+        </div>
+
+        {/* <div className="flex flex-row mr-3">
           <div className="relative inline-block text-left pr-10">
             <div className="flex flex-row">
               <div className="mt-[4px] flex flex-row mr-2">Parent:-</div>
@@ -174,11 +199,10 @@ function GatepassNavbar({
                     <button
                       key={option}
                       onClick={() => handleParentSelect(option)}
-                      className={`block px-2 py-1 w-full text-left text-sm text-gray-700 rounded-md  ${
-                        selectedParentOption === option
-                          ? 'bg-[#37AFE1] text-white'
-                          : ''
-                      } `}
+                      className={`block px-2 py-1 w-full text-left text-sm text-gray-700 rounded-md  ${selectedParentOption === option
+                        ? 'bg-[#37AFE1] text-white'
+                        : ''
+                        } `}
                     >
                       {option}
                     </button>
@@ -187,8 +211,6 @@ function GatepassNavbar({
               </div>
             )}
           </div>
-          {/* -------------Parent Status Filter end------------- */}
-          {/* -------------Admin Status Filter start------------- */}
           <div className="relative inline-block text-left pr-10">
             <div className="flex flex-row">
               <div className="mt-[4px] flex flex-row mr-2">Admin:-</div>
@@ -209,11 +231,10 @@ function GatepassNavbar({
                     <button
                       key={option}
                       onClick={() => handleAdminSelect(option)}
-                      className={`block px-2 py-1 w-full text-left text-sm text-gray-700 rounded-md  ${
-                        selectedAdminOption === option
-                          ? 'bg-[#37AFE1] text-white'
-                          : ''
-                      } `}
+                      className={`block px-2 py-1 w-full text-left text-sm text-gray-700 rounded-md  ${selectedAdminOption === option
+                        ? 'bg-[#37AFE1] text-white'
+                        : ''
+                        } `}
                     >
                       {option}
                     </button>
@@ -222,7 +243,6 @@ function GatepassNavbar({
               </div>
             )}
           </div>
-          {/* -------------Admin Status Filter end------------- */}
 
           <div className="flex justify-center">
             <div className="search-container">
@@ -245,13 +265,13 @@ function GatepassNavbar({
                 onKeyDown={(e) => {
                   if (e.key === 'Enter') {
                     // searchGatepasses();
-                    filterGatepasses(selectedParentOption, selectedAdminOption);
+                    filterGatepasses(selectedParentOption, selectedAdminOption, searchQuery);
                   }
                 }}
               />
             </div>
           </div>
-        </div>
+        </div> */}
       </div>
     </div>
   );

@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import SearchIcon from '@mui/icons-material/Search';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
-import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
 import axios from 'axios';
 import { VITE_BACKEND_BASE_API } from '../../helper/envConfig/envConfig.js';
-import './css/StudentNavbar.css';
+import './css/RoomAllotmentNavbar.css';
 import DrawerBasic from '../commonCustomComponents/DrawerBasic.jsx';
+import toast from 'react-hot-toast';
 import DrawerFilters from './DrawerFilters.jsx';
 
-function StudentNavbar({
+function RoomAllotmentNavbar({
   students,
   setStudents,
   selectedOption,
@@ -21,20 +21,17 @@ function StudentNavbar({
   setTotalPages,
   // pageNumberList,
   // setPageNumberList,
-  searchQuery,
-  setSearchQuery,
   isLoading,
 }) {
   const [showMenu, setShowMenu] = useState(false);
   const [pinNumber, setPinNumber] = useState('');
+  const [searchQuery, setSearchQuery] = useState('');
 
-  const options = ['All', 'Wing3', 'Dome', 'Vishvambharam'];
+  const options = ['All', 'Pending', 'Confirmed', 'Cancelled'];
 
   const handleSelect = (option) => {
     setSelectedOption(option);
-    setSearchQuery('');
     setShowMenu(false);
-    filterStudents(option);
   };
 
   const handlePinInput = (e) => {
@@ -45,70 +42,6 @@ function StudentNavbar({
     setSearchQuery(e.target.value);
   };
 
-  const filterStudents = async (option) => {
-    isLoading(true);
-    try {
-      setCurrentPage(1);
-      if (option === 'All') {
-        const { data } = await axios.get(
-          `${VITE_BACKEND_BASE_API}/student/getStudentDetails`,
-          {
-            params: {
-              page: 1,
-              limit: 10,
-            },
-          },
-        );
-        const results = data.data;
-        // setStudentData(results);
-        // setNoOfStudent(results.length);
-        setStudents(results);
-
-        const response = await axios.get(
-          `${VITE_BACKEND_BASE_API}/pagination/getStudentPagination`,
-          {
-            params: {
-              limit: 10,
-            },
-          },
-        );
-        setTotalPages(response.data.pagination.totalPages);
-        setTotalItems(response.data.pagination.totalItems);
-      } else {
-        const { data } = await axios.get(
-          `${VITE_BACKEND_BASE_API}/student/getStudentDetails`,
-          {
-            params: {
-              page: 1,
-              limit: 10,
-              category: option,
-            },
-          },
-        );
-        const results = data.data;
-        // setStudentData(results);
-        // setNoOfStudent(results.length);
-        setStudents(results);
-
-        const response = await axios.get(
-          `${VITE_BACKEND_BASE_API}/pagination/getStudentPagination`,
-          {
-            params: {
-              limit: 10,
-              category: option,
-            },
-          },
-        );
-        setTotalPages(response.data.pagination.totalPages);
-        setTotalItems(response.data.pagination.totalItems);
-      }
-    } catch (error) {
-      console.log('Error fetching student data', error);
-    } finally {
-      isLoading(false);
-    }
-  };
-
   const searchStudents = async (searchQuery) => {
     isLoading(true);
     try {
@@ -116,13 +49,12 @@ function StudentNavbar({
       const query = searchQuery.trim();
       if (!query) {
         const { data } = await axios.get(
-          `${VITE_BACKEND_BASE_API}/student/getStudentDetails?page=1&limit=10`,
+          `${VITE_BACKEND_BASE_API}/student/getAlumni?page=1&limit=10`,
         );
-
         setStudents(data.data);
 
         const response = await axios.get(
-          `${VITE_BACKEND_BASE_API}/pagination/getStudentPagination`,
+          `${VITE_BACKEND_BASE_API}/pagination/getAlumniPagination`,
           {
             params: {
               limit: 10,
@@ -136,18 +68,17 @@ function StudentNavbar({
           const isPin = /^\d+$/.test(query);
           if (isPin) {
             const { data } = await axios.get(
-              `${VITE_BACKEND_BASE_API}/student/getStudentDetails`,
+              `${VITE_BACKEND_BASE_API}/student/getAlumni`,
               {
                 params: {
                   pin_number: query,
                 },
               },
             );
-
             setStudents(data.data);
 
             const response = await axios.get(
-              `${VITE_BACKEND_BASE_API}/pagination/getStudentPagination`,
+              `${VITE_BACKEND_BASE_API}/pagination/getAlumniPagination`,
               {
                 params: {
                   limit: 10,
@@ -159,18 +90,17 @@ function StudentNavbar({
             setTotalItems(response.data.pagination.totalItems);
           } else {
             const { data } = await axios.get(
-              `${VITE_BACKEND_BASE_API}/student/getStudentDetails`,
+              `${VITE_BACKEND_BASE_API}/student/getAlumni`,
               {
                 params: {
                   student_full_name: query,
                 },
               },
             );
-
             setStudents(data.data);
 
             const response = await axios.get(
-              `${VITE_BACKEND_BASE_API}/pagination/getStudentPagination`,
+              `${VITE_BACKEND_BASE_API}/pagination/getAlumniPagination`,
               {
                 params: {
                   limit: 10,
@@ -182,11 +112,14 @@ function StudentNavbar({
             setTotalItems(response.data.pagination.totalItems);
           }
         } catch (error) {
-          console.log('Error fetching student data');
+          console.error('Error fetching student data');
         }
       }
+      // setStudentData(results);
+      // setNoOfStudent(results.length);
     } catch (err) {
       console.error('Error fetching student data:', err);
+      toast.error('Error Try Again');
     } finally {
       isLoading(false);
     }
@@ -198,14 +131,14 @@ function StudentNavbar({
       try {
         setCurrentPage(1);
         const { data } = await axios.get(
-          `${VITE_BACKEND_BASE_API}/student/getStudentDetails`,
+          `${VITE_BACKEND_BASE_API}/student/getAlumni`,
         );
         // // setStudentData(data.data);
         // setNoOfStudent(data.data.length);
         setStudents(data.data);
 
         const response = await axios.get(
-          `${VITE_BACKEND_BASE_API}/pagination/getStudentPagination`,
+          `${VITE_BACKEND_BASE_API}/pagination/getAlumniPagination`,
           {
             params: {
               limit: 10,
@@ -216,6 +149,7 @@ function StudentNavbar({
         setTotalItems(response.data.pagination.totalItems);
       } catch (error) {
         console.log(error);
+        toast.error('Error Try Again');
       } finally {
         isLoading(false);
       }
@@ -251,7 +185,6 @@ function StudentNavbar({
             // setPageNumberList={setPageNumberList}
             searchQuery={searchQuery}
             setSearchQuery={setSearchQuery}
-            filterStudents={filterStudents}
             searchStudents={searchStudents}
           />
         </div>
@@ -259,13 +192,13 @@ function StudentNavbar({
         {/* <div className="flex flex-row mr-3">
           <div className="relative inline-block text-left pr-10">
             <div className="flex flex-row">
-              <div className="mt-[4px] flex flex-row mr-2">Category:-</div>
+              <div className="mt-[4px] flex flex-row mr-2">Filter</div>
               <button
                 onClick={() => setShowMenu(!showMenu)}
                 className="flex items-center border-[1.5px] border-black focus:border-[#37AFE1] rounded-md px-2 py-1 text-gray-700 focus:outline-none"
               >
                 {selectedOption}
-                {showMenu ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />}
+                <ArrowDropDownIcon />
               </button>
             </div>
             {showMenu && (
@@ -277,11 +210,10 @@ function StudentNavbar({
                     <button
                       key={option}
                       onClick={() => handleSelect(option)}
-                      className={`block px-2 py-1 w-full text-left text-sm text-gray-700 rounded-md  ${
-                        selectedOption === option
+                      className={`block px-2 py-1 w-full text-left text-sm text-gray-700 rounded-md  ${selectedOption === option
                           ? 'bg-[#37AFE1] text-white'
                           : ''
-                      } `}
+                        } `}
                     >
                       {option}
                     </button>
@@ -299,7 +231,6 @@ function StudentNavbar({
                 type="text"
                 placeholder="Search something..."
                 className="search-input"
-                value={searchQuery}
                 onChange={handleSearchInput}
                 onFocus={(e) => {
                   e.target.placeholder = 'Search Pin Number / Name';
@@ -323,4 +254,4 @@ function StudentNavbar({
   );
 }
 
-export default StudentNavbar;
+export default RoomAllotmentNavbar;

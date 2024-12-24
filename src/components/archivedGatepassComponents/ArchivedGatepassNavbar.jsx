@@ -9,6 +9,7 @@ import axios from 'axios';
 import { VITE_BACKEND_BASE_API } from '../../helper/envConfig/envConfig.js';
 import './css/ArchivedGatepassNavbar.css';
 import DrawerBasic from '../commonCustomComponents/DrawerBasic.jsx';
+import DrawerFilters from './DrawerFilters.jsx';
 
 function ArchivedGatepassNavbar({
   gatepasses,
@@ -29,7 +30,7 @@ function ArchivedGatepassNavbar({
 }) {
   const [searchQuery, setSearchQuery] = useState('');
 
-  const filterGatepasses = async () => {
+  const filterGatepasses = async (searchQuery, startDate, endDate) => {
     // console.log(new Date(startDate).toLocaleString(),new Date(endDate).toLocaleString());
     isLoading(true);
     try {
@@ -130,15 +131,39 @@ function ArchivedGatepassNavbar({
   return (
     <div className="w-full colour-white p-[15px]">
       <div className="h-16 bg-[#ffffff] flex items-center px-4 rounded-md justify-between">
-        <div>
+        <div className="flex-shrink-0">
           <DrawerBasic />
         </div>
-        <div>
+
+        <div className="flex-grow flex justify-center items-center space-x-3">
           <span className="text-[25px] font-bold">Gatepass</span>
           <span className="text-[18px]">{`  (${totalItems})`}</span>
         </div>
-        <div className="flex flex-row mr-3 items-center">
-          {/* Start Date Picker */}
+
+        <div className="flex-shrink-0">
+          <DrawerFilters
+            gatepasses={gatepasses}
+            setGatepasses={setGatepasses}
+            totalItems={totalItems}
+            setTotalItems={setTotalItems}
+            // currentPage={currentPage}
+            setCurrentPage={setCurrentPage}
+            // totalPages={totalPages}
+            setTotalPages={setTotalPages}
+            // pageNumberList={pageNumberList}
+            // setPageNumberList={setPageNumberList}
+            startDate={startDate}
+            setStartDate={setStartDate}
+            endDate={endDate}
+            setEndDate={setEndDate}
+            isLoading={isLoading}
+            searchQuery={searchQuery}
+            setSearchQuery={setSearchQuery}
+            filterGatepasses={filterGatepasses}
+          />
+        </div>
+
+        {/* <div className="flex flex-row mr-3 items-center">
           <LocalizationProvider dateAdapter={AdapterDayjs}>
             <DatePicker
               label="Start Date"
@@ -149,8 +174,6 @@ function ArchivedGatepassNavbar({
               )}
             />
           </LocalizationProvider>
-
-          {/* End Date Picker */}
           <LocalizationProvider dateAdapter={AdapterDayjs}>
             <DatePicker
               label="End Date"
@@ -162,7 +185,6 @@ function ArchivedGatepassNavbar({
             />
           </LocalizationProvider>
 
-          {/* Search Input */}
           <div className="flex justify-center ml-3">
             <div className="search-container">
               <span className="search-icon">
@@ -183,13 +205,13 @@ function ArchivedGatepassNavbar({
                 }}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter') {
-                    filterGatepasses();
+                    filterGatepasses(searchQuery, startDate, endDate);
                   }
                 }}
               />
             </div>
           </div>
-        </div>
+        </div> */}
       </div>
     </div>
   );

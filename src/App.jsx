@@ -22,6 +22,8 @@ import BlocksLoader from './components/commonCustomComponents/BlocksLoader.jsx';
 import DrawerBasic from './components/commonCustomComponents/DrawerBasic.jsx';
 import DashboardLayout from './components/dashboardComponents/DashboardLayout.jsx';
 import Sidebar from './layouts/Sidebar.jsx';
+import AttendanceLayout from './components/attendanceComponents/AttendanceLayout.jsx';
+import RoomAllotmentLayout from './components/roomAllotmentComponents/RoomAllotmentLayout.jsx';
 
 function App() {
   const router = createBrowserRouter([
@@ -122,8 +124,7 @@ function App() {
             <div className="app-container">
               {/* <Sidebar /> */}
               <div className="flex-grow">
-                <DrawerBasic />
-                <PhotoUpload />
+                <AttendanceLayout />
               </div>
             </div>
           ),
@@ -157,8 +158,7 @@ function App() {
             <div className="app-container">
               {/* <Sidebar /> */}
               <div className="flex-grow">
-                <DrawerBasic />
-                <PhotoUpload />
+                <RoomAllotmentLayout />
               </div>
             </div>
           ),
