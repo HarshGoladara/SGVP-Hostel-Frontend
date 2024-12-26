@@ -18,6 +18,8 @@ import { VITE_BACKEND_BASE_API } from '../../helper/envConfig/envConfig';
 import toast from 'react-hot-toast';
 import { useCookies } from 'react-cookie';
 import { v4 as uuid } from 'uuid';
+import LoginIcon from '@mui/icons-material/Login';
+import HomeIcon from '@mui/icons-material/Home';
 
 const LoginComponent = () => {
   const {
@@ -283,6 +285,7 @@ const LoginComponent = () => {
               ) : (
                 'Login'
               )}
+              <LoginIcon className="ml-2" />
             </Button>
             <Box className="h-3" />
             <Button
@@ -296,6 +299,7 @@ const LoginComponent = () => {
               onClick={() => navigate('/')}
             >
               Home
+              <HomeIcon className="ml-2" />
             </Button>
           </form>
         </Paper>

@@ -6,472 +6,463 @@ import { Divider, Box, IconButton } from '@mui/material';
 import './css/DetailsCard.css';
 import { UpdateDialog } from './UpdateDialog.jsx';
 import { useCookies } from 'react-cookie';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  Typography,
+  Grid2,
+  Menu,
+  MenuItem,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  TextField,
+  Button,
+  CircularProgress,
+} from '@mui/material';
+import PersonRemoveIcon from '@mui/icons-material/PersonRemove';
+import DeleteIcon from '@mui/icons-material/Delete';
+import AddCircleIcon from '@mui/icons-material/AddCircle';
+import axios from 'axios';
+import { VITE_BACKEND_BASE_API } from '../../helper/envConfig/envConfig.js';
+import toast from 'react-hot-toast';
+import AssignRoomAndBedDialog from './AssignRoomAndBedDialog.jsx';
 
-const DetailsCard = ({ students, setStudents, student, onClose }) => {
-  const totalPages = 4;
-  const [selectedStudent, setSelectedStudent] = useState(student);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [animationDirection, setAnimationDirection] = useState('');
+const DetailsCard = ({
+  roomAllotment,
+  setRoomAllotment,
+  selectedOption,
+  setSelectedOption,
+  fetchRooms,
+  bed,
+  onClose,
+}) => {
+  const [selectedBed, setSelectedBed] = useState(bed);
+  const [deAllocateLoading, setDeAllocateLoading] = useState(false);
+  const [removeBedLoading, setRemoveBedLoading] = useState(false);
+  const [assignRoomAndBedDialogOpen, setAssignRoomAndBedDialogOpen] =
+    useState(false);
+
   const [cookies] = useCookies(['token']);
-  const gotoNextPage = () => {
-    if (currentPage < totalPages) {
-      setAnimationDirection('slide-out'); // Set to slide out
-      setTimeout(() => {
-        setCurrentPage(currentPage + 1);
-        setAnimationDirection('slide-in'); // Set to slide in
-      }, 300); // Duration of the animation
+
+  const handleDeallocateBed = async () => {
+    // Add logic to handle deallocating the bed
+    // console.log('De-Allocate Bed clicked', selectedBed);
+    try {
+      setDeAllocateLoading(true);
+      const response = await axios.delete(
+        `${VITE_BACKEND_BASE_API}/roomAllotment/deAllocateRoomAndBed`,
+        {
+          params: { bed_number: selectedBed.bed_number },
+        },
+      );
+      if (response.status === 200) {
+        toast.success(`Bed ${selectedBed.bed_number} De-Allocated`);
+        setSelectedBed({
+          ...selectedBed,
+          pin_number: null,
+          student_full_name: null,
+        });
+        fetchRooms();
+      } else {
+        toast.error('Error!');
+      }
+    } catch (error) {
+      console.log('Error de-allocating bed', error);
+      toast.error('Error!');
+    } finally {
+      setDeAllocateLoading(false);
+      onClose();
     }
   };
 
-  const gotoPreviousPage = () => {
-    if (currentPage > 1) {
-      setAnimationDirection('glide-out'); // Set to glide out
-      setTimeout(() => {
-        setCurrentPage(currentPage - 1);
-        setAnimationDirection('glide-in'); // Set to glide in
-      }, 300); // Duration of the animation
+  const handleRemoveBed = async () => {
+    // Add logic to handle removing the bed
+    // console.log('Remove Bed clicked', selectedBed);
+    try {
+      setRemoveBedLoading(true);
+      const response = await axios.delete(
+        `${VITE_BACKEND_BASE_API}/roomAllotment/deleteBed`,
+        {
+          params: { bed_number: selectedBed.bed_number },
+        },
+      );
+      if (response.status === 200) {
+        toast.success(`Bed ${selectedBed.bed_number} Removed`);
+        fetchRooms();
+      } else {
+        toast.error('Error!');
+      }
+    } catch (error) {
+      console.log('Error removing bed', error);
+      toast.error('Error!');
+    } finally {
+      setRemoveBedLoading(false);
+      onClose();
     }
   };
 
-  const isUpdateDialogEnabled = cookies.token.update_data_credentials;
+  const handleAssignRoomAndBed = () => {
+    // Add logic to handle assigning a room and bed
+    // console.log('Assign Room & Bed clicked', selectedBed);
+    setAssignRoomAndBedDialogOpen(true);
+  };
+
+  const isDeAllocateBedEnabled = selectedBed.pin_number !== null;
+  const isRemoveBedEnabled = selectedBed.pin_number === null;
+  const isAssignRoomAndBedEnabled = selectedBed.pin_number === null;
 
   return (
-    <Box
-      sx={{
-        position: 'absolute',
-        top: '50%',
-        left: '50%',
-        transform: 'translate(-50%, -50%)',
-        // width: 800,
-        bgcolor: 'background.paper',
-        boxShadow: 24,
-        borderRadius: 3,
-        p: 4,
-      }}
-      className="bg-white rounded-xl shadow-lg min-w-[800px] min-h-[400px] p-6 h-[57%] w-[75%] transform transition-transform duration-300 scale-100 relative"
-    >
-      <IconButton
-        sx={{ position: 'absolute', top: 16, right: 16 }}
-        onClick={onClose}
-      >
-        <CloseIcon />
-      </IconButton>
-
-      {/* --------------------------page-1----------------------------- */}
-      <div
-        className={`flex flex-col ${currentPage === 1 ? animationDirection : 'hidden'}`}
-      >
-        <div className="flex justify-stretch">
-          <div className="text-3xl font-bold">Student Details</div>
-          {isUpdateDialogEnabled && (
-            <UpdateDialog
-              students={students}
-              setStudents={setStudents}
-              selectedStudent={selectedStudent}
-              setSelectedStudent={setSelectedStudent}
-              currentPage={currentPage}
-            />
-          )}
-        </div>
-        <div className="flex mt-[10px]">
-          <div className="h-[180px] md:h-[250px] w-[20%] flex-shrink-0 mr-4">
-            {' '}
-            {/* Fixed 20% width for the image */}
-            {selectedStudent.student_photo_url ? (
-              <img
-                src={
-                  selectedStudent.student_photo_url ||
-                  `https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQVrNIrc_GMNFCWvfIVx-5-1jI0YMf-3a6yyg&s`
-                }
-                alt={selectedStudent.student_full_name}
-                className="h-full w-full object-cover rounded-lg"
-              />
-            ) : (
-              <div className="flex items-center justify-center h-full w-full bg-blue-500 text-white text-lg font-bold rounded-lg">
-                {selectedStudent.student_full_name.charAt(0)}
-              </div>
-            )}
-          </div>
-          <div className="flex-grow ml-[10px] flex flex-col">
-            <span className="text-2xl font-bold block">
-              {selectedStudent.student_full_name}
-            </span>
-            <span className="text-gray-600 text-[15px] block mt-1">
-              {selectedStudent.pin_number}
-            </span>
-            <div className="bg-[#e2e8f0] flex-grow w-full h-full mt-2 rounded-xl">
-              <div className="my-2 mx-5 grid grid-flow-col justify-stretch">
-                <div className="flex flex-col">
-                  <div className="text-[12px] text-gray-600">Mobile Number</div>
-                  <div>{selectedStudent.student_contact_number}</div>
-                </div>
-                <div className="flex flex-col">
-                  <div className="text-[12px] text-gray-600">Religion</div>
-                  <div>{selectedStudent.religion}</div>
-                </div>
-                <div className="flex flex-col">
-                  <div className="text-[12px] text-gray-600">Caste</div>
-                  <div>{selectedStudent.caste}</div>
-                </div>
-                <div className="flex flex-col">
-                  <div className="text-[12px] text-gray-600 ">Home Town</div>
-                  <div>{selectedStudent.city}</div>
-                </div>
-              </div>
-              <Divider />
-              <div className="my-2 mx-5 grid grid-flow-col justify-stretch">
-                <div className="flex flex-col">
-                  <div className="text-[12px] text-gray-600">Email</div>
-                  <div>{selectedStudent.student_email}</div>
-                </div>
-                <div className="flex flex-col">
-                  <div className="text-[12px] text-gray-600 ">
-                    Date Of Birth
-                  </div>
-                  <div>
-                    {new Date(selectedStudent.dob).toLocaleDateString('en-GB', {
-                      day: '2-digit',
-                      month: '2-digit',
-                      year: 'numeric',
-                    })}
-                  </div>
-                </div>
-                <div className="flex flex-col">
-                  <div className="text-[12px] text-gray-600 ">Nationality</div>
-                  <div>{selectedStudent.nationality}</div>
-                </div>
-              </div>
-              <Divider />
-              <div className="my-2 mx-5 grid grid-flow-col justify-stretch">
-                <div className="flex flex-col">
-                  <div className="text-[12px] text-gray-600">Address</div>
-                  <div className="text-[13px]">{selectedStudent.address}</div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* --------------------------page-2----------------------------- */}
-      <div
-        className={`flex flex-col ${currentPage == 2 ? animationDirection : 'hidden'}`}
-      >
-        <div className="flex justify-stretch">
-          <div className="text-3xl font-bold">Student Education</div>
-          {isUpdateDialogEnabled && (
-            <UpdateDialog
-              students={students}
-              setStudents={setStudents}
-              selectedStudent={selectedStudent}
-              setSelectedStudent={setSelectedStudent}
-              currentPage={currentPage}
-            />
-          )}
-        </div>
-        <div className="flex mt-[10px]">
-          <div className="h-[180px] md:h-[250px] w-[20%] flex-shrink-0 mr-4">
-            {' '}
-            {/* Fixed 20% width for the image */}
-            {selectedStudent.student_photo_url ? (
-              <img
-                src={selectedStudent.student_photo_url}
-                alt={selectedStudent.student_full_name}
-                className="h-full w-full object-cover rounded-lg"
-              />
-            ) : (
-              <div className="flex items-center justify-center h-full w-full bg-blue-500 text-white text-lg font-bold rounded-lg">
-                {selectedStudent.student_full_name.charAt(0)}
-              </div>
-            )}
-          </div>
-          <div className="flex-grow ml-[10px] flex flex-col">
-            <span className="text-2xl font-bold block">
-              {selectedStudent.student_full_name}
-            </span>
-            <span className="text-gray-600 text-[15px] block mt-1">
-              {selectedStudent.pin_number}
-            </span>
-            <div className="bg-[#e2e8f0] flex-grow w-full h-full mt-2 rounded-xl">
-              <div className="my-2 mx-5 grid grid-flow-col justify-stretch">
-                <div className="flex flex-col">
-                  <div className="text-[12px] text-gray-600">
-                    University Name
-                  </div>
-                  <div className="">{selectedStudent.name_of_university}</div>
-                </div>
-                <div className="flex flex-col">
-                  <div className="text-[12px] text-gray-600">Collage Name</div>
-                  <div>{selectedStudent.name_of_collage}</div>
-                </div>
-              </div>
-              <Divider />
-              <div className="my-2 mx-5 grid grid-flow-col justify-stretch">
-                <div className="flex flex-col ">
-                  <div className="text-[12px] text-gray-600">Course</div>
-                  <div>{selectedStudent.course}</div>
-                </div>
-                <div className="flex flex-col">
-                  <div className="text-[12px] text-gray-600 ">Branch</div>
-                  <div>{selectedStudent.branch}</div>
-                </div>
-                <div className="flex flex-col">
-                  <div className="text-[12px] text-gray-600 ">
-                    Student Qualification
-                  </div>
-                  <div>{selectedStudent.student_qualification}</div>
-                </div>
-              </div>
-              <Divider />
-              <div className="my-2 mx-5 grid grid-flow-col justify-stretch">
-                <div className="flex flex-col">
-                  <div className="text-[12px] text-gray-600 ">Current Year</div>
-                  <div>{selectedStudent.current_year}</div>
-                </div>
-                <div className="flex flex-col">
-                  <div className="text-[12px] text-gray-600 ">Current Sem</div>
-                  <div>{selectedStudent.current_sem}</div>
-                </div>
-                <div className="flex flex-col">
-                  <div className="text-[12px] text-gray-600 ">
-                    {`Total Course Duration`}
-                  </div>
-                  <div>{selectedStudent.course_duration_years}</div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* --------------------------page-3----------------------------- */}
-      <div
-        className={`flex flex-col ${currentPage == 3 ? animationDirection : 'hidden'}`}
-      >
-        <div className="flex justify-stretch">
-          <div className="text-3xl font-bold">Parent Details</div>
-          {isUpdateDialogEnabled && (
-            <UpdateDialog
-              students={students}
-              setStudents={setStudents}
-              selectedStudent={selectedStudent}
-              setSelectedStudent={setSelectedStudent}
-              currentPage={currentPage}
-            />
-          )}
-        </div>
-        <div className="flex mt-[10px]">
-          <div>
-            <div className="h-[90px] md:h-[125px] w-full flex-shrink-0 mr-4 mb-1">
-              {' '}
-              {/* Fixed 30% width for the image */}
-              {selectedStudent.father_photo_url ? (
-                <img
-                  src={selectedStudent.father_photo_url}
-                  alt={selectedStudent.father_name}
-                  className="h-full w-full object-cover rounded-lg"
-                />
-              ) : (
-                <div className="flex items-center justify-center h-full w-[150px] bg-blue-500 text-white text-lg font-bold rounded-lg">
-                  {selectedStudent.father_name.charAt(0)}
-                </div>
-              )}
-            </div>
-            <div className="h-[90px] md:h-[125px] w-full flex-shrink-0 mr-4">
-              {' '}
-              {/* Fixed 30% width for the image */}
-              {selectedStudent.mother_photo_url ? (
-                <img
-                  src={selectedStudent.mother_photo_url}
-                  alt={selectedStudent.mother_name}
-                  className="h-full w-full object-cover rounded-lg"
-                />
-              ) : (
-                <div className="flex items-center justify-center h-full w-[150px] bg-blue-500 text-white text-lg font-bold rounded-lg">
-                  {selectedStudent.mother_name.charAt(0)}
-                </div>
-              )}
-            </div>
-          </div>
-          <div className="flex-grow ml-[10px] flex flex-col">
-            <span className="text-2xl font-bold block">
-              {selectedStudent.student_full_name}
-            </span>
-            <span className="text-gray-600 text-[15px] block mt-1">
-              {selectedStudent.pin_number}
-            </span>
-            <div className="bg-[#e2e8f0] flex-grow w-full h-full mt-2 rounded-xl">
-              <div className="my-2 mx-5 grid grid-flow-col justify-stretch">
-                <div className="flex flex-col">
-                  <div className="text-[12px] text-gray-600">Father Name</div>
-                  <div className="">{selectedStudent.father_name}</div>
-                </div>
-                <div className="flex flex-col">
-                  <div className="text-[12px] text-gray-600">
-                    Father Mobile No
-                  </div>
-                  <div>{selectedStudent.father_contact_number}</div>
-                </div>
-                <div className="flex flex-col">
-                  <div className="text-[12px] text-gray-600">Father Email</div>
-                  <div>{selectedStudent.father_email}</div>
-                </div>
-              </div>
-              <Divider />
-              <div className="my-1 mx-5 grid grid-flow-col justify-stretch">
-                <div className="flex flex-col ">
-                  <div className="text-[12px] text-gray-600">Mother name</div>
-                  <div>{selectedStudent.mother_name}</div>
-                </div>
-                <div className="flex flex-col">
-                  <div className="text-[12px] text-gray-600 ">
-                    Mother Mobile Number
-                  </div>
-                  <div>{selectedStudent.mother_contact_number}</div>
-                </div>
-              </div>
-              <Divider />
-              <div className="my-1 mx-5 grid grid-flow-col justify-stretch">
-                <div className="flex flex-col">
-                  <div className="text-[12px] text-gray-600 ">
-                    Relative Name
-                  </div>
-                  <div>{selectedStudent.relative_name}</div>
-                </div>
-                <div className="flex flex-col">
-                  <div className="text-[12px] text-gray-600 ">
-                    Relative Contact Number
-                  </div>
-                  <div>{selectedStudent.relative_contact_number}</div>
-                </div>
-
-                <div className="flex flex-col">
-                  <div className="text-[12px] text-gray-600 ">Relation</div>
-                  <div>{selectedStudent.relation}</div>
-                </div>
-              </div>
-              <div className="my-1 mx-5 grid grid-flow-col justify-stretch">
-                <div className="flex flex-col">
-                  <div className="text-[12px] text-gray-600 ">
-                    Relative Address
-                  </div>
-                  <div className="text-[13px]">
-                    {selectedStudent.relative_address}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* --------------------------page-4----------------------------- */}
-      <div
-        className={`flex flex-col ${currentPage == 4 ? animationDirection : 'hidden'}`}
-      >
-        <div className="flex justify-stretch">
-          <div className="text-3xl font-bold">Reference Details</div>
-          {isUpdateDialogEnabled && (
-            <UpdateDialog
-              students={students}
-              setStudents={setStudents}
-              selectedStudent={selectedStudent}
-              setSelectedStudent={setSelectedStudent}
-              currentPage={currentPage}
-            />
-          )}
-        </div>
-        <div className="flex mt-[10px]">
-          <div className="h-[180px] md:h-[250px] w-[20%] flex-shrink-0 mr-4">
-            {' '}
-            {/* Fixed 30% width for the image */}
-            {selectedStudent.student_photo_url ? (
-              <img
-                src={selectedStudent.student_photo_url}
-                alt={selectedStudent.student_full_name}
-                className="h-full w-full object-cover rounded-lg"
-              />
-            ) : (
-              <div className="flex items-center justify-center h-full w-full bg-blue-500 text-white text-lg font-bold rounded-lg">
-                {selectedStudent.student_full_name.charAt(0)}
-              </div>
-            )}
-          </div>
-          <div className="flex-grow ml-[10px] flex flex-col">
-            <span className="text-2xl font-bold block">
-              {selectedStudent.student_full_name}
-            </span>
-            <span className="text-gray-600 text-[15px] block mt-1">
-              {selectedStudent.pin_number}
-            </span>
-            <div className="bg-[#e2e8f0] flex-grow w-full h-full mt-2 rounded-xl">
-              <div className="my-2 mx-5 grid grid-flow-col justify-stretch">
-                <div className="flex flex-col">
-                  <div className="text-[12px] text-gray-600">
-                    Relative Full Name
-                  </div>
-                  <div className="">
-                    {selectedStudent.reference_relative_full_name}
-                  </div>
-                </div>
-                <div className="flex flex-col">
-                  <div className="text-[12px] text-gray-600">Relation</div>
-                  <div>{selectedStudent.reference_relative_relation}</div>
-                </div>
-                <div className="flex flex-col">
-                  <div className="text-[12px] text-gray-600">
-                    Relative Mobile Number
-                  </div>
-                  <div>{selectedStudent.reference_relative_mobile}</div>
-                </div>
-              </div>
-              <Divider />
-              <div className="my-2 mx-5 grid grid-flow-col justify-stretch">
-                <div className="flex flex-col ">
-                  <div className="text-[12px] text-gray-600">Sant Name</div>
-                  <div>{selectedStudent.name_of_sant}</div>
-                </div>
-                <div className="flex flex-col">
-                  <div className="text-[12px] text-gray-600 ">
-                    Sant Mobile Number
-                  </div>
-                  <div>{selectedStudent.sant_phone_number}</div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      {/*........................ page logic ends her.............. */}
-      <div
-        className="flex flex-row justify-end my-2 mx-2"
-        style={{
-          position: 'absolute',
-          bottom: 10,
-          right: '50%',
+    <>
+      <Card
+        sx={{
+          maxWidth: 700,
+          minWidth: 500,
+          margin: 'auto',
+          padding: 2,
+          boxShadow: '0 4px 10px rgba(0, 0, 0, 0.2)',
+          borderRadius: 3,
+          position: 'relative',
         }}
       >
-        <div>{currentPage} - 4</div>
-        <div className="cursor-pointer">
-          <button
-            disabled={currentPage == 1 ? true : false}
-            className="disabled:text-gray-400"
-            onClick={gotoPreviousPage}
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+          }}
+        >
+          <img
+            src="/images/logo.jpg"
+            alt="Logo"
+            style={{ width: 50, height: 50, marginLeft: 8 }}
+          />
+          {/* Card Header */}
+          <CardHeader
+            title={`SGVP HOSTEL`}
+            subheader={`${selectedOption} Room Allotment`}
+            sx={{ textAlign: 'center' }}
+          />
+          {/* Close Icon */}
+          <IconButton onClick={onClose}>
+            <CloseIcon />
+          </IconButton>
+        </Box>
+
+        {/* Card Content */}
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4">
+            <Grid2 item xs={12}>
+              <Typography variant="body2" color="textSecondary">
+                PIN Number:
+              </Typography>
+              <Typography>{selectedBed.pin_number || '__________'}</Typography>
+            </Grid2>
+
+            <Grid2 item xs={12}>
+              <Typography variant="body2" color="textSecondary">
+                Student Name:
+              </Typography>
+              <Typography>
+                {selectedBed.student_full_name || '____________'}
+              </Typography>
+            </Grid2>
+
+            <Grid2 item xs={12}>
+              <Typography variant="body2" color="textSecondary">
+                Room Number:
+              </Typography>
+              <Typography variant="body1">{selectedBed.room_number}</Typography>
+            </Grid2>
+
+            <Grid2 item xs={6}>
+              <Typography variant="body2" color="textSecondary">
+                Bed Number:
+              </Typography>
+              <Typography variant="body1">{selectedBed.bed_number}</Typography>
+            </Grid2>
+          </div>
+
+          {/* <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4 mt-4">
+          <Grid2
+            item
+            xs={6}
+            sx={{
+              display: 'flex',
+            }}
           >
-            <ChevronLeftIcon />
-          </button>
-        </div>
-        <div className="cursor-pointer">
-          <button
-            disabled={currentPage == 4 ? true : false}
-            className="disabled:text-gray-400"
-            onClick={gotoNextPage}
+            <Grid2>
+              <Typography variant="body2" color="textSecondary">
+                Parent Approval:
+              </Typography>
+              <Typography
+                variant="body1"
+                sx={{
+                  color: statusColor(selectedBed.parent_approval_status),
+                  display: 'flex',
+                  alignItems: 'center',
+                }}
+                className="capitalize"
+              >
+                {selectedBed.parent_approval_status === 'approved' && (
+                  <CheckCircleOutlineIcon sx={{ marginRight: 1 }} />
+                )}
+                {selectedBed.parent_approval_status === 'pending' && (
+                  <PendingIcon sx={{ marginRight: 1 }} />
+                )}
+                {selectedBed.parent_approval_status === 'disapproved' && (
+                  <HighlightOffIcon sx={{ marginRight: 1 }} />
+                )}
+                {selectedBed.parent_approval_status}
+              </Typography>
+            </Grid2>
+            {isUpdateDialogEnabled && (
+              <Grid2>
+                <IconButton onClick={(e) => handleMenuOpen(e, 'parent')}>
+                  <EditIcon />
+                </IconButton>
+                <Menu
+                  anchorEl={anchorElParent}
+                  open={Boolean(anchorElParent)}
+                  onClose={() => handleMenuClose('parent')}
+                >
+                  {parentOptions.map((status) => (
+                    <MenuItem
+                      key={status}
+                      onClick={() => handleStatusChange(status, 'parent')}
+                      className="capitalize"
+                    >
+                      {status}
+                    </MenuItem>
+                  ))}
+                </Menu>
+              </Grid2>
+            )}
+          </Grid2>
+
+          <Grid2
+            item
+            xs={6}
+            sx={{
+              display: 'flex',
+            }}
           >
-            <ChevronRightIcon />
-          </button>
-        </div>
-      </div>
-    </Box>
+            <Grid2>
+              <Typography variant="body2" color="textSecondary">
+                Admin Approval:
+              </Typography>
+              <Typography
+                variant="body1"
+                sx={{
+                  color: statusColor(selectedBed.admin_approval_status),
+                  display: 'flex',
+                  alignItems: 'center',
+                }}
+                className="capitalize"
+              >
+                {selectedBed.admin_approval_status === 'approved' && (
+                  <CheckCircleOutlineIcon sx={{ marginRight: 1 }} />
+                )}
+                {selectedBed.admin_approval_status === 'pending' && (
+                  <PendingIcon sx={{ marginRight: 1 }} />
+                )}
+                {selectedBed.admin_approval_status === 'disapproved' && (
+                  <HighlightOffIcon sx={{ marginRight: 1 }} />
+                )}
+                {selectedBed.admin_approval_status}
+              </Typography>
+            </Grid2>
+            {isUpdateDialogEnabled && (
+              <Grid2>
+                <IconButton onClick={(e) => handleMenuOpen(e, 'admin')}>
+                  <EditIcon />
+                </IconButton>
+                <Menu
+                  anchorEl={anchorElAdmin}
+                  open={Boolean(anchorElAdmin)}
+                  onClose={() => handleMenuClose('admin')}
+                  className="capitalize"
+                >
+                  {adminOptions.map((status) => (
+                    <MenuItem
+                      key={status}
+                      onClick={() => handleStatusChange(status, 'admin')}
+                    >
+                      {status}
+                    </MenuItem>
+                  ))}
+                </Menu>
+              </Grid2>
+            )}
+          </Grid2>
+
+          {isUpdateDialogEnabled && (
+            <Grid2 item xs={12}>
+              {selectedBed.remarks && (
+                <Typography variant="body2" color="textSecondary">
+                  Remarks:
+                </Typography>
+              )}
+              {selectedBed.remarks && (
+                <Typography variant="body1">
+                  {selectedBed.remarks || 'No remarks available'}
+                </Typography>
+              )}
+              <Button
+                variant="contained"
+                color="primary"
+                size="small"
+                sx={{ mt: 1 }}
+                onClick={handleDialogToggle}
+              >
+                {selectedBed.remarks ? 'Update Remarks' : 'Add Remarks'}
+              </Button>
+            </Grid2>
+          )}
+        </div> */}
+        </CardContent>
+
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'space-evenly',
+            padding: 2,
+            gap: 3,
+          }}
+        >
+          {isDeAllocateBedEnabled && (
+            <Button
+              variant="outlined"
+              color="warning"
+              onClick={handleDeallocateBed}
+              disabled={!isDeAllocateBedEnabled}
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                textTransform: 'none',
+                fontWeight: 'bold',
+                borderColor: 'warning.main',
+                color: 'warning.main',
+                transition: 'all 0.3s ease',
+                '&:hover': {
+                  backgroundColor: 'warning.main',
+                  color: 'white',
+                  borderColor: 'warning.main',
+                },
+              }}
+            >
+              {deAllocateLoading ? (
+                <CircularProgress size={24} />
+              ) : (
+                <>
+                  <PersonRemoveIcon className="mr-2" />
+                  De-Allocate Bed
+                </>
+              )}
+              {/* <PersonRemoveIcon className="mr-2" />
+            De-Allocate Bed */}
+            </Button>
+          )}
+          {isRemoveBedEnabled && (
+            <Button
+              variant="outlined"
+              color="error"
+              onClick={handleRemoveBed}
+              disabled={!isRemoveBedEnabled}
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                textTransform: 'none',
+                fontWeight: 'bold',
+                borderColor: 'error.main',
+                color: 'error.main',
+                transition: 'all 0.3s ease',
+                '&:hover': {
+                  backgroundColor: 'error.main',
+                  color: 'white',
+                  borderColor: 'error.main',
+                },
+              }}
+            >
+              {removeBedLoading ? (
+                <CircularProgress size={24} />
+              ) : (
+                <>
+                  <DeleteIcon className="mr-2" />
+                  Remove Bed
+                </>
+              )}
+              {/* <DeleteIcon className="mr-2" />
+          Remove Bed */}
+            </Button>
+          )}
+          {isAssignRoomAndBedEnabled && (
+            <Button
+              variant="outlined"
+              color="primary"
+              onClick={handleAssignRoomAndBed}
+              disabled={!isAssignRoomAndBedEnabled}
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                textTransform: 'none',
+                fontWeight: 'bold',
+                borderColor: 'primary.main',
+                color: 'primary.main',
+                transition: 'all 0.3s ease',
+                '&:hover': {
+                  backgroundColor: 'primary.main',
+                  color: 'white',
+                  borderColor: 'primary.main',
+                },
+              }}
+            >
+              <AddCircleIcon className="mr-2" />
+              Assign Room & Bed
+            </Button>
+          )}
+        </Box>
+
+        {/* {isUpdateDialogEnabled && (
+        <Dialog open={isDialogOpen} onClose={handleDialogToggle}>
+          <DialogTitle>
+            {selectedBed.remarks ? 'Update Remarks' : 'Add Remarks'}
+          </DialogTitle>
+          <DialogContent className="mt-2">
+            <TextField
+              label="Remarks"
+              multiline
+              fullWidth
+              rows={4}
+              value={remarksInput}
+              onChange={(e) => setRemarksInput(e.target.value)}
+            />
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleDialogToggle} color="secondary">
+              Cancel
+            </Button>
+            <Button onClick={handleSaveRemarks} color="primary">
+              Save
+            </Button>
+          </DialogActions>
+        </Dialog>
+      )} */}
+      </Card>
+      <AssignRoomAndBedDialog
+        roomAllotment={roomAllotment}
+        setRoomAllotment={setRoomAllotment}
+        selectedOption={selectedOption}
+        setSelectedOption={setSelectedOption}
+        fetchRooms={fetchRooms}
+        bed={selectedBed}
+        setSelectedBed={setSelectedBed}
+        open={assignRoomAndBedDialogOpen}
+        onClose={() => setAssignRoomAndBedDialogOpen(false)}
+      />
+    </>
   );
 };
 export default DetailsCard;

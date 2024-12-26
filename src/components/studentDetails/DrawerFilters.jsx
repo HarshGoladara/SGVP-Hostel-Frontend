@@ -73,6 +73,20 @@ export default function DrawerFilters({
         color="neutral"
         startDecorator={<TuneIcon />}
         onClick={() => setOpen(true)}
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          textTransform: 'none',
+          fontWeight: 'bold',
+          borderColor: '#6c757d',
+          color: '#6c757d',
+          transition: 'all 0.3s ease',
+          '&:hover': {
+            backgroundColor: '#6c757d',
+            color: '#fff',
+            borderColor: '#6c757d',
+          },
+        }}
       >
         Change filters
       </Button>

@@ -3,13 +3,18 @@ import DetailsCard from './DetailsCard';
 import './css/ModalStyle.css';
 
 const RoomAllotmentModal = ({
-  students,
-  setStudents,
-  student,
+  roomAllotment,
+  setRoomAllotment,
+  selectedOption,
+  setSelectedOption,
+  loading,
+  isLoading,
+  bed,
   open,
   onClose,
+  fetchRooms,
 }) => {
-  const [showStudent, setShowStudent] = useState(true);
+  const [showBed, setShowBed] = useState(true);
   const [isVisible, setIsVisible] = useState(open);
 
   useEffect(() => {
@@ -35,12 +40,17 @@ const RoomAllotmentModal = ({
       {/* Background Blur */}
       <div className="fixed inset-0 bg-black opacity-50" onClick={onClose} />
       <DetailsCard
-        students={students}
-        setStudents={setStudents}
-        student={student}
+        roomAllotment={roomAllotment}
+        setRoomAllotment={setRoomAllotment}
+        selectedOption={selectedOption}
+        setSelectedOption={setSelectedOption}
+        loading={loading}
+        isLoading={isLoading}
+        bed={bed}
+        fetchRooms={fetchRooms}
         onClose={() => {
           onClose();
-          setShowStudent(true); // Reset to show student details on close
+          setShowBed(true); // Reset to show student details on close
         }}
       />
     </div>

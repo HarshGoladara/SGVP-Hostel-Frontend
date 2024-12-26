@@ -37,31 +37,19 @@ import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
 
 export default function DrawerFilters({
-  students,
-  setStudents,
+  roomAllotment,
+  setRoomAllotment,
   selectedOption,
   setSelectedOption,
-  totalItems,
-  setTotalItems,
-  // currentPage,
-  setCurrentPage,
-  // totalPages,
-  setTotalPages,
-  // pageNumberList,
-  // setPageNumberList,
+  isLoading,
   searchQuery,
   setSearchQuery,
-  isLoading,
-  searchStudents,
 }) {
   const [open, setOpen] = React.useState(false);
-  const [search, setSearch] = useState('');
 
-  const options = ['All', 'Pending', 'Confirmed', 'Cancelled'];
+  const options = ['Wing3', 'Dome', 'Vishvambharam'];
 
-  const applyFilter = (search) => {
-    setSearchQuery(search);
-    searchStudents(search);
+  const applyFilter = () => {
     setOpen(false);
   };
 
@@ -72,6 +60,20 @@ export default function DrawerFilters({
         color="neutral"
         startDecorator={<TuneIcon />}
         onClick={() => setOpen(true)}
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          textTransform: 'none',
+          fontWeight: 'bold',
+          borderColor: '#6c757d',
+          color: '#6c757d',
+          transition: 'all 0.3s ease',
+          '&:hover': {
+            backgroundColor: '#6c757d',
+            color: '#fff',
+            borderColor: '#6c757d',
+          },
+        }}
       >
         Change filters
       </Button>
@@ -106,34 +108,61 @@ export default function DrawerFilters({
           <ModalClose />
           <Divider sx={{ mt: 'auto' }} />
           <DialogContent sx={{ gap: 2 }}>
-            {/* Search Input */}
-            <div className="flex justify-center ml-3 mt-1">
-              <div className="search-container">
-                <span className="search-icon">
-                  <SearchIcon />
-                </span>
-                <input
-                  type="text"
-                  placeholder="Search something..."
-                  className="search-input"
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                  onFocus={(e) => {
-                    e.target.placeholder = 'Search Pin / Name ';
-                    e.target.classList.add('focused');
-                  }}
-                  onBlur={(e) => {
-                    e.target.placeholder = 'Search something...';
-                    e.target.classList.remove('focused');
-                  }}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter') {
-                      applyFilter(search);
-                    }
-                  }}
-                />
-              </div>
-            </div>
+            <Typography level="title-md" sx={{ fontWeight: 'bold' }}>
+              Room Category
+            </Typography>
+            <RadioGroup
+              value={selectedOption || ''}
+              onChange={(event) => {
+                setSelectedOption(event.target.value);
+                // filterStudents(event.target.value);
+              }}
+            >
+              <Box
+                sx={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))',
+                  gap: 1.5,
+                }}
+              >
+                {options.map((item) => (
+                  <Card
+                    key={item}
+                    sx={{
+                      boxShadow: 'none',
+                      '&:hover': { bgcolor: 'background.level1' },
+                    }}
+                  >
+                    <CardContent>
+                      <Typography level="title-md">{item}</Typography>
+                    </CardContent>
+                    <Radio
+                      disableIcon
+                      overlay
+                      checked={selectedOption === item}
+                      variant="outlined"
+                      color="neutral"
+                      value={item}
+                      sx={{ mt: -2 }}
+                      slotProps={{
+                        action: {
+                          sx: {
+                            ...(selectedOption === item && {
+                              borderWidth: 2,
+                              borderColor:
+                                'var(--joy-palette-primary-outlinedBorder)',
+                            }),
+                            '&:hover': {
+                              bgcolor: 'transparent',
+                            },
+                          },
+                        },
+                      }}
+                    />
+                  </Card>
+                ))}
+              </Box>
+            </RadioGroup>
           </DialogContent>
 
           <Divider sx={{ mt: 'auto' }} />
@@ -152,7 +181,7 @@ export default function DrawerFilters({
             >
               Clear
             </Button>
-            <Button onClick={() => applyFilter(search)}>Filter</Button>
+            <Button onClick={() => applyFilter()}>Filter</Button>
           </Stack>
         </Sheet>
       </Drawer>

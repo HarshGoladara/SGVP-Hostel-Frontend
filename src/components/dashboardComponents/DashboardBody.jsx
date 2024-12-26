@@ -25,6 +25,10 @@ import AddEventDialog from './AddEventDialog.jsx';
 import UpdateDeleteEventDialog from './UpdateDeleteEventDialog.jsx';
 import * as XLSX from 'xlsx'; // Import XLSX library
 import dayjs from 'dayjs';
+import DescriptionIcon from '@mui/icons-material/Description';
+import AssessmentIcon from '@mui/icons-material/Assessment';
+import PrintIcon from '@mui/icons-material/Print';
+import FileCopyIcon from '@mui/icons-material/FileCopy';
 
 const DashboardBody = ({}) => {
   const [noOfStudents, setNoOfStudents] = useState(null);
@@ -498,11 +502,26 @@ const DashboardBody = ({}) => {
               </Typography>
               {noOfPendingEntries !== null && (
                 <Button
-                  variant="contained"
+                  variant="outlined"
                   color="primary"
                   onClick={() => generateReport(pendingEntries)}
-                  sx={{ marginTop: 2 }}
+                  sx={{
+                    marginTop: 2,
+                    display: 'flex',
+                    alignItems: 'center',
+                    textTransform: 'none',
+                    fontWeight: 'bold',
+                    borderColor: 'primary.main',
+                    color: 'primary.main',
+                    transition: 'all 0.3s ease',
+                    '&:hover': {
+                      backgroundColor: 'primary.main',
+                      color: 'white',
+                      borderColor: 'primary.main',
+                    },
+                  }}
                 >
+                  <FileCopyIcon className="mr-2" />
                   Generate Report
                 </Button>
               )}

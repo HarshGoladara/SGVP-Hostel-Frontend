@@ -14,6 +14,7 @@ import WeekendIcon from '@mui/icons-material/Weekend';
 import * as XLSX from 'xlsx'; // Import XLSX library
 import { TempleHindu } from '@mui/icons-material';
 import dayjs from 'dayjs';
+import FileCopyIcon from '@mui/icons-material/FileCopy';
 
 const AttendanceBody = ({
   selectedCategoryOption,
@@ -26,10 +27,10 @@ const AttendanceBody = ({
   setSearchQuery,
 }) => {
   const [noOfStudents, setNoOfStudents] = useState(null);
-  const [MorningAttendance, setMorningAttendance] = useState(null);
-  const [EveningAttendance, setEveningAttendance] = useState(null);
-  const [NightAttendance, setNightAttendance] = useState(null);
-  const [SundayAttendance, setSundayAttendance] = useState(null);
+  const [morningAttendance, setMorningAttendance] = useState(null);
+  const [eveningAttendance, setEveningAttendance] = useState(null);
+  const [nightAttendance, setNightAttendance] = useState(null);
+  const [sundayAttendance, setSundayAttendance] = useState(null);
 
   const loadTotalStudents = async () => {
     setNoOfStudents(null);
@@ -345,7 +346,7 @@ const AttendanceBody = ({
                     paddingX: 4,
                     paddingY: 1,
                     borderRadius: '25px',
-                    backgroundColor: `${MorningAttendance !== null ? '#2196f3' : ''}`, // Blue background
+                    backgroundColor: `${morningAttendance !== null ? '#2196f3' : ''}`, // Blue background
                     color: '#fff', // White text
                     display: 'inline-block',
                     textAlign: 'center',
@@ -353,10 +354,10 @@ const AttendanceBody = ({
                     minWidth: '50px', // Ensure oval shape
                   }}
                 >
-                  {MorningAttendance !== null ? (
-                    `${searchQuery.trim() ? `${MorningAttendance.length}` : `${MorningAttendance.length}/${noOfStudents}`}`
+                  {morningAttendance !== null && noOfStudents !== null ? (
+                    `${searchQuery.trim() ? `${morningAttendance.length}` : `${morningAttendance.length}/${noOfStudents}`}`
                   ) : (
-                    // `${MorningAttendance.length}/${noOfStudents}`
+                    // `${morningAttendance.length}/${noOfStudents}`
                     <CustomCircularLoader
                       size={50}
                       logoSrc="/images/logo.jpg"
@@ -365,13 +366,28 @@ const AttendanceBody = ({
                 </Box>
               </Typography>
               {/* Generate Report Button */}
-              {MorningAttendance !== null && (
+              {morningAttendance !== null && (
                 <Button
-                  variant="contained"
+                  variant="outlined"
                   color="primary"
-                  onClick={() => generateReport('Morning', MorningAttendance)}
-                  sx={{ marginTop: 2 }}
+                  onClick={() => generateReport('Morning', morningAttendance)}
+                  sx={{
+                    marginTop: 2,
+                    display: 'flex',
+                    alignItems: 'center',
+                    textTransform: 'none',
+                    fontWeight: 'bold',
+                    borderColor: 'primary.main',
+                    color: 'primary.main',
+                    transition: 'all 0.3s ease',
+                    '&:hover': {
+                      backgroundColor: 'primary.main',
+                      color: 'white',
+                      borderColor: 'primary.main',
+                    },
+                  }}
                 >
+                  <FileCopyIcon className="mr-2" />
                   Generate Report
                 </Button>
               )}
@@ -399,7 +415,7 @@ const AttendanceBody = ({
                     paddingX: 4,
                     paddingY: 1,
                     borderRadius: '25px',
-                    backgroundColor: `${EveningAttendance !== null ? '#2196f3' : ''}`, // Blue background
+                    backgroundColor: `${eveningAttendance !== null ? '#2196f3' : ''}`, // Blue background
                     color: '#fff', // White text
                     display: 'inline-block',
                     textAlign: 'center',
@@ -407,10 +423,10 @@ const AttendanceBody = ({
                     minWidth: '50px', // Ensure oval shape
                   }}
                 >
-                  {EveningAttendance !== null ? (
-                    `${searchQuery.trim() ? `${EveningAttendance.length}` : `${EveningAttendance.length}/${noOfStudents}`}`
+                  {eveningAttendance !== null ? (
+                    `${searchQuery.trim() ? `${eveningAttendance.length}` : `${eveningAttendance.length}/${noOfStudents}`}`
                   ) : (
-                    // `${EveningAttendance.length}/${noOfStudents}`
+                    // `${eveningAttendance.length}/${noOfStudents}`
                     <CustomCircularLoader
                       size={50}
                       logoSrc="/images/logo.jpg"
@@ -419,13 +435,28 @@ const AttendanceBody = ({
                 </Box>
               </Typography>
               {/* Generate Report Button */}
-              {EveningAttendance !== null && (
+              {eveningAttendance !== null && (
                 <Button
-                  variant="contained"
+                  variant="outlined"
                   color="primary"
-                  onClick={() => generateReport('Evening', EveningAttendance)}
-                  sx={{ marginTop: 2 }}
+                  onClick={() => generateReport('Evening', eveningAttendance)}
+                  sx={{
+                    marginTop: 2,
+                    display: 'flex',
+                    alignItems: 'center',
+                    textTransform: 'none',
+                    fontWeight: 'bold',
+                    borderColor: 'primary.main',
+                    color: 'primary.main',
+                    transition: 'all 0.3s ease',
+                    '&:hover': {
+                      backgroundColor: 'primary.main',
+                      color: 'white',
+                      borderColor: 'primary.main',
+                    },
+                  }}
                 >
+                  <FileCopyIcon className="mr-2" />
                   Generate Report
                 </Button>
               )}
@@ -453,7 +484,7 @@ const AttendanceBody = ({
                     paddingX: 4,
                     paddingY: 1,
                     borderRadius: '25px',
-                    backgroundColor: `${NightAttendance !== null ? '#2196f3' : ''}`, // Blue background
+                    backgroundColor: `${nightAttendance !== null ? '#2196f3' : ''}`, // Blue background
                     color: '#fff', // White text
                     display: 'inline-block',
                     textAlign: 'center',
@@ -461,10 +492,10 @@ const AttendanceBody = ({
                     minWidth: '50px', // Ensure oval shape
                   }}
                 >
-                  {NightAttendance !== null ? (
-                    `${searchQuery.trim() ? `${NightAttendance.length}` : `${NightAttendance.length}/${noOfStudents}`}`
+                  {nightAttendance !== null ? (
+                    `${searchQuery.trim() ? `${nightAttendance.length}` : `${nightAttendance.length}/${noOfStudents}`}`
                   ) : (
-                    // `${NightAttendance.length}/${noOfStudents}`
+                    // `${nightAttendance.length}/${noOfStudents}`
                     <CustomCircularLoader
                       size={50}
                       logoSrc="/images/logo.jpg"
@@ -473,13 +504,28 @@ const AttendanceBody = ({
                 </Box>
               </Typography>
               {/* Generate Report Button */}
-              {NightAttendance !== null && (
+              {nightAttendance !== null && (
                 <Button
-                  variant="contained"
+                  variant="outlined"
                   color="primary"
-                  onClick={() => generateReport('Night', NightAttendance)}
-                  sx={{ marginTop: 2 }}
+                  onClick={() => generateReport('Night', nightAttendance)}
+                  sx={{
+                    marginTop: 2,
+                    display: 'flex',
+                    alignItems: 'center',
+                    textTransform: 'none',
+                    fontWeight: 'bold',
+                    borderColor: 'primary.main',
+                    color: 'primary.main',
+                    transition: 'all 0.3s ease',
+                    '&:hover': {
+                      backgroundColor: 'primary.main',
+                      color: 'white',
+                      borderColor: 'primary.main',
+                    },
+                  }}
                 >
+                  <FileCopyIcon className="mr-2" />
                   Generate Report
                 </Button>
               )}
@@ -508,7 +554,7 @@ const AttendanceBody = ({
                       paddingX: 4,
                       paddingY: 1,
                       borderRadius: '25px',
-                      backgroundColor: `${SundayAttendance !== null ? '#2196f3' : ''}`, // Blue background
+                      backgroundColor: `${sundayAttendance !== null ? '#2196f3' : ''}`, // Blue background
                       color: '#fff', // White text
                       display: 'inline-block',
                       textAlign: 'center',
@@ -516,10 +562,10 @@ const AttendanceBody = ({
                       minWidth: '50px', // Ensure oval shape
                     }}
                   >
-                    {SundayAttendance !== null ? (
-                      `${searchQuery.trim() ? `${SundayAttendance.length}` : `${SundayAttendance.length}/${noOfStudents}`}`
+                    {sundayAttendance !== null ? (
+                      `${searchQuery.trim() ? `${sundayAttendance.length}` : `${sundayAttendance.length}/${noOfStudents}`}`
                     ) : (
-                      // `${SundayAttendance.length}/${noOfStudents}`
+                      // `${sundayAttendance.length}/${noOfStudents}`
                       <CustomCircularLoader
                         size={50}
                         logoSrc="/images/logo.jpg"
@@ -528,11 +574,11 @@ const AttendanceBody = ({
                   </Box>
                 </Typography>
                 {/* Generate Report Button */}
-                {SundayAttendance !== null && (
+                {sundayAttendance !== null && (
                   <Button
                     variant="contained"
                     color="primary"
-                    onClick={() => generateReport('Sunday', SundayAttendance)}
+                    onClick={() => generateReport('Sunday', sundayAttendance)}
                     sx={{ marginTop: 2 }}
                   >
                     Generate Report

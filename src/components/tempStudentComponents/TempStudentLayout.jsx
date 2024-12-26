@@ -21,39 +21,43 @@ function TempStudentLayout() {
   };
 
   return (
-    <div className="h-full flex flex-col">
-      <TempStudentNavbar
-        students={students}
-        setStudents={setStudents}
-        selectedOption={selectedOption}
-        setSelectedOption={setSelectedOption}
-        totalItems={totalItems}
-        setTotalItems={setTotalItems}
-        currentPage={currentPage}
-        setCurrentPage={setCurrentPage}
-        totalPages={totalPages}
-        setTotalPages={setTotalPages}
-        pageNumberList={pageNumberList}
-        setPageNumberList={setPageNumberList}
-        isLoading={handleLoading}
-      />
-      <TempStudentBody
-        students={students}
-        setStudents={setStudents}
-        selectedOption={selectedOption}
-        setSelectedOption={setSelectedOption}
-        totalItems={totalItems}
-        setTotalItems={setTotalItems}
-        currentPage={currentPage}
-        setCurrentPage={setCurrentPage}
-        totalPages={totalPages}
-        setTotalPages={setTotalPages}
-        pageNumberList={pageNumberList}
-        setPageNumberList={setPageNumberList}
-        loading={loading}
-        isLoading={handleLoading}
-        className="flex-grow"
-      />
+    <div className="min-h-screen flex flex-col">
+      <div className="sticky top-0 z-10 bg-white shadow-md">
+        <TempStudentNavbar
+          students={students}
+          setStudents={setStudents}
+          selectedOption={selectedOption}
+          setSelectedOption={setSelectedOption}
+          totalItems={totalItems}
+          setTotalItems={setTotalItems}
+          currentPage={currentPage}
+          setCurrentPage={setCurrentPage}
+          totalPages={totalPages}
+          setTotalPages={setTotalPages}
+          pageNumberList={pageNumberList}
+          setPageNumberList={setPageNumberList}
+          isLoading={handleLoading}
+        />
+      </div>
+      <div className="flex-grow overflow-y-auto">
+        <TempStudentBody
+          students={students}
+          setStudents={setStudents}
+          selectedOption={selectedOption}
+          setSelectedOption={setSelectedOption}
+          totalItems={totalItems}
+          setTotalItems={setTotalItems}
+          currentPage={currentPage}
+          setCurrentPage={setCurrentPage}
+          totalPages={totalPages}
+          setTotalPages={setTotalPages}
+          pageNumberList={pageNumberList}
+          setPageNumberList={setPageNumberList}
+          loading={loading}
+          isLoading={handleLoading}
+          className="flex-grow"
+        />
+      </div>
     </div>
   );
 }

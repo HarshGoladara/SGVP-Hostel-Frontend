@@ -18,28 +18,32 @@ function DashboardLayout() {
   };
 
   return (
-    <div className="h-full flex flex-col">
-      <DashboardNavbar
-        gatepasses={gatepasses}
-        setGatepasses={setGatepasses}
-        selectedParentOption={selectedParentOption}
-        setSelectedParentOption={setSelectedParentOption}
-        selectedAdminOption={selectedAdminOption}
-        setSelectedAdminOption={setSelectedAdminOption}
-        isLoading={handleLoading}
-        loading={loading}
-      />
-      <DashboardBody
-        gatepasses={gatepasses}
-        setGatepasses={setGatepasses}
-        selectedParentOption={selectedParentOption}
-        setSelectedParentOption={setSelectedParentOption}
-        selectedAdminOption={selectedAdminOption}
-        setSelectedAdminOption={setSelectedAdminOption}
-        isLoading={handleLoading}
-        loading={loading}
-        className="flex-grow"
-      />
+    <div className="min-h-screen flex flex-col">
+      <div className="sticky top-0 z-10 bg-white shadow-md">
+        <DashboardNavbar
+          gatepasses={gatepasses}
+          setGatepasses={setGatepasses}
+          selectedParentOption={selectedParentOption}
+          setSelectedParentOption={setSelectedParentOption}
+          selectedAdminOption={selectedAdminOption}
+          setSelectedAdminOption={setSelectedAdminOption}
+          isLoading={handleLoading}
+          loading={loading}
+        />
+      </div>
+      <div className="flex-grow overflow-y-auto">
+        <DashboardBody
+          gatepasses={gatepasses}
+          setGatepasses={setGatepasses}
+          selectedParentOption={selectedParentOption}
+          setSelectedParentOption={setSelectedParentOption}
+          selectedAdminOption={selectedAdminOption}
+          setSelectedAdminOption={setSelectedAdminOption}
+          isLoading={handleLoading}
+          loading={loading}
+          className="flex-grow"
+        />
+      </div>
     </div>
   );
 }

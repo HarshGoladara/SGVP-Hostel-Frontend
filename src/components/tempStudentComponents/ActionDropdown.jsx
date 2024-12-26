@@ -2,6 +2,9 @@ import React, { useState } from 'react';
 import { Menu, MenuItem, IconButton } from '@mui/material';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import { useCookies } from 'react-cookie';
+import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
+import HighlightOffIcon from '@mui/icons-material/HighlightOff';
+import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 
 const ActionDropdown = ({ onActionSelect, student }) => {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -46,7 +49,10 @@ const ActionDropdown = ({ onActionSelect, student }) => {
       >
         <ul>
           <p className="text-gray-700 hover:bg-[#37AFE1] hover:text-white transition duration-300 cursor-pointer">
-            <MenuItem onClick={() => handleClose('Show')}>Show</MenuItem>
+            <MenuItem onClick={() => handleClose('Show')}>
+              <OpenInNewIcon className="mr-2" />
+              Show
+            </MenuItem>
           </p>
           {isConfirmEnabled && (
             <p className="text-gray-700 hover:bg-[#37AFE1] hover:text-white transition duration-300 cursor-pointer">
@@ -54,6 +60,7 @@ const ActionDropdown = ({ onActionSelect, student }) => {
                 onClick={() => isConfirmEnabled && handleClose('Confirm')}
                 disabled={!isConfirmEnabled}
               >
+                <CheckCircleOutlineIcon className="mr-2" />
                 Confirm
               </MenuItem>
             </p>
@@ -64,6 +71,7 @@ const ActionDropdown = ({ onActionSelect, student }) => {
                 onClick={() => isCancelEnabled && handleClose('Cancel')}
                 disabled={!isCancelEnabled}
               >
+                <HighlightOffIcon className="mr-2" />
                 Cancel
               </MenuItem>
             </p>

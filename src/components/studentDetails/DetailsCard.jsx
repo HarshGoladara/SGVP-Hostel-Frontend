@@ -12,6 +12,7 @@ import axios from 'axios';
 import toast from 'react-hot-toast';
 import { VITE_BACKEND_BASE_API } from '../../helper/envConfig/envConfig.js';
 import { CircularProgress } from '@mui/material';
+import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 
 const DetailsCard = ({ students, setStudents, student, onClose }) => {
   const totalPages = 4;
@@ -239,9 +240,10 @@ const DetailsCard = ({ students, setStudents, student, onClose }) => {
               <div className="mt-2 flex flex-row items-center gap-2">
                 <label
                   htmlFor="upload-photo"
-                  className="cursor-pointer bg-blue-500 text-white text-sm px-4 py-2 rounded-lg hover:bg-blue-600"
+                  className="cursor-pointer bg-blue-500 text-white text-sm px-4 py-1 rounded-lg hover:bg-blue-600"
                 >
-                  Upload
+                  <CloudUploadIcon className="mr-2" />
+                  Photo
                 </label>
                 <input
                   type="file"
@@ -253,7 +255,7 @@ const DetailsCard = ({ students, setStudents, student, onClose }) => {
                 />
                 <button
                   onClick={uploadStudentPhoto}
-                  className={`bg-green-500 text-black text-sm px-4 py-2 rounded-lg hover:bg-green-600 ${
+                  className={`bg-green-500 text-black text-sm px-4 py-1 rounded-lg hover:bg-green-600 ${
                     photoFile.studentPhotoFile
                       ? ''
                       : 'opacity-50 cursor-not-allowed'
@@ -453,9 +455,10 @@ const DetailsCard = ({ students, setStudents, student, onClose }) => {
               <div className="mt-2 flex flex-row items-center gap-2">
                 <label
                   htmlFor="upload-father-photo"
-                  className="cursor-pointer bg-blue-500 text-white text-sm px-4 py-2 rounded-lg hover:bg-blue-600"
+                  className="cursor-pointer bg-blue-500 text-white text-sm px-4 py-1 rounded-lg hover:bg-blue-600"
                 >
-                  Upload
+                  <CloudUploadIcon className="mr-2" />
+                  Photo
                 </label>
                 <input
                   type="file"
@@ -467,7 +470,7 @@ const DetailsCard = ({ students, setStudents, student, onClose }) => {
                 />
                 <button
                   onClick={uploadFatherPhoto}
-                  className={`bg-green-500 text-black text-sm px-4 py-2 rounded-lg hover:bg-green-600 ${
+                  className={`bg-green-500 text-black text-sm px-4 py-1 rounded-lg hover:bg-green-600 ${
                     photoFile.fatherPhotoFile
                       ? ''
                       : 'opacity-50 cursor-not-allowed'
@@ -497,9 +500,10 @@ const DetailsCard = ({ students, setStudents, student, onClose }) => {
               <div className="mt-2 flex flex-row items-center gap-2">
                 <label
                   htmlFor="upload-mother-photo"
-                  className="cursor-pointer bg-blue-500 text-white text-sm px-4 py-2 rounded-lg hover:bg-blue-600"
+                  className="cursor-pointer bg-blue-500 text-white text-sm px-4 py-1 rounded-lg hover:bg-blue-600"
                 >
-                  Upload
+                  <CloudUploadIcon className="mr-2" />
+                  Photo
                 </label>
                 <input
                   type="file"
@@ -511,7 +515,7 @@ const DetailsCard = ({ students, setStudents, student, onClose }) => {
                 />
                 <button
                   onClick={uploadMotherPhoto}
-                  className={`bg-green-500 text-black text-sm px-4 py-2 rounded-lg hover:bg-green-600 ${
+                  className={`bg-green-500 text-black text-sm px-4 py-1 rounded-lg hover:bg-green-600 ${
                     photoFile.motherPhotoFile
                       ? ''
                       : 'opacity-50 cursor-not-allowed'
