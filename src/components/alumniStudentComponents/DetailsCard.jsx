@@ -48,7 +48,7 @@ const DetailsCard = ({ students, setStudents, student, onClose }) => {
         borderRadius: 3,
         p: 4,
       }}
-      className="bg-white rounded-xl shadow-lg min-w-[800px] min-h-[400px] p-6 h-[57%] w-[75%] transform transition-transform duration-300 scale-100 relative"
+      className="bg-white rounded-xl shadow-lg min-w-[800px] min-h-[400px] p-6 h-[57%] w-[75%] transform transition-transform duration-300 scale-100 relative card-container"
     >
       <IconButton
         sx={{ position: 'absolute', top: 16, right: 16 }}
@@ -63,7 +63,7 @@ const DetailsCard = ({ students, setStudents, student, onClose }) => {
       >
         <div className="flex justify-stretch">
           <div className="text-3xl font-bold">Student Details</div>
-          {isUpdateDialogEnabled && (
+          {/* {isUpdateDialogEnabled && (
             <UpdateDialog
               students={students}
               setStudents={setStudents}
@@ -71,7 +71,7 @@ const DetailsCard = ({ students, setStudents, student, onClose }) => {
               setSelectedStudent={setSelectedStudent}
               currentPage={currentPage}
             />
-          )}
+          )} */}
         </div>
         <div className="flex mt-[10px]">
           <div className="h-[180px] md:h-[250px] w-[20%] flex-shrink-0 mr-4">
@@ -159,7 +159,7 @@ const DetailsCard = ({ students, setStudents, student, onClose }) => {
       >
         <div className="flex justify-stretch">
           <div className="text-3xl font-bold">Student Education</div>
-          {isUpdateDialogEnabled && (
+          {/* {isUpdateDialogEnabled && (
             <UpdateDialog
               students={students}
               setStudents={setStudents}
@@ -167,7 +167,7 @@ const DetailsCard = ({ students, setStudents, student, onClose }) => {
               setSelectedStudent={setSelectedStudent}
               currentPage={currentPage}
             />
-          )}
+          )} */}
         </div>
         <div className="flex mt-[10px]">
           <div className="h-[180px] md:h-[250px] w-[20%] flex-shrink-0 mr-4">
@@ -250,7 +250,7 @@ const DetailsCard = ({ students, setStudents, student, onClose }) => {
       >
         <div className="flex justify-stretch">
           <div className="text-3xl font-bold">Parent Details</div>
-          {isUpdateDialogEnabled && (
+          {/* {isUpdateDialogEnabled && (
             <UpdateDialog
               students={students}
               setStudents={setStudents}
@@ -258,7 +258,7 @@ const DetailsCard = ({ students, setStudents, student, onClose }) => {
               setSelectedStudent={setSelectedStudent}
               currentPage={currentPage}
             />
-          )}
+          )} */}
         </div>
         <div className="flex mt-[10px]">
           <div>
@@ -371,7 +371,7 @@ const DetailsCard = ({ students, setStudents, student, onClose }) => {
       >
         <div className="flex justify-stretch">
           <div className="text-3xl font-bold">Reference Details</div>
-          {isUpdateDialogEnabled && (
+          {/* {isUpdateDialogEnabled && (
             <UpdateDialog
               students={students}
               setStudents={setStudents}
@@ -379,7 +379,7 @@ const DetailsCard = ({ students, setStudents, student, onClose }) => {
               setSelectedStudent={setSelectedStudent}
               currentPage={currentPage}
             />
-          )}
+          )} */}
         </div>
         <div className="flex mt-[10px]">
           <div className="h-[180px] md:h-[250px] w-[20%] flex-shrink-0 mr-4">

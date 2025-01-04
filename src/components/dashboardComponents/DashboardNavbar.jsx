@@ -119,7 +119,7 @@ function DashboardNavbar({
         </div>
 
         {/* Icons Section */}
-        <div className="flex items-center space-x-2">
+        {/* <div className="flex items-center space-x-2">
           <IconButton color="inherit">
             <NotificationsIcon />
           </IconButton>
@@ -129,7 +129,7 @@ function DashboardNavbar({
           <IconButton color="inherit">
             <AccountCircleIcon />
           </IconButton>
-        </div>
+        </div> */}
       </div>
     </div>
   );

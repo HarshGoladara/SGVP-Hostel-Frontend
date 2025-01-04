@@ -9,7 +9,16 @@ import { CircularProgress } from '@mui/material';
 import CustomCircularLoader from '../commonCustomComponents/CustomCircularLoader.jsx';
 import HairballSpinner from '../commonCustomComponents/HairballSpinner.jsx';
 import DashoboardModal from './DashboardModal.jsx';
-import { Grid2, Card, CardContent, Typography, Button } from '@mui/material';
+import {
+  Grid2,
+  Card,
+  CardContent,
+  Typography,
+  Button,
+  List,
+  ListItem,
+  ListItemText,
+} from '@mui/material';
 import SchoolIcon from '@mui/icons-material/School';
 import EventNoteIcon from '@mui/icons-material/EventNote';
 import GroupIcon from '@mui/icons-material/Group';
@@ -29,6 +38,7 @@ import DescriptionIcon from '@mui/icons-material/Description';
 import AssessmentIcon from '@mui/icons-material/Assessment';
 import PrintIcon from '@mui/icons-material/Print';
 import FileCopyIcon from '@mui/icons-material/FileCopy';
+import BedIcon from '@mui/icons-material/Bed';
 
 const DashboardBody = ({}) => {
   const [noOfStudents, setNoOfStudents] = useState(null);
@@ -38,8 +48,10 @@ const DashboardBody = ({}) => {
   const [noOfActiveGatepasses, setNoOfActiveGatepasses] = useState(null);
   const [noOfPendingEntries, setNoOfPendingEntries] = useState(null);
   const [pendingEntries, setPendingEntries] = useState([]);
+  const [emptyBeds, setEmptyBeds] = useState(null);
   const [events, setEvents] = useState([]);
   const [modalOpen, setModalOpen] = useState(false);
+  const [modalPendingEntriesOpen, setModalPendingEntriesOpen] = useState(false);
   const [newEvent, setNewEvent] = useState({
     title: '',
     date: '',
@@ -58,6 +70,10 @@ const DashboardBody = ({}) => {
       ...prevEvent,
       [name]: value,
     }));
+  };
+
+  const handleCloseModal = () => {
+    setModalPendingEntriesOpen(false);
   };
 
   useEffect(() => {
@@ -94,6 +110,23 @@ const DashboardBody = ({}) => {
       } catch (error) {
         console.error(error);
         toast.error('Error Loading no of pending admission.');
+      }
+
+      // load no of empty beds
+      try {
+        const response = await axios.get(
+          `${VITE_BACKEND_BASE_API}/dashboard/getEmptyBed`,
+        );
+        // console.log(response);
+        if (response.status === 200) {
+          console.log(response.data.data);
+          setEmptyBeds(response.data.data);
+        } else {
+          toast.error('Error Loading no of empty beds.');
+        }
+      } catch (error) {
+        console.error(error);
+        toast.error('Error Loading no of empty beds.');
       }
 
       // load number of active gatepasses
@@ -249,7 +282,13 @@ const DashboardBody = ({}) => {
     <div className="bg-[#e2e8f0] flex-grow w-full h-full mt-2 rounded-xl">
       <div className="my-2 mx-5 grid grid-flow-col justify-stretch">
         <div className="flex flex-col">
-          <Card sx={{ width: 250, height: 200 }}>
+          <Card
+            sx={{
+              width: 350,
+              height: 200,
+              background: 'linear-gradient(135deg, #EF6225, white, #EF6225)',
+            }}
+          >
             <CardContent
               sx={{
                 textAlign: 'center',
@@ -291,7 +330,13 @@ const DashboardBody = ({}) => {
           </Card>
         </div>
         <div className="flex flex-col">
-          <Card sx={{ width: 250, height: 200 }}>
+          <Card
+            sx={{
+              width: 350,
+              height: 200,
+              background: 'linear-gradient(135deg, #EF2525, white, #EF2525)',
+            }}
+          >
             <CardContent
               sx={{
                 textAlign: 'center',
@@ -333,7 +378,69 @@ const DashboardBody = ({}) => {
           </Card>
         </div>
         <div className="flex flex-col">
-          <Card sx={{ width: 250, height: 200 }}>
+          <Card
+            sx={{
+              width: 350,
+              height: 200,
+              background: 'linear-gradient(135deg, #EFCC25, white, #EFCC25)',
+            }}
+          >
+            <CardContent
+              sx={{
+                textAlign: 'center',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'center',
+                alignItems: 'center',
+                height: '100%',
+              }}
+            >
+              <BedIcon fontSize="large" />
+              <Typography variant="h6">Available Beds</Typography>
+              <Typography variant="h4" sx={{ marginTop: 1 }}>
+                <Box
+                  sx={{
+                    marginTop: 1,
+                    paddingX: 5,
+                    paddingY: 1,
+                    borderRadius: '25px',
+                    backgroundColor: `${emptyBeds !== null ? '#2196f3' : ''}`, // Blue background
+                    color: '#fff', // White text
+                    display: 'inline-block',
+                    textAlign: 'Left',
+                    minWidth: '50px', // Ensure oval shape
+                    fontSize: '20px',
+                  }}
+                >
+                  {emptyBeds !== null ? (
+                    emptyBeds
+                      .map(
+                        (data) => `${data.category}: ${data.empty_beds_count}`,
+                      )
+                      .join('\n') // Join categories and counts with line breaks
+                  ) : (
+                    <CustomCircularLoader
+                      size={50}
+                      logoSrc="/images/logo.jpg"
+                    />
+                  )}
+                </Box>
+              </Typography>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+
+      <Divider />
+      <div className="my-2 mx-5 grid grid-flow-col justify-stretch">
+        <div className="flex flex-col">
+          <Card
+            sx={{
+              width: 350,
+              height: 200,
+              background: 'linear-gradient(135deg, #A1EF25, white, #A1EF25)',
+            }}
+          >
             <CardContent
               sx={{
                 textAlign: 'center',
@@ -375,7 +482,13 @@ const DashboardBody = ({}) => {
           </Card>
         </div>
         <div className="flex flex-col">
-          <Card sx={{ width: 250, height: 200 }}>
+          <Card
+            sx={{
+              width: 350,
+              height: 200,
+              background: 'linear-gradient(135deg, #25EF8C, white, #25EF8C)',
+            }}
+          >
             <CardContent
               sx={{
                 textAlign: 'center',
@@ -416,11 +529,14 @@ const DashboardBody = ({}) => {
             </CardContent>
           </Card>
         </div>
-      </div>
-      <Divider />
-      <div className="my-2 mx-5 grid grid-flow-col justify-stretch">
         <div className="flex flex-col">
-          <Card sx={{ width: 250, height: 200 }}>
+          <Card
+            sx={{
+              width: 350,
+              height: 200,
+              background: 'linear-gradient(135deg, #25E1EF, white, #25E1EF)',
+            }}
+          >
             <CardContent
               sx={{
                 textAlign: 'center',
@@ -461,8 +577,17 @@ const DashboardBody = ({}) => {
             </CardContent>
           </Card>
         </div>
+      </div>
+      <Divider />
+      <div className="my-2 mx-5 grid grid-flow-col justify-stretch">
         <div className="flex flex-col">
-          <Card sx={{ width: 250, height: 200 }}>
+          <Card
+            sx={{
+              width: 350,
+              height: 200,
+              background: 'linear-gradient(135deg, #EF749D, white, #EF749D)',
+            }}
+          >
             <CardContent
               sx={{
                 textAlign: 'center',
@@ -477,6 +602,9 @@ const DashboardBody = ({}) => {
               <Typography variant="h6">Pending Entries</Typography>
               <Typography variant="h4" sx={{ marginTop: 1 }}>
                 <Box
+                  onClick={() => {
+                    // setModalPendingEntriesOpen(true);
+                  }}
                   sx={{
                     marginTop: 1,
                     paddingX: 4,
@@ -488,6 +616,10 @@ const DashboardBody = ({}) => {
                     textAlign: 'center',
                     fontSize: '1.5rem', // Adjust font size
                     minWidth: '50px', // Ensure oval shape
+                    cursor: 'pointer', // Pointer cursor on hover
+                    '&:hover': {
+                      backgroundColor: `${noOfPendingEntries !== null ? '#1976d2' : ''}`, // Slightly darker blue on hover
+                    },
                   }}
                 >
                   {noOfPendingEntries !== null ? (
@@ -529,7 +661,6 @@ const DashboardBody = ({}) => {
           </Card>
         </div>
       </div>
-      <Divider />
 
       <div>
         <div style={{ padding: '20px' }}>
@@ -559,6 +690,11 @@ const DashboardBody = ({}) => {
         </div>
       </div>
       <div>
+        <DashoboardModal
+          pendingEntries={pendingEntries}
+          open={modalPendingEntriesOpen}
+          onClose={handleCloseModal}
+        />
         <UpdateDeleteEventDialog
           events={events}
           setEvents={setEvents}

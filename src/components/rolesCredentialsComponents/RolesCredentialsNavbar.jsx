@@ -4,17 +4,13 @@ import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
 import axios from 'axios';
 import { VITE_BACKEND_BASE_API } from '../../helper/envConfig/envConfig.js';
-import './css/StudentNavbar.css';
+import './css/RolesCredentialsNavbar.css';
 import DrawerBasic from '../commonCustomComponents/DrawerBasic.jsx';
 import DrawerFilters from './DrawerFilters.jsx';
-import { Button } from '@mui/material';
-import FileCopyIcon from '@mui/icons-material/FileCopy';
-import { CircularProgress } from '@mui/material';
-import * as XLSX from 'xlsx'; // Import XLSX library
 
-function StudentNavbar({
-  students,
-  setStudents,
+function RolesCredentialsNavbar({
+  rolesCredentials,
+  setRolesCredentials,
   selectedOption,
   setSelectedOption,
   totalItems,
@@ -28,14 +24,9 @@ function StudentNavbar({
   searchQuery,
   setSearchQuery,
   isLoading,
-  selectedUniversity,
-  setSelectedUniversity,
-  selectedBranch,
-  setSelectedBranch,
 }) {
   const [showMenu, setShowMenu] = useState(false);
   const [pinNumber, setPinNumber] = useState('');
-  const [reportLoading, setReportLoading] = useState(false);
 
   const options = ['All', 'Wing3', 'Dome', 'Vishvambharam'];
 
@@ -54,41 +45,63 @@ function StudentNavbar({
     setSearchQuery(e.target.value);
   };
 
-  const filterStudents = async (option, university, branch) => {
+  const filterStudents = async (option) => {
     isLoading(true);
     try {
       setCurrentPage(1);
-
-      const { data } = await axios.get(
-        `${VITE_BACKEND_BASE_API}/student/getStudentDetails`,
-        {
-          params: {
-            page: 1,
-            limit: 10,
-            category: option === 'All' ? null : option,
-            name_of_university: university === 'All' ? null : university,
-            branch: branch === 'All' ? null : branch,
+      if (option === 'All') {
+        const { data } = await axios.get(
+          `${VITE_BACKEND_BASE_API}/credential/getRolesAndCredentials`,
+          {
+            params: {
+              page: 1,
+              limit: 10,
+            },
           },
-        },
-      );
-      const results = data.data;
-      // setStudentData(results);
-      // setNoOfStudent(results.length);
-      setStudents(results);
+        );
+        const results = data.data;
+        // setStudentData(results);
+        // setNoOfStudent(results.length);
+        setRolesCredentials(results);
 
-      const response = await axios.get(
-        `${VITE_BACKEND_BASE_API}/pagination/getStudentPagination`,
-        {
-          params: {
-            limit: 10,
-            category: option === 'All' ? null : option,
-            name_of_university: university === 'All' ? null : university,
-            branch: branch === 'All' ? null : branch,
+        const response = await axios.get(
+          `${VITE_BACKEND_BASE_API}/pagination/getStudentPagination`, //changes require------------------
+          {
+            params: {
+              limit: 10,
+            },
           },
-        },
-      );
-      setTotalPages(response.data.pagination.totalPages);
-      setTotalItems(response.data.pagination.totalItems);
+        );
+        setTotalPages(response.data.pagination.totalPages);
+        setTotalItems(response.data.pagination.totalItems);
+      } else {
+        const { data } = await axios.get(
+          `${VITE_BACKEND_BASE_API}/credential/getRolesAndCredentials`,
+          {
+            params: {
+              page: 1,
+              limit: 10,
+              category: option,
+            },
+          },
+        );
+        const results = data.data;
+        // setStudentData(results);
+        // setNoOfStudent(results.length);
+        setRolesCredentials(results);
+
+        const response = await axios.get(
+          `${VITE_BACKEND_BASE_API}/pagination/getStudentPagination`,
+          {
+            params: {
+              limit: 10,
+              category: option,
+            },
+          },
+        );
+        setTotalPages(response.data.pagination.totalPages);
+        setTotalItems(response.data.pagination.totalItems);
+      }
     } catch (error) {
       console.log('Error fetching student data', error);
     } finally {
@@ -103,10 +116,10 @@ function StudentNavbar({
       const query = searchQuery.trim();
       if (!query) {
         const { data } = await axios.get(
-          `${VITE_BACKEND_BASE_API}/student/getStudentDetails?page=1&limit=10`,
+          `${VITE_BACKEND_BASE_API}/credential/getRolesAndCredentials?page=1&limit=10`,
         );
 
-        setStudents(data.data);
+        setRolesCredentials(data.data);
 
         const response = await axios.get(
           `${VITE_BACKEND_BASE_API}/pagination/getStudentPagination`,
@@ -123,7 +136,7 @@ function StudentNavbar({
           const isPin = /^\d+$/.test(query);
           if (isPin) {
             const { data } = await axios.get(
-              `${VITE_BACKEND_BASE_API}/student/getStudentDetails`,
+              `${VITE_BACKEND_BASE_API}/credential/getRolesAndCredentials`,
               {
                 params: {
                   pin_number: query,
@@ -131,7 +144,7 @@ function StudentNavbar({
               },
             );
 
-            setStudents(data.data);
+            setRolesCredentials(data.data);
 
             const response = await axios.get(
               `${VITE_BACKEND_BASE_API}/pagination/getStudentPagination`,
@@ -146,7 +159,7 @@ function StudentNavbar({
             setTotalItems(response.data.pagination.totalItems);
           } else {
             const { data } = await axios.get(
-              `${VITE_BACKEND_BASE_API}/student/getStudentDetails`,
+              `${VITE_BACKEND_BASE_API}/credential/getRolesAndCredentials`,
               {
                 params: {
                   student_full_name: query,
@@ -154,7 +167,7 @@ function StudentNavbar({
               },
             );
 
-            setStudents(data.data);
+            setRolesCredentials(data.data);
 
             const response = await axios.get(
               `${VITE_BACKEND_BASE_API}/pagination/getStudentPagination`,
@@ -169,62 +182,13 @@ function StudentNavbar({
             setTotalItems(response.data.pagination.totalItems);
           }
         } catch (error) {
-          console.log('Error fetching student data');
+          console.log('Error fetching RolesCredentials data');
         }
       }
     } catch (err) {
-      console.error('Error fetching student data:', err);
+      console.error('Error fetching RolesCredentials data:', err);
     } finally {
       isLoading(false);
-    }
-  };
-
-  const generateStudentDataReport = async () => {
-    setReportLoading(true);
-    try {
-      const response = await axios.get(
-        `${VITE_BACKEND_BASE_API}/student/getStudentReportDetails`,
-        {
-          params: {
-            category: selectedOption === 'All' ? null : selectedOption,
-            name_of_university:
-              selectedUniversity === 'All' ? null : selectedUniversity,
-            branch: selectedBranch === 'All' ? null : selectedBranch,
-          },
-        },
-      );
-
-      if (response.status === 200) {
-        // Convert the data to a worksheet
-        const worksheet = XLSX.utils.json_to_sheet(response.data.data);
-        // Create a new workbook and append the worksheet
-        const workbook = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(
-          workbook,
-          worksheet,
-          'Student Data Report',
-        );
-        // Generate a binary string
-        const excelBuffer = XLSX.write(workbook, {
-          bookType: 'xlsx',
-          type: 'array',
-        });
-        // Create a Blob from the buffer
-        const blob = new Blob([excelBuffer], {
-          type: 'application/octet-stream',
-        });
-        // Create a link to download the Blob
-        const link = document.createElement('a');
-        link.href = URL.createObjectURL(blob);
-        link.download = `student_data_report.xlsx`;
-        link.click();
-      } else {
-        console.error('Error fetching student report data');
-      }
-    } catch (err) {
-      console.error('Error fetching student report data:', err);
-    } finally {
-      setReportLoading(false);
     }
   };
 
@@ -234,11 +198,11 @@ function StudentNavbar({
       try {
         setCurrentPage(1);
         const { data } = await axios.get(
-          `${VITE_BACKEND_BASE_API}/student/getStudentDetails`,
+          `${VITE_BACKEND_BASE_API}/credential/getRolesAndCredentials`,
         );
         // // setStudentData(data.data);
         // setNoOfStudent(data.data.length);
-        setStudents(data.data);
+        setRolesCredentials(data.data);
 
         const response = await axios.get(
           `${VITE_BACKEND_BASE_API}/pagination/getStudentPagination`,
@@ -267,46 +231,14 @@ function StudentNavbar({
         </div>
 
         <div className="flex-grow flex justify-center items-center space-x-3">
-          <span className="text-[25px] font-bold">Student</span>
-          <span className="text-[18px]">{`  (${totalItems})`}</span>
+          <span className="text-[25px] font-bold">Roles & Credentials</span>
+          {/* <span className="text-[18px]">{`  (${totalItems})`}</span> */}
         </div>
 
-        <div className="flex-shrink-0">
-          <Button
-            variant="outlined"
-            color="primary"
-            onClick={() => {
-              generateStudentDataReport();
-            }}
-            sx={{
-              marginRight: 1,
-              display: 'flex',
-              alignItems: 'center',
-              textTransform: 'none',
-              fontWeight: 'bold',
-              borderColor: 'primary.main',
-              color: 'primary.main',
-              transition: 'all 0.3s ease',
-              '&:hover': {
-                backgroundColor: 'primary.main',
-                color: 'white',
-                borderColor: 'primary.main',
-              },
-            }}
-          >
-            <FileCopyIcon className="mr-2" />
-            {reportLoading ? (
-              <CircularProgress size={24} sx={{ color: 'blue' }} />
-            ) : (
-              'Generate Report'
-            )}
-          </Button>
-        </div>
-
-        <div className="flex-shrink-0">
+        {/* <div className="flex-shrink-0">
           <DrawerFilters
-            students={students}
-            setStudents={setStudents}
+            rolesCredentials={rolesCredentials}
+            setRolesCredentials={setRolesCredentials}
             selectedOption={selectedOption}
             setSelectedOption={setSelectedOption}
             totalItems={totalItems}
@@ -321,12 +253,8 @@ function StudentNavbar({
             setSearchQuery={setSearchQuery}
             filterStudents={filterStudents}
             searchStudents={searchStudents}
-            selectedUniversity={selectedUniversity}
-            setSelectedUniversity={setSelectedUniversity}
-            selectedBranch={selectedBranch}
-            setSelectedBranch={setSelectedBranch}
           />
-        </div>
+        </div> */}
 
         {/* <div className="flex flex-row mr-3">
           <div className="relative inline-block text-left pr-10">
@@ -395,4 +323,4 @@ function StudentNavbar({
   );
 }
 
-export default StudentNavbar;
+export default RolesCredentialsNavbar;

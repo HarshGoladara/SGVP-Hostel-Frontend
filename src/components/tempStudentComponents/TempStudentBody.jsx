@@ -5,7 +5,15 @@ import { ArrowBack, ArrowForward } from '@mui/icons-material';
 import TempStudentModal from './TempStudentModal.jsx';
 import { VITE_BACKEND_BASE_API } from '../../helper/envConfig/envConfig.js';
 import ActionDropdown from './ActionDropdown.jsx';
-import { CircularProgress } from '@mui/material';
+import {
+  CircularProgress,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  Button,
+} from '@mui/material';
 import CustomCircularLoader from '../commonCustomComponents/CustomCircularLoader.jsx';
 import HairballSpinner from '../commonCustomComponents/HairballSpinner.jsx';
 import toast from 'react-hot-toast';
@@ -28,6 +36,8 @@ const TempStudentTable = ({
 }) => {
   const [selectedStudent, setSelectedStudent] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
+  const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
+  const [confirmDialogType, setConfirmDialogType] = useState(''); // 'confirm' or 'cancel'
 
   const statusColor = (status) => {
     switch (status) {
@@ -178,6 +188,26 @@ const TempStudentTable = ({
     setCurrentPage(page);
   };
 
+  const openConfirmDialog = (type, student) => {
+    setSelectedStudent(student);
+    setConfirmDialogType(type);
+    setConfirmDialogOpen(true);
+  };
+
+  const handleConfirmDialogClose = () => {
+    setConfirmDialogOpen(false);
+    setSelectedStudent(null);
+  };
+
+  const handleConfirmDialogAction = () => {
+    if (confirmDialogType === 'confirm') {
+      handleConfirmAction(selectedStudent);
+    } else if (confirmDialogType === 'cancel') {
+      handleCancelAction(selectedStudent);
+    }
+    handleConfirmDialogClose();
+  };
+
   // Generate page numbers for pagination
   const getPageNumbers = () => {
     const pageNumbers = [];
@@ -229,7 +259,7 @@ const TempStudentTable = ({
         {/* Added horizontal margin with mx-2 */}
         <table className="min-w-full border-collapse text-s">
           <thead className="">
-            <tr className="bg-gray-200 rounded-2xl">
+            <tr className="bg-gray-400 rounded-2xl">
               {/* Apply rounded corners to the entire row */}
               <th className="py-2 px-4 text-left font-bold rounded-tl-2xl rounded-bl-2xl">
                 Photo
@@ -279,7 +309,7 @@ const TempStudentTable = ({
               students.map((student) => (
                 <tr
                   key={student.entry_number}
-                  className="border-b hover:bg-gray-50"
+                  className="border-b hover:bg-gradient-to-r from-blue-200 to-blue-400 odd:bg-gray-200 even:bg-gray-300"
                 >
                   <td className="py-2 px-4">
                     {student.student_photo_url ? (
@@ -340,9 +370,11 @@ const TempStudentTable = ({
                         if (action === 'Show') {
                           handleShowDetails(student);
                         } else if (action === 'Confirm') {
-                          handleConfirmAction(student);
+                          // handleConfirmAction(student);
+                          openConfirmDialog('confirm', student);
                         } else if (action === 'Cancel') {
-                          handleCancelAction(student);
+                          // handleCancelAction(student);
+                          openConfirmDialog('cancel', student);
                         }
                       }}
                       student={student}
@@ -358,6 +390,62 @@ const TempStudentTable = ({
           open={modalOpen}
           onClose={handleCloseModal}
         />
+        <Dialog open={confirmDialogOpen} onClose={handleConfirmDialogClose}>
+          <DialogTitle>Confirm Action</DialogTitle>
+          <DialogContent>
+            <DialogContentText>
+              Are you sure you want to{' '}
+              {confirmDialogType === 'confirm' ? 'confirm' : 'cancel'} admission
+              for <strong>{selectedStudent?.student_full_name}</strong>?
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button
+              onClick={handleConfirmDialogClose}
+              variant="outlined"
+              color="primary"
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                textTransform: 'none',
+                fontWeight: 'bold',
+                borderColor: 'primary.main',
+                color: 'primary.main',
+                transition: 'all 0.3s ease',
+                '&:hover': {
+                  backgroundColor: 'primary.main',
+                  color: 'white',
+                  borderColor: 'primary.main',
+                },
+              }}
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={handleConfirmDialogAction}
+              color={confirmDialogType === 'confirm' ? 'success' : 'error'}
+              variant="outlined"
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                textTransform: 'none',
+                fontWeight: 'bold',
+                borderColor: `${confirmDialogType === 'confirm' ? 'success.main' : 'error.main'}`,
+                color: `${confirmDialogType === 'confirm' ? 'success.main' : 'error.main'}`,
+                transition: 'all 0.3s ease',
+                '&:hover': {
+                  backgroundColor: `${confirmDialogType === 'confirm' ? 'success.main' : 'error.main'}`,
+                  color: 'white',
+                  borderColor: `${confirmDialogType === 'confirm' ? 'success.main' : 'error.main'}`,
+                },
+              }}
+            >
+              {confirmDialogType === 'confirm'
+                ? 'Confirm Admission'
+                : 'Cancel Admission'}
+            </Button>
+          </DialogActions>
+        </Dialog>
       </div>
       <div className="flex justify-between items-center py-4 mx-5">
         <span className="text-gray-700 whitespace-nowrap">

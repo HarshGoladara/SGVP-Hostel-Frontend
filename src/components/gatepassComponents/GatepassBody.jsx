@@ -18,6 +18,8 @@ const GatepassTable = ({
   currentPage,
   setCurrentPage,
   totalPages,
+  totalItems,
+  setTotalItems,
   // setTotalPages,
   pageNumberList,
   setPageNumberList,
@@ -155,6 +157,7 @@ const GatepassTable = ({
         // console.log('Admin Approval successful:', response);
         toast.success('Admin Approval successful');
         removeGatepassFromList(gatepass.gatepass_number);
+        setTotalItems(totalItems - 1);
       } else {
         console.error('Error updating gatepass approval');
         toast.error('Error! Try Again');
@@ -181,6 +184,7 @@ const GatepassTable = ({
         // console.log('Admin DisApproval successful:', response);
         toast.success('Admin DisApproval successful');
         removeGatepassFromList(gatepass.gatepass_number);
+        setTotalItems(totalItems - 1);
       } else {
         console.error('Error updating gatepass Disapproval');
         toast.error('Error! Try Again');
@@ -224,6 +228,7 @@ const GatepassTable = ({
           // console.log('Gatepass Moved to Archived successfully:', responsePost);
           toast.success('Re-Entry Completed And Gatepass Archived');
           removeGatepassFromList(gatepass.gatepass_number);
+          setTotalItems(totalItems - 1);
         } else {
           console.error('Error updating in time by admin');
           toast.error('Error Try Again');
@@ -378,7 +383,7 @@ const GatepassTable = ({
         {/* Added horizontal margin with mx-2 */}
         <table className="min-w-full border-collapse text-s">
           <thead className="">
-            <tr className="bg-gray-200 rounded-2xl">
+            <tr className="bg-gray-400 rounded-2xl">
               {/* Apply rounded corners to the entire row */}
               {/* Rounded left side */}
               <th className="py-2 px-4 text-left font-bold">GID</th>
@@ -426,7 +431,7 @@ const GatepassTable = ({
               gatepasses.map((gatepass) => (
                 <tr
                   key={gatepass.gatepass_number}
-                  className="border-b hover:bg-gray-50"
+                  className="border-b hover:bg-gradient-to-r from-blue-200 to-blue-400 odd:bg-gray-200 even:bg-gray-300"
                 >
                   <td className="py-2 px-4">
                     <span className="font-bold">
@@ -483,6 +488,8 @@ const GatepassTable = ({
           selectedParentOption={selectedParentOption}
           selectedAdminOption={selectedAdminOption}
           gatepass={selectedGatepass}
+          totalItems={totalItems}
+          setTotalItems={setTotalItems}
           open={modalOpen}
           onClose={handleCloseModal}
         />

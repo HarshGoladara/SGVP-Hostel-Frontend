@@ -1,33 +1,16 @@
-// import React from 'react';
-// import StudentNavbar from './StudentNavbar';
-// import StudentBody from './StudentBody';
-
-// function StudentLayout() {
-//   return (
-//     <div className="h-full flex flex-col">
-//       <StudentNavbar />
-//       <StudentBody className="flex-grow" />
-//     </div>
-//   );
-// }
-
-// export default StudentLayout;
-
 import React, { useState } from 'react';
-import StudentNavbar from './StudentNavbar';
-import StudentBody from './StudentBody';
+import RolesCredentialsNavbar from './RolesCredentialsNavbar';
+import RolesCredentialsBody from './RolesCredentialsBody';
 
-function StudentLayout() {
-  const [students, setStudents] = useState([]);
-  const [selectedOption, setSelectedOption] = useState('All');
-  const [selectedUniversity, setSelectedUniversity] = useState('All');
-  const [selectedBranch, setSelectedBranch] = useState('All');
+function RolesCredentialsLayout() {
   const [searchResults, setSearchResults] = useState([]);
   const [loading, setLoading] = useState(false);
   const [totalItems, setTotalItems] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [pageNumberList, setPageNumberList] = useState([]);
+  const [rolesCredentials, setRolesCredentials] = useState([]);
+  const [selectedOption, setSelectedOption] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
 
   const handleSearch = (results) => {
@@ -41,9 +24,9 @@ function StudentLayout() {
   return (
     <div className="min-h-screen flex flex-col">
       <div className="sticky top-0 z-10 bg-white shadow-md">
-        <StudentNavbar
-          students={students}
-          setStudents={setStudents}
+        <RolesCredentialsNavbar
+          rolesCredentials={rolesCredentials}
+          setRolesCredentials={setRolesCredentials}
           selectedOption={selectedOption}
           setSelectedOption={setSelectedOption}
           totalItems={totalItems}
@@ -57,16 +40,12 @@ function StudentLayout() {
           searchQuery={searchQuery}
           setSearchQuery={setSearchQuery}
           isLoading={handleLoading}
-          selectedUniversity={selectedUniversity}
-          setSelectedUniversity={setSelectedUniversity}
-          selectedBranch={selectedBranch}
-          setSelectedBranch={setSelectedBranch}
         />
       </div>
       <div className="flex-grow overflow-y-auto">
-        <StudentBody
-          students={students}
-          setStudents={setStudents}
+        <RolesCredentialsBody
+          rolesCredentials={rolesCredentials}
+          setRolesCredentials={setRolesCredentials}
           selectedOption={selectedOption}
           setSelectedOption={setSelectedOption}
           totalItems={totalItems}
@@ -81,10 +60,6 @@ function StudentLayout() {
           setSearchQuery={setSearchQuery}
           loading={loading}
           isLoading={handleLoading}
-          selectedUniversity={selectedUniversity}
-          setSelectedUniversity={setSelectedUniversity}
-          selectedBranch={selectedBranch}
-          setSelectedBranch={setSelectedBranch}
           className="flex-grow"
         />
       </div>
@@ -92,4 +67,4 @@ function StudentLayout() {
   );
 }
 
-export default StudentLayout;
+export default RolesCredentialsLayout;

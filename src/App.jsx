@@ -24,6 +24,7 @@ import DashboardLayout from './components/dashboardComponents/DashboardLayout.js
 import Sidebar from './layouts/Sidebar.jsx';
 import AttendanceLayout from './components/attendanceComponents/AttendanceLayout.jsx';
 import RoomAllotmentLayout from './components/roomAllotmentComponents/RoomAllotmentLayout.jsx';
+import RolesCredentialsLayout from './components/rolesCredentialsComponents/RolesCredentialsLayout.jsx';
 
 function App() {
   const router = createBrowserRouter([
@@ -170,6 +171,17 @@ function App() {
               {/* <Sidebar /> */}
               <div className="flex-grow">
                 <AlumniStudentLayout />
+              </div>
+            </div>
+          ),
+        },
+        {
+          path: '/roles',
+          element: (
+            <div className="app-container">
+              {/* <Sidebar /> */}
+              <div className="flex-grow">
+                <RolesCredentialsLayout />
               </div>
             </div>
           ),

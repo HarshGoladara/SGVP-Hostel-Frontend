@@ -33,6 +33,8 @@ const DetailsCard = ({
   setGatepasses,
   selectedParentOption,
   selectedAdminOption,
+  totalItems,
+  setTotalItems,
   gatepass,
   onClose,
 }) => {
@@ -137,6 +139,7 @@ const DetailsCard = ({
             selectedAdminOption,
             updatedBody,
           );
+          setTotalItems(totalItems - 1);
         } else {
           console.error('Error in parent status update:');
           toast.error('Error! Try Again');

@@ -42,7 +42,7 @@ const DetailsCard = ({ student, onClose }) => {
         borderRadius: 3,
         p: 4,
       }}
-      className="bg-white rounded-xl shadow-lg min-w-[800px] min-h-[400px] p-6 h-[57%] w-[75%] transform transition-transform duration-300 scale-100 relative"
+      className="bg-white rounded-xl shadow-lg min-w-[800px] min-h-[400px] p-6 h-[57%] w-[75%] transform transition-transform duration-300 scale-100 relative card-container"
     >
       <IconButton
         sx={{ position: 'absolute', top: 16, right: 16 }}

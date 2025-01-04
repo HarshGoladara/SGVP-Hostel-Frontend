@@ -44,6 +44,8 @@ const DetailsCard = ({
   const [removeBedLoading, setRemoveBedLoading] = useState(false);
   const [assignRoomAndBedDialogOpen, setAssignRoomAndBedDialogOpen] =
     useState(false);
+  const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
+  const [confirmDialogType, setConfirmDialogType] = useState(null); // "deallocate" or "remove"
 
   const [cookies] = useCookies(['token']);
 
@@ -101,6 +103,22 @@ const DetailsCard = ({
     } finally {
       setRemoveBedLoading(false);
       onClose();
+    }
+  };
+
+  const handleConfirmDialogOpen = (type) => {
+    setConfirmDialogType(type);
+    setConfirmDialogOpen(true);
+  };
+
+  const handleConfirmDialogClose = (confirmed) => {
+    setConfirmDialogOpen(false);
+    if (confirmed) {
+      if (confirmDialogType === 'deallocate') {
+        handleDeallocateBed();
+      } else if (confirmDialogType === 'remove') {
+        handleRemoveBed();
+      }
     }
   };
 
@@ -336,7 +354,7 @@ const DetailsCard = ({
             <Button
               variant="outlined"
               color="warning"
-              onClick={handleDeallocateBed}
+              onClick={() => handleConfirmDialogOpen('deallocate')}
               disabled={!isDeAllocateBedEnabled}
               sx={{
                 display: 'flex',
@@ -369,7 +387,7 @@ const DetailsCard = ({
             <Button
               variant="outlined"
               color="error"
-              onClick={handleRemoveBed}
+              onClick={() => handleConfirmDialogOpen('remove')}
               disabled={!isRemoveBedEnabled}
               sx={{
                 display: 'flex',
@@ -451,6 +469,40 @@ const DetailsCard = ({
         </Dialog>
       )} */}
       </Card>
+
+      <Dialog
+        open={confirmDialogOpen}
+        onClose={() => handleConfirmDialogClose(false)}
+      >
+        <DialogTitle>
+          {confirmDialogType === 'deallocate'
+            ? 'De-Allocate Bed'
+            : 'Remove Bed'}
+        </DialogTitle>
+        <DialogContent>
+          Are you sure you want to{' '}
+          {confirmDialogType === 'deallocate'
+            ? 'de-allocate this bed'
+            : 'remove this bed'}
+          ?
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={() => handleConfirmDialogClose(false)}
+            color="secondary"
+          >
+            Cancel
+          </Button>
+          <Button
+            onClick={() => handleConfirmDialogClose(true)}
+            color="primary"
+            variant="contained"
+          >
+            Confirm
+          </Button>
+        </DialogActions>
+      </Dialog>
+
       <AssignRoomAndBedDialog
         roomAllotment={roomAllotment}
         setRoomAllotment={setRoomAllotment}

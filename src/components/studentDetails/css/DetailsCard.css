@@ -24,12 +24,22 @@
 
 /* Apply the slide-in animation */
 .slide-in {
+  /* animation: slideIn 0.3s ease-out forwards; */
   animation: slideIn 0.3s ease-out forwards;
+  position: absolute; /* Keep content within card bounds */
+  top: 10;
+  left: 10;
+  width: 100%; /* Match card width */
 }
 
 /* Apply the slide-out animation */
 .slide-out {
+  /* animation: slideOut 0.3s ease-in forwards; */
   animation: slideOut 0.3s ease-in forwards;
+  position: absolute; /* Keep content within card bounds */
+  top: 10;
+  left: 10;
+  width: 100%; /* Match card width */
 }
 
 /* Define the keyframes for glide-in animation */
@@ -58,12 +68,30 @@
 
 /* Apply the glide-in animation */
 .glide-in {
+  /* animation: glideIn 0.3s ease-out forwards; */
   animation: glideIn 0.3s ease-out forwards;
+  position: absolute; /* Keep content within card bounds */
+  top: 10;
+  left: 10;
+  width: 100%; /* Match card width */
 }
 
 /* Apply the glide-out animation */
 .glide-out {
+  /* animation: glideOut 0.3s ease-in forwards; */
   animation: glideOut 0.3s ease-in forwards;
+  position: absolute; /* Keep content within card bounds */
+  top: 10;
+  left: 10;
+  width: 100%; /* Match card width */
+}
+
+/* Ensure parent container hides overflow content */
+.card-container {
+  position: relative;
+  overflow: hidden; /* Prevent content from going outside card */
+  width: 100%; /* Match card dimensions */
+  height: 100%; /* Match card dimensions */
 }
 
 /* Hidden state to prevent elements from being visible during transitions */

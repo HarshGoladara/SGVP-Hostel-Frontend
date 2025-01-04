@@ -40,6 +40,9 @@ const RoomAllotmentBody = ({
   const [addRoomDialogOpen, setAddRoomDialogOpen] = useState(false);
   const [addBedDialogOpen, setAddBedDialogOpen] = useState(false);
   const [selectedRoomNumber, setSelectedRoomNumber] = useState(null);
+  // New state for confirmation dialog
+  const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
+  const [roomToDelete, setRoomToDelete] = useState(null);
 
   const handleShowDetails = (bed) => {
     setSelectedBed(bed);
@@ -48,6 +51,11 @@ const RoomAllotmentBody = ({
 
   const handleCloseModal = () => {
     setModalOpen(false);
+  };
+
+  const confirmRemoveRoom = (room) => {
+    setRoomToDelete(room);
+    setConfirmDialogOpen(true);
   };
 
   const handleRemoveRoom = async (room) => {
@@ -69,6 +77,8 @@ const RoomAllotmentBody = ({
       console.log('error removing room', error);
     } finally {
       isLoading(false);
+      setConfirmDialogOpen(false);
+      setRoomToDelete(null);
     }
   };
 
@@ -188,7 +198,8 @@ const RoomAllotmentBody = ({
                 color="error"
                 disabled={!isRemoveRoomEnabled(room)}
                 onClick={() => {
-                  handleRemoveRoom(room);
+                  // handleRemoveRoom(room);
+                  confirmRemoveRoom(room);
                 }}
                 sx={{
                   display: 'flex',
@@ -214,12 +225,22 @@ const RoomAllotmentBody = ({
             <div className="grid grid-cols-4 gap-4">
               {room.beds.map((bed) => (
                 <div
+                  // key={bed.bed_number}
+                  // className={`p-4 border rounded-lg text-center shadow-md cursor-pointer ${bed.isOccupied
+                  //   ? 'bg-red-100 text-red-500'
+                  //   : 'bg-green-100 text-green-500'
+                  //   }`}
+                  // onClick={() => {
+                  //   handleShowDetails(bed);
+                  // }}
                   key={bed.bed_number}
-                  className={`p-4 border rounded-lg text-center shadow-md cursor-pointer ${
-                    bed.isOccupied
-                      ? 'bg-red-100 text-red-500'
-                      : 'bg-green-100 text-green-500'
-                  }`}
+                  className={`p-4 border rounded-lg text-center shadow-md cursor-pointer`}
+                  style={{
+                    background: bed.isOccupied
+                      ? 'linear-gradient(135deg, #FC9C9C,white, #FC9C9C)' // Gradient for occupied beds (red shades)
+                      : 'linear-gradient(135deg, #9FF59F,white, #9FF59F)', // Gradient for available beds (green shades)
+                    color: bed.isOccupied ? '#FF0000' : '#00A000', // Adjust text color for better visibility
+                  }}
                   onClick={() => {
                     handleShowDetails(bed);
                   }}
@@ -265,6 +286,68 @@ const RoomAllotmentBody = ({
           </div>
         ))
       )}
+
+      {/* Confirmation Dialog */}
+      <Dialog
+        open={confirmDialogOpen}
+        onClose={() => setConfirmDialogOpen(false)}
+      >
+        <DialogTitle>Confirm Room Deletion</DialogTitle>
+        <DialogContent>
+          <Typography>
+            Are you sure you want to remove Room{' '}
+            <strong>{roomToDelete?.room_number || '---'}</strong>? This action
+            cannot be undone.
+          </Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={() => {
+              setConfirmDialogOpen(false);
+              setRoomToDelete(null);
+            }}
+            variant="outlined"
+            color="primary"
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              textTransform: 'none',
+              fontWeight: 'bold',
+              borderColor: `primary.main`,
+              color: `primary.main`,
+              transition: 'all 0.3s ease',
+              '&:hover': {
+                backgroundColor: `primary.main`,
+                color: 'white',
+                borderColor: `primary.main`,
+              },
+            }}
+          >
+            Cancel
+          </Button>
+          <Button
+            onClick={() => handleRemoveRoom(roomToDelete)}
+            variant="outlined"
+            color="error"
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              textTransform: 'none',
+              fontWeight: 'bold',
+              borderColor: `error.main`,
+              color: `error.main`,
+              transition: 'all 0.3s ease',
+              '&:hover': {
+                backgroundColor: `error.main`,
+                color: 'white',
+                borderColor: `error.main`,
+              },
+            }}
+          >
+            Confirm
+          </Button>
+        </DialogActions>
+      </Dialog>
 
       <RoomAllotmentModal
         roomAllotment={roomAllotment}

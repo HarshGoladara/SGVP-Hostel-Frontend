@@ -2,8 +2,14 @@ import React, { useState, useEffect } from 'react';
 import DetailsCard from './DetailsCard';
 import './css/ModalStyle.css';
 
-const DashboardModal = ({ pendingEntries, open, onClose }) => {
-  const [showPendingEntries, setShowPendingEntries] = useState(true);
+const RolesCredentialsModal = ({
+  rolesCredentials,
+  setRolesCredentials,
+  rolesCredential,
+  open,
+  onClose,
+}) => {
+  const [showRolesCredential, setShowRolesCredential] = useState(true);
   const [isVisible, setIsVisible] = useState(open);
 
   useEffect(() => {
@@ -29,14 +35,16 @@ const DashboardModal = ({ pendingEntries, open, onClose }) => {
       {/* Background Blur */}
       <div className="fixed inset-0 bg-black opacity-50" onClick={onClose} />
       <DetailsCard
-        pendingEntries={pendingEntries}
+        rolesCredentials={rolesCredentials}
+        setRolesCredentials={setRolesCredentials}
+        rolesCredential={rolesCredential}
         onClose={() => {
           onClose();
-          setShowPendingEntries(true); // Reset to show gatepass details on close
+          setShowRolesCredential(true); // Reset to show rolesCredential details on close
         }}
       />
     </div>
   );
 };
 
-export default DashboardModal;
+export default RolesCredentialsModal;

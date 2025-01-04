@@ -1,6 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { IconButton } from '@mui/material';
+import {
+  IconButton,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  Button,
+} from '@mui/material';
 import { ArrowBack, ArrowForward } from '@mui/icons-material';
 import StudentModal from './StudentModal';
 import { VITE_BACKEND_BASE_API } from '../../helper/envConfig/envConfig.js';
@@ -16,6 +24,8 @@ const StudentTable = ({
   currentPage,
   setCurrentPage,
   totalPages,
+  totalItems,
+  setTotalItems,
   // setTotalPages,
   pageNumberList,
   setPageNumberList,
@@ -24,6 +34,8 @@ const StudentTable = ({
 }) => {
   const [selectedStudent, setSelectedStudent] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
+  const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
+  const [studentToMove, setStudentToMove] = useState(null);
 
   const fetchStudentData = async (page) => {
     try {
@@ -62,11 +74,27 @@ const StudentTable = ({
         `${VITE_BACKEND_BASE_API}/student/moveFromToAlumni`,
         moveFromToAlumniBody,
       );
-      if (response.status === 200) {
+
+      let responseDeAllocateRoomAndBed;
+      if (student.bed_number) {
+        responseDeAllocateRoomAndBed = await axios.delete(
+          `${VITE_BACKEND_BASE_API}/roomAllotment/deAllocateRoomAndBed`,
+          {
+            params: { bed_number: student.bed_number },
+          },
+        );
+      }
+
+      if (
+        response.status === 200 &&
+        (student.bed_number === null ||
+          responseDeAllocateRoomAndBed.status === 200)
+      ) {
         toast.success('Data Moved to Alumni');
         setStudents((prevStudents) =>
           prevStudents.filter((s) => s.pin_number !== student.pin_number),
         );
+        setTotalItems(totalItems - 1);
       } else {
         toast.error('Error Try Again');
       }
@@ -101,6 +129,23 @@ const StudentTable = ({
 
   const handlePageClick = (page) => {
     setCurrentPage(page);
+  };
+
+  const handleConfirmMoveToAlumni = (student) => {
+    setStudentToMove(student);
+    setConfirmDialogOpen(true);
+  };
+
+  const handleConfirmDialogClose = () => {
+    setConfirmDialogOpen(false);
+    setStudentToMove(null);
+  };
+
+  const handleConfirmDialogYes = async () => {
+    if (studentToMove) {
+      await handleMoveToAlumniAction(studentToMove);
+    }
+    handleConfirmDialogClose();
   };
 
   // Generate page numbers for pagination
@@ -154,7 +199,7 @@ const StudentTable = ({
         {/* Added horizontal margin with mx-2 */}
         <table className="min-w-full border-collapse text-s">
           <thead className="">
-            <tr className="bg-gray-200 rounded-2xl">
+            <tr className="bg-gray-400 rounded-2xl">
               {/* Apply rounded corners to the entire row */}
               <th className="py-2 px-4 text-left font-bold rounded-tl-2xl rounded-bl-2xl">
                 Photo
@@ -202,7 +247,7 @@ const StudentTable = ({
               students.map((student) => (
                 <tr
                   key={student.pin_number}
-                  className="border-b hover:bg-gray-50"
+                  className="border-b hover:bg-gradient-to-r from-blue-200 to-blue-400 odd:bg-gray-200 even:bg-gray-300"
                 >
                   <td className="py-2 px-4">
                     {student.student_photo_url ? (
@@ -240,7 +285,8 @@ const StudentTable = ({
                         if (action === 'Show') {
                           handleShowDetails(student);
                         } else if (action === 'Move To Alumni') {
-                          handleMoveToAlumniAction(student);
+                          // handleMoveToAlumniAction(student);
+                          handleConfirmMoveToAlumni(student);
                         }
                       }}
                     />
@@ -258,6 +304,66 @@ const StudentTable = ({
           onClose={handleCloseModal}
         />
       </div>
+      <Dialog
+        open={confirmDialogOpen}
+        onClose={handleConfirmDialogClose}
+        aria-labelledby="confirm-dialog-title"
+        aria-describedby="confirm-dialog-description"
+      >
+        <DialogTitle id="confirm-dialog-title">Confirm Action</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="confirm-dialog-description">
+            Are you sure you want to move{' '}
+            <strong>{studentToMove?.student_full_name || 'Student'}</strong> to
+            Alumni?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={handleConfirmDialogClose}
+            color="secondary"
+            variant="outlined"
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              textTransform: 'none',
+              fontWeight: 'bold',
+              borderColor: 'secondary.main',
+              color: 'secondary.main',
+              transition: 'all 0.3s ease',
+              '&:hover': {
+                backgroundColor: 'secondary.main',
+                color: 'white',
+                borderColor: 'secondary.main',
+              },
+            }}
+          >
+            Cancel
+          </Button>
+          <Button
+            onClick={handleConfirmDialogYes}
+            color="primary"
+            autoFocus
+            variant="outlined"
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              textTransform: 'none',
+              fontWeight: 'bold',
+              borderColor: 'primary.main',
+              color: 'primary.main',
+              transition: 'all 0.3s ease',
+              '&:hover': {
+                backgroundColor: 'primary.main',
+                color: 'white',
+                borderColor: 'primary.main',
+              },
+            }}
+          >
+            Yes
+          </Button>
+        </DialogActions>
+      </Dialog>
       <div className="flex justify-between items-center py-4 mx-5">
         <span className="text-gray-700 whitespace-nowrap">
           {currentPage} of {totalPages}

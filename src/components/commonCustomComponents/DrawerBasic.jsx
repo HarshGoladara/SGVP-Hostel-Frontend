@@ -48,6 +48,7 @@ export default function DrawerBasic() {
     '/archivedGatepass': 'Archived Gatepass',
     '/roomAllotment': 'Room Allotment',
     '/alumni': 'Alumni',
+    '/roles': 'Roles',
   };
 
   // Sync active item with the current route on mount and location change
@@ -248,6 +249,20 @@ export default function DrawerBasic() {
                 className={`${activeItem === 'Alumni' ? 'text-white' : ''}`}
               >
                 Alumni
+              </span>
+            </ListItem>
+
+            <ListItem
+              key="Roles"
+              className={`active:bg-blue-300 ${activeItem === 'Roles' ? 'bg-[#37afe1]' : 'hover:bg-blue-200'} cursor-pointer`}
+              // className={activeItem === 'Roles' ? 'active' : ''}
+              onClick={() => handleItemClick('Roles', '/roles')}
+            >
+              <PersonIcon
+                className={`${activeItem === 'Roles' ? 'text-white' : ''}`}
+              />
+              <span className={`${activeItem === 'Roles' ? 'text-white' : ''}`}>
+                Roles
               </span>
             </ListItem>
           </List>

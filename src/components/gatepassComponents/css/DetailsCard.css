@@ -1,21 +1,100 @@
-/* const [animationDirection, setAnimationDirection] = useState('');
+/* Define the keyframes for slide-in animation */
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
 
-    const gotoNextPage = () => {
-        if (currentPage < totalPages) {
-            setAnimationDirection('slide-out'); // Set to slide out
-            setTimeout(() => {
-                setCurrentPage(currentPage + 1);
-                setAnimationDirection('slide-in'); // Set to slide in
-            }, 300); // Duration of the animation
-        }
-    };
+/* Define the keyframes for slide-out animation */
+@keyframes slideOut {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+}
 
-    const gotoPreviousPage = () => {
-        if (currentPage > 1) {
-            setAnimationDirection('slide-out'); // Set to slide out
-            setTimeout(() => {
-                setCurrentPage(currentPage - 1);
-                setAnimationDirection('slide-in'); // Set to slide in
-            }, 300); // Duration of the animation
-        }
-    }; */
+/* Apply the slide-in animation */
+.slide-in {
+  /* animation: slideIn 0.3s ease-out forwards; */
+  animation: slideIn 0.3s ease-out forwards;
+  position: absolute; /* Keep content within card bounds */
+  top: 10;
+  left: 10;
+  width: 100%; /* Match card width */
+}
+
+/* Apply the slide-out animation */
+.slide-out {
+  /* animation: slideOut 0.3s ease-in forwards; */
+  animation: slideOut 0.3s ease-in forwards;
+  position: absolute; /* Keep content within card bounds */
+  top: 10;
+  left: 10;
+  width: 100%; /* Match card width */
+}
+
+/* Define the keyframes for glide-in animation */
+@keyframes glideIn {
+  from {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* Define the keyframes for glide-out animation */
+@keyframes glideOut {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+}
+
+/* Apply the glide-in animation */
+.glide-in {
+  /* animation: glideIn 0.3s ease-out forwards; */
+  animation: glideIn 0.3s ease-out forwards;
+  position: absolute; /* Keep content within card bounds */
+  top: 10;
+  left: 10;
+  width: 100%; /* Match card width */
+}
+
+/* Apply the glide-out animation */
+.glide-out {
+  /* animation: glideOut 0.3s ease-in forwards; */
+  animation: glideOut 0.3s ease-in forwards;
+  position: absolute; /* Keep content within card bounds */
+  top: 10;
+  left: 10;
+  width: 100%; /* Match card width */
+}
+
+/* Ensure parent container hides overflow content */
+.card-container {
+  position: relative;
+  overflow: hidden; /* Prevent content from going outside card */
+  width: 100%; /* Match card dimensions */
+  height: 100%; /* Match card dimensions */
+}
+
+/* Hidden state to prevent elements from being visible during transitions */
+.hidden {
+  display: none;
+}

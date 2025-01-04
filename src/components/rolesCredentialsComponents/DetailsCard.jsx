@@ -14,9 +14,15 @@ import { VITE_BACKEND_BASE_API } from '../../helper/envConfig/envConfig.js';
 import { CircularProgress } from '@mui/material';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 
-const DetailsCard = ({ students, setStudents, student, onClose }) => {
+const DetailsCard = ({
+  rolesCredentials,
+  setRolesCredentials,
+  rolesCredential,
+  onClose,
+}) => {
   const totalPages = 4;
-  const [selectedStudent, setSelectedStudent] = useState(student);
+  const [selectedRolesCredential, setSelectedRolesCredential] =
+    useState(rolesCredential);
   const [currentPage, setCurrentPage] = useState(1);
   const [animationDirection, setAnimationDirection] = useState('');
   const [studentLoading, setStudentLoading] = useState(false);
@@ -86,21 +92,21 @@ const DetailsCard = ({ students, setStudents, student, onClose }) => {
       setStudentLoading(true);
       const studentPhotoUrl = await uploadImage(
         photoFile.studentPhotoFile,
-        `students/${selectedStudent.student_full_name}/student_photo`,
+        `rolesCredentials/${selectedRolesCredential.student_full_name}/student_photo`,
       );
 
       const response = await axios.put(
         `${VITE_BACKEND_BASE_API}/updateData/updateStudentData`,
         {
-          pin_number: selectedStudent.pin_number,
+          pin_number: selectedRolesCredential.pin_number,
           student_photo_url: studentPhotoUrl,
         },
       );
 
       if (response.status === 200) {
         toast.success('Student Photo Updated Successfully.');
-        setSelectedStudent({
-          ...selectedStudent,
+        setSelectedRolesCredential({
+          ...selectedRolesCredential,
           student_photo_url: studentPhotoUrl,
         });
       } else {
@@ -118,21 +124,21 @@ const DetailsCard = ({ students, setStudents, student, onClose }) => {
       setFatherLoading(true);
       const fatherPhotoUrl = await uploadImage(
         photoFile.fatherPhotoFile,
-        `students/${selectedStudent.student_full_name}/father_photo`,
+        `rolesCredentials/${selectedRolesCredential.student_full_name}/father_photo`,
       );
 
       const response = await axios.put(
         `${VITE_BACKEND_BASE_API}/updateData/updateParentDetails`,
         {
-          pin_number: selectedStudent.pin_number,
+          pin_number: selectedRolesCredential.pin_number,
           father_photo_url: fatherPhotoUrl,
         },
       );
 
       if (response.status === 200) {
         toast.success('Father Photo Updated Successfully.');
-        setSelectedStudent({
-          ...selectedStudent,
+        setSelectedRolesCredential({
+          ...selectedRolesCredential,
           father_photo_url: fatherPhotoUrl,
         });
       } else {
@@ -150,21 +156,21 @@ const DetailsCard = ({ students, setStudents, student, onClose }) => {
       setMotherLoading(true);
       const motherPhotoUrl = await uploadImage(
         photoFile.motherPhotoFile,
-        `students/${selectedStudent.student_full_name}/student_photo`,
+        `rolesCredentials/${selectedRolesCredential.student_full_name}/student_photo`,
       );
 
       const response = await axios.put(
         `${VITE_BACKEND_BASE_API}/updateData/updateParentDetails`,
         {
-          pin_number: selectedStudent.pin_number,
+          pin_number: selectedRolesCredential.pin_number,
           mother_photo_url: motherPhotoUrl,
         },
       );
 
       if (response.status === 200) {
         toast.success('Mother Photo Updated Successfully.');
-        setSelectedStudent({
-          ...selectedStudent,
+        setSelectedRolesCredential({
+          ...selectedRolesCredential,
           mother_photo_url: motherPhotoUrl,
         });
       } else {
@@ -193,7 +199,7 @@ const DetailsCard = ({ students, setStudents, student, onClose }) => {
         borderRadius: 3,
         p: 4,
       }}
-      className="bg-white rounded-xl shadow-lg min-w-[800px] min-h-[450px] p-6 h-[57%] w-[75%] transform transition-transform duration-300 scale-100 relative card-container"
+      className="bg-white rounded-xl shadow-lg min-w-[800px] min-h-[450px] p-6 h-[57%] w-[75%] transform transition-transform duration-300 scale-100 relative"
     >
       <IconButton
         sx={{ position: 'absolute', top: 16, right: 16 }}
@@ -209,10 +215,10 @@ const DetailsCard = ({ students, setStudents, student, onClose }) => {
           <div className="text-3xl font-bold">Student Details</div>
           {isUpdateDialogEnabled && (
             <UpdateDialog
-              students={students}
-              setStudents={setStudents}
-              selectedStudent={selectedStudent}
-              setSelectedStudent={setSelectedStudent}
+              rolesCredentials={rolesCredentials}
+              setRolesCredentials={setRolesCredentials}
+              selectedRolesCredential={selectedRolesCredential}
+              setSelectedRolesCredential={setSelectedRolesCredential}
               currentPage={currentPage}
             />
           )}
@@ -221,18 +227,18 @@ const DetailsCard = ({ students, setStudents, student, onClose }) => {
           <div className="h-[180px] md:h-[250px] w-[20%] flex-shrink-0 mr-4">
             {' '}
             {/* Fixed 20% width for the image */}
-            {selectedStudent.student_photo_url ? (
+            {selectedRolesCredential.student_photo_url ? (
               <img
                 src={
-                  selectedStudent.student_photo_url ||
+                  selectedRolesCredential.student_photo_url ||
                   `https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQVrNIrc_GMNFCWvfIVx-5-1jI0YMf-3a6yyg&s`
                 }
-                alt={selectedStudent.student_full_name}
+                alt={selectedRolesCredential.student_full_name}
                 className="h-full w-full object-cover rounded-lg"
               />
             ) : (
               <div className="flex items-center justify-center h-full w-full bg-blue-500 text-white text-lg font-bold rounded-lg">
-                {selectedStudent.student_full_name.charAt(0)}
+                {selectedRolesCredential.student_full_name.charAt(0)}
               </div>
             )}
             {/* Upload Photo Button */}
@@ -269,58 +275,63 @@ const DetailsCard = ({ students, setStudents, student, onClose }) => {
           </div>
           <div className="flex-grow ml-[10px] flex flex-col">
             <span className="text-2xl font-bold block">
-              {selectedStudent.student_full_name}
+              {selectedRolesCredential.student_full_name}
             </span>
             <span className="text-gray-600 text-[15px] block mt-1">
-              {selectedStudent.pin_number}
+              {selectedRolesCredential.pin_number}
             </span>
             <div className="bg-[#e2e8f0] flex-grow w-full h-full mt-2 rounded-xl">
               <div className="my-2 mx-5 grid grid-flow-col justify-stretch">
                 <div className="flex flex-col">
                   <div className="text-[12px] text-gray-600">Mobile Number</div>
-                  <div>{selectedStudent.student_contact_number}</div>
+                  <div>{selectedRolesCredential.student_contact_number}</div>
                 </div>
                 <div className="flex flex-col">
                   <div className="text-[12px] text-gray-600">Religion</div>
-                  <div>{selectedStudent.religion}</div>
+                  <div>{selectedRolesCredential.religion}</div>
                 </div>
                 <div className="flex flex-col">
                   <div className="text-[12px] text-gray-600">Caste</div>
-                  <div>{selectedStudent.caste}</div>
+                  <div>{selectedRolesCredential.caste}</div>
                 </div>
                 <div className="flex flex-col">
                   <div className="text-[12px] text-gray-600 ">Home Town</div>
-                  <div>{selectedStudent.city}</div>
+                  <div>{selectedRolesCredential.city}</div>
                 </div>
               </div>
               <Divider />
               <div className="my-2 mx-5 grid grid-flow-col justify-stretch">
                 <div className="flex flex-col">
                   <div className="text-[12px] text-gray-600">Email</div>
-                  <div>{selectedStudent.student_email}</div>
+                  <div>{selectedRolesCredential.student_email}</div>
                 </div>
                 <div className="flex flex-col">
                   <div className="text-[12px] text-gray-600 ">
                     Date Of Birth
                   </div>
                   <div>
-                    {new Date(selectedStudent.dob).toLocaleDateString('en-GB', {
-                      day: '2-digit',
-                      month: '2-digit',
-                      year: 'numeric',
-                    })}
+                    {new Date(selectedRolesCredential.dob).toLocaleDateString(
+                      'en-GB',
+                      {
+                        day: '2-digit',
+                        month: '2-digit',
+                        year: 'numeric',
+                      },
+                    )}
                   </div>
                 </div>
                 <div className="flex flex-col">
                   <div className="text-[12px] text-gray-600 ">Nationality</div>
-                  <div>{selectedStudent.nationality}</div>
+                  <div>{selectedRolesCredential.nationality}</div>
                 </div>
               </div>
               <Divider />
               <div className="my-2 mx-5 grid grid-flow-col justify-stretch">
                 <div className="flex flex-col">
                   <div className="text-[12px] text-gray-600">Address</div>
-                  <div className="text-[13px]">{selectedStudent.address}</div>
+                  <div className="text-[13px]">
+                    {selectedRolesCredential.address}
+                  </div>
                 </div>
               </div>
             </div>
@@ -336,10 +347,10 @@ const DetailsCard = ({ students, setStudents, student, onClose }) => {
           <div className="text-3xl font-bold">Student Education</div>
           {isUpdateDialogEnabled && (
             <UpdateDialog
-              students={students}
-              setStudents={setStudents}
-              selectedStudent={selectedStudent}
-              setSelectedStudent={setSelectedStudent}
+              rolesCredentials={rolesCredentials}
+              setRolesCredentials={setRolesCredentials}
+              selectedRolesCredential={selectedRolesCredential}
+              setSelectedRolesCredential={setSelectedRolesCredential}
               currentPage={currentPage}
             />
           )}
@@ -348,24 +359,24 @@ const DetailsCard = ({ students, setStudents, student, onClose }) => {
           <div className="h-[180px] md:h-[250px] w-[20%] flex-shrink-0 mr-4">
             {' '}
             {/* Fixed 20% width for the image */}
-            {selectedStudent.student_photo_url ? (
+            {selectedRolesCredential.student_photo_url ? (
               <img
-                src={selectedStudent.student_photo_url}
-                alt={selectedStudent.student_full_name}
+                src={selectedRolesCredential.student_photo_url}
+                alt={selectedRolesCredential.student_full_name}
                 className="h-full w-full object-cover rounded-lg"
               />
             ) : (
               <div className="flex items-center justify-center h-full w-full bg-blue-500 text-white text-lg font-bold rounded-lg">
-                {selectedStudent.student_full_name.charAt(0)}
+                {selectedRolesCredential.student_full_name.charAt(0)}
               </div>
             )}
           </div>
           <div className="flex-grow ml-[10px] flex flex-col">
             <span className="text-2xl font-bold block">
-              {selectedStudent.student_full_name}
+              {selectedRolesCredential.student_full_name}
             </span>
             <span className="text-gray-600 text-[15px] block mt-1">
-              {selectedStudent.pin_number}
+              {selectedRolesCredential.pin_number}
             </span>
             <div className="bg-[#e2e8f0] flex-grow w-full h-full mt-2 rounded-xl">
               <div className="my-2 mx-5 grid grid-flow-col justify-stretch">
@@ -373,45 +384,47 @@ const DetailsCard = ({ students, setStudents, student, onClose }) => {
                   <div className="text-[12px] text-gray-600">
                     University Name
                   </div>
-                  <div className="">{selectedStudent.name_of_university}</div>
+                  <div className="">
+                    {selectedRolesCredential.name_of_university}
+                  </div>
                 </div>
                 <div className="flex flex-col">
                   <div className="text-[12px] text-gray-600">Collage Name</div>
-                  <div>{selectedStudent.name_of_collage}</div>
+                  <div>{selectedRolesCredential.name_of_collage}</div>
                 </div>
               </div>
               <Divider />
               <div className="my-2 mx-5 grid grid-flow-col justify-stretch">
                 <div className="flex flex-col ">
                   <div className="text-[12px] text-gray-600">Course</div>
-                  <div>{selectedStudent.course}</div>
+                  <div>{selectedRolesCredential.course}</div>
                 </div>
                 <div className="flex flex-col">
                   <div className="text-[12px] text-gray-600 ">Branch</div>
-                  <div>{selectedStudent.branch}</div>
+                  <div>{selectedRolesCredential.branch}</div>
                 </div>
                 <div className="flex flex-col">
                   <div className="text-[12px] text-gray-600 ">
                     Student Qualification
                   </div>
-                  <div>{selectedStudent.student_qualification}</div>
+                  <div>{selectedRolesCredential.student_qualification}</div>
                 </div>
               </div>
               <Divider />
               <div className="my-2 mx-5 grid grid-flow-col justify-stretch">
                 <div className="flex flex-col">
                   <div className="text-[12px] text-gray-600 ">Current Year</div>
-                  <div>{selectedStudent.current_year}</div>
+                  <div>{selectedRolesCredential.current_year}</div>
                 </div>
                 <div className="flex flex-col">
                   <div className="text-[12px] text-gray-600 ">Current Sem</div>
-                  <div>{selectedStudent.current_sem}</div>
+                  <div>{selectedRolesCredential.current_sem}</div>
                 </div>
                 <div className="flex flex-col">
                   <div className="text-[12px] text-gray-600 ">
                     {`Total Course Duration`}
                   </div>
-                  <div>{selectedStudent.course_duration_years}</div>
+                  <div>{selectedRolesCredential.course_duration_years}</div>
                 </div>
               </div>
             </div>
@@ -427,10 +440,10 @@ const DetailsCard = ({ students, setStudents, student, onClose }) => {
           <div className="text-3xl font-bold">Parent Details</div>
           {isUpdateDialogEnabled && (
             <UpdateDialog
-              students={students}
-              setStudents={setStudents}
-              selectedStudent={selectedStudent}
-              setSelectedStudent={setSelectedStudent}
+              rolesCredentials={rolesCredentials}
+              setRolesCredentials={setRolesCredentials}
+              selectedRolesCredential={selectedRolesCredential}
+              setSelectedRolesCredential={setSelectedRolesCredential}
               currentPage={currentPage}
             />
           )}
@@ -439,15 +452,15 @@ const DetailsCard = ({ students, setStudents, student, onClose }) => {
           <div>
             {/* Father's Photo Section */}
             <div className="h-[90px] md:h-[125px] w-full flex-shrink-0 mr-4 mb-1">
-              {selectedStudent.father_photo_url ? (
+              {selectedRolesCredential.father_photo_url ? (
                 <img
-                  src={selectedStudent.father_photo_url}
-                  alt={selectedStudent.father_name}
+                  src={selectedRolesCredential.father_photo_url}
+                  alt={selectedRolesCredential.father_name}
                   className="h-full w-full object-cover rounded-lg"
                 />
               ) : (
                 <div className="flex items-center justify-center h-full w-[150px] bg-blue-500 text-white text-lg font-bold rounded-lg">
-                  {selectedStudent.father_name.charAt(0)}
+                  {selectedRolesCredential.father_name.charAt(0)}
                 </div>
               )}
             </div>
@@ -484,15 +497,15 @@ const DetailsCard = ({ students, setStudents, student, onClose }) => {
 
             {/* Mother's Photo Section */}
             <div className="h-[90px] md:h-[125px] w-full flex-shrink-0 mr-4 mt-4">
-              {selectedStudent.mother_photo_url ? (
+              {selectedRolesCredential.mother_photo_url ? (
                 <img
-                  src={selectedStudent.mother_photo_url}
-                  alt={selectedStudent.mother_name}
+                  src={selectedRolesCredential.mother_photo_url}
+                  alt={selectedRolesCredential.mother_name}
                   className="h-full w-full object-cover rounded-lg"
                 />
               ) : (
                 <div className="flex items-center justify-center h-full w-[150px] bg-blue-500 text-white text-lg font-bold rounded-lg">
-                  {selectedStudent.mother_name.charAt(0)}
+                  {selectedRolesCredential.mother_name.charAt(0)}
                 </div>
               )}
             </div>
@@ -530,39 +543,39 @@ const DetailsCard = ({ students, setStudents, student, onClose }) => {
 
           <div className="flex-grow ml-[10px] flex flex-col">
             <span className="text-2xl font-bold block">
-              {selectedStudent.student_full_name}
+              {selectedRolesCredential.student_full_name}
             </span>
             <span className="text-gray-600 text-[15px] block mt-1">
-              {selectedStudent.pin_number}
+              {selectedRolesCredential.pin_number}
             </span>
             <div className="bg-[#e2e8f0] flex-grow w-full h-full mt-2 rounded-xl">
               <div className="my-2 mx-5 grid grid-flow-col justify-stretch">
                 <div className="flex flex-col">
                   <div className="text-[12px] text-gray-600">Father Name</div>
-                  <div className="">{selectedStudent.father_name}</div>
+                  <div className="">{selectedRolesCredential.father_name}</div>
                 </div>
                 <div className="flex flex-col">
                   <div className="text-[12px] text-gray-600">
                     Father Mobile No
                   </div>
-                  <div>{selectedStudent.father_contact_number}</div>
+                  <div>{selectedRolesCredential.father_contact_number}</div>
                 </div>
                 <div className="flex flex-col">
                   <div className="text-[12px] text-gray-600">Father Email</div>
-                  <div>{selectedStudent.father_email}</div>
+                  <div>{selectedRolesCredential.father_email}</div>
                 </div>
               </div>
               <Divider />
               <div className="my-1 mx-5 grid grid-flow-col justify-stretch">
                 <div className="flex flex-col ">
                   <div className="text-[12px] text-gray-600">Mother name</div>
-                  <div>{selectedStudent.mother_name}</div>
+                  <div>{selectedRolesCredential.mother_name}</div>
                 </div>
                 <div className="flex flex-col">
                   <div className="text-[12px] text-gray-600 ">
                     Mother Mobile Number
                   </div>
-                  <div>{selectedStudent.mother_contact_number}</div>
+                  <div>{selectedRolesCredential.mother_contact_number}</div>
                 </div>
               </div>
               <Divider />
@@ -571,18 +584,18 @@ const DetailsCard = ({ students, setStudents, student, onClose }) => {
                   <div className="text-[12px] text-gray-600 ">
                     Relative Name
                   </div>
-                  <div>{selectedStudent.relative_name}</div>
+                  <div>{selectedRolesCredential.relative_name}</div>
                 </div>
                 <div className="flex flex-col">
                   <div className="text-[12px] text-gray-600 ">
                     Relative Contact Number
                   </div>
-                  <div>{selectedStudent.relative_contact_number}</div>
+                  <div>{selectedRolesCredential.relative_contact_number}</div>
                 </div>
 
                 <div className="flex flex-col">
                   <div className="text-[12px] text-gray-600 ">Relation</div>
-                  <div>{selectedStudent.relation}</div>
+                  <div>{selectedRolesCredential.relation}</div>
                 </div>
               </div>
               <div className="my-1 mx-5 grid grid-flow-col justify-stretch">
@@ -591,7 +604,7 @@ const DetailsCard = ({ students, setStudents, student, onClose }) => {
                     Relative Address
                   </div>
                   <div className="text-[13px]">
-                    {selectedStudent.relative_address}
+                    {selectedRolesCredential.relative_address}
                   </div>
                 </div>
               </div>
@@ -608,10 +621,10 @@ const DetailsCard = ({ students, setStudents, student, onClose }) => {
           <div className="text-3xl font-bold">Reference Details</div>
           {isUpdateDialogEnabled && (
             <UpdateDialog
-              students={students}
-              setStudents={setStudents}
-              selectedStudent={selectedStudent}
-              setSelectedStudent={setSelectedStudent}
+              rolesCredentials={rolesCredentials}
+              setRolesCredentials={setRolesCredentials}
+              selectedRolesCredential={selectedRolesCredential}
+              setSelectedRolesCredential={setSelectedRolesCredential}
               currentPage={currentPage}
             />
           )}
@@ -620,24 +633,24 @@ const DetailsCard = ({ students, setStudents, student, onClose }) => {
           <div className="h-[180px] md:h-[250px] w-[20%] flex-shrink-0 mr-4">
             {' '}
             {/* Fixed 30% width for the image */}
-            {selectedStudent.student_photo_url ? (
+            {selectedRolesCredential.student_photo_url ? (
               <img
-                src={selectedStudent.student_photo_url}
-                alt={selectedStudent.student_full_name}
+                src={selectedRolesCredential.student_photo_url}
+                alt={selectedRolesCredential.student_full_name}
                 className="h-full w-full object-cover rounded-lg"
               />
             ) : (
               <div className="flex items-center justify-center h-full w-full bg-blue-500 text-white text-lg font-bold rounded-lg">
-                {selectedStudent.student_full_name.charAt(0)}
+                {selectedRolesCredential.student_full_name.charAt(0)}
               </div>
             )}
           </div>
           <div className="flex-grow ml-[10px] flex flex-col">
             <span className="text-2xl font-bold block">
-              {selectedStudent.student_full_name}
+              {selectedRolesCredential.student_full_name}
             </span>
             <span className="text-gray-600 text-[15px] block mt-1">
-              {selectedStudent.pin_number}
+              {selectedRolesCredential.pin_number}
             </span>
             <div className="bg-[#e2e8f0] flex-grow w-full h-full mt-2 rounded-xl">
               <div className="my-2 mx-5 grid grid-flow-col justify-stretch">
@@ -646,31 +659,33 @@ const DetailsCard = ({ students, setStudents, student, onClose }) => {
                     Relative Full Name
                   </div>
                   <div className="">
-                    {selectedStudent.reference_relative_full_name}
+                    {selectedRolesCredential.reference_relative_full_name}
                   </div>
                 </div>
                 <div className="flex flex-col">
                   <div className="text-[12px] text-gray-600">Relation</div>
-                  <div>{selectedStudent.reference_relative_relation}</div>
+                  <div>
+                    {selectedRolesCredential.reference_relative_relation}
+                  </div>
                 </div>
                 <div className="flex flex-col">
                   <div className="text-[12px] text-gray-600">
                     Relative Mobile Number
                   </div>
-                  <div>{selectedStudent.reference_relative_mobile}</div>
+                  <div>{selectedRolesCredential.reference_relative_mobile}</div>
                 </div>
               </div>
               <Divider />
               <div className="my-2 mx-5 grid grid-flow-col justify-stretch">
                 <div className="flex flex-col ">
                   <div className="text-[12px] text-gray-600">Sant Name</div>
-                  <div>{selectedStudent.name_of_sant}</div>
+                  <div>{selectedRolesCredential.name_of_sant}</div>
                 </div>
                 <div className="flex flex-col">
                   <div className="text-[12px] text-gray-600 ">
                     Sant Mobile Number
                   </div>
-                  <div>{selectedStudent.sant_phone_number}</div>
+                  <div>{selectedRolesCredential.sant_phone_number}</div>
                 </div>
               </div>
             </div>
