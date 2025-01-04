@@ -22,43 +22,47 @@ function ArchivedGatepassLayout() {
   };
 
   return (
-    <div className="h-full flex flex-col">
-      <ArchivedGatepassNavbar
-        gatepasses={gatepasses}
-        setGatepasses={setGatepasses}
-        totalItems={totalItems}
-        setTotalItems={setTotalItems}
-        currentPage={currentPage}
-        setCurrentPage={setCurrentPage}
-        totalPages={totalPages}
-        setTotalPages={setTotalPages}
-        pageNumberList={pageNumberList}
-        setPageNumberList={setPageNumberList}
-        startDate={startDate}
-        setStartDate={setStartDate}
-        endDate={endDate}
-        setEndDate={setEndDate}
-        isLoading={handleLoading}
-      />
-      <ArchivedGatepassBody
-        gatepasses={gatepasses}
-        setGatepasses={setGatepasses}
-        totalItems={totalItems}
-        setTotalItems={setTotalItems}
-        currentPage={currentPage}
-        setCurrentPage={setCurrentPage}
-        totalPages={totalPages}
-        setTotalPages={setTotalPages}
-        pageNumberList={pageNumberList}
-        setPageNumberList={setPageNumberList}
-        startDate={startDate}
-        setStartDate={setStartDate}
-        endDate={endDate}
-        setEndDate={setEndDate}
-        loading={loading}
-        isLoading={handleLoading}
-        className="flex-grow"
-      />
+    <div className="min-h-screen flex flex-col">
+      <div className="sticky top-0 z-10 bg-white shadow-md">
+        <ArchivedGatepassNavbar
+          gatepasses={gatepasses}
+          setGatepasses={setGatepasses}
+          totalItems={totalItems}
+          setTotalItems={setTotalItems}
+          currentPage={currentPage}
+          setCurrentPage={setCurrentPage}
+          totalPages={totalPages}
+          setTotalPages={setTotalPages}
+          pageNumberList={pageNumberList}
+          setPageNumberList={setPageNumberList}
+          startDate={startDate}
+          setStartDate={setStartDate}
+          endDate={endDate}
+          setEndDate={setEndDate}
+          isLoading={handleLoading}
+        />
+      </div>
+      <div className="flex-grow overflow-y-auto">
+        <ArchivedGatepassBody
+          gatepasses={gatepasses}
+          setGatepasses={setGatepasses}
+          totalItems={totalItems}
+          setTotalItems={setTotalItems}
+          currentPage={currentPage}
+          setCurrentPage={setCurrentPage}
+          totalPages={totalPages}
+          setTotalPages={setTotalPages}
+          pageNumberList={pageNumberList}
+          setPageNumberList={setPageNumberList}
+          startDate={startDate}
+          setStartDate={setStartDate}
+          endDate={endDate}
+          setEndDate={setEndDate}
+          loading={loading}
+          isLoading={handleLoading}
+          className="flex-grow"
+        />
+      </div>
     </div>
   );
 }

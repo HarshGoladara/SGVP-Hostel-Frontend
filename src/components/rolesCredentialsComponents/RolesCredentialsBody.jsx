@@ -1,48 +1,41 @@
-import React, { act, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { IconButton } from '@mui/material';
 import { ArrowBack, ArrowForward } from '@mui/icons-material';
+import RolesCredentialsModal from './RolesCredentialsModal';
 import { VITE_BACKEND_BASE_API } from '../../helper/envConfig/envConfig.js';
 import ActionDropdown from './ActionDropdown.jsx';
-import toast from 'react-hot-toast';
 import { CircularProgress } from '@mui/material';
 import CustomCircularLoader from '../commonCustomComponents/CustomCircularLoader.jsx';
 import HairballSpinner from '../commonCustomComponents/HairballSpinner.jsx';
+import toast from 'react-hot-toast';
+import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
+import HighlightOffIcon from '@mui/icons-material/HighlightOff';
 
-const ArchivedGatepassTable = ({
-  gatepasses,
-  setGatepasses,
+const RolesCredentialsTable = ({
+  rolesCredentials,
+  setRolesCredentials,
   currentPage,
   setCurrentPage,
   totalPages,
   // setTotalPages,
   pageNumberList,
   setPageNumberList,
-  startDate,
-  setStartDate,
-  endDate,
-  setEndDate,
   loading,
   isLoading,
 }) => {
-  const [selectedGatepass, setSelectedGatepass] = useState(null);
+  const [selectedRolesCredential, setSelectedRolesCredential] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
 
-  const fetchGatepasses = async (page) => {
+  const fetchRolesCredentialData = async (page) => {
     try {
       isLoading(true);
       const { data } = await axios.get(
-        `${VITE_BACKEND_BASE_API}/gatepass/getGatepassFromArchived`,
-        {
-          params: {
-            page: page,
-            limit: 10,
-          },
-        },
+        `${VITE_BACKEND_BASE_API}/credential/getRolesAndCredentials?page=${page}&limit=10`,
       );
-      setGatepasses(data.data);
+      setRolesCredentials(data.data);
     } catch (error) {
-      console.error('Error fetching gatepass data', error);
+      console.error('Error fetching RolesCredentials data', error);
     } finally {
       isLoading(false);
     }
@@ -50,19 +43,19 @@ const ArchivedGatepassTable = ({
 
   useEffect(() => {
     // console.log("searchResults in body:", searchResults);
-    if (gatepasses) {
-      setGatepasses(gatepasses);
+    if (rolesCredentials) {
+      setRolesCredentials(rolesCredentials);
     } else {
-      fetchGatepasses(currentPage);
+      fetchRolesCredentialData(currentPage);
     }
-  }, [gatepasses]);
+  }, [rolesCredentials]);
 
   useEffect(() => {
-    fetchGatepasses(currentPage);
+    fetchRolesCredentialData(currentPage);
   }, [currentPage]);
 
-  const handleShowDetails = (gatepass) => {
-    setSelectedGatepass(gatepass);
+  const handleShowDetails = (rolesCredential) => {
+    setSelectedRolesCredential(rolesCredential);
     setModalOpen(true);
   };
 
@@ -138,22 +131,32 @@ const ArchivedGatepassTable = ({
         <table className="min-w-full border-collapse text-s">
           <thead className="">
             <tr className="bg-gray-400 rounded-2xl">
-              {/* Apply rounded corners to the entire row */}
-              {/* Rounded left side */}
-              <th className="py-2 px-4 text-left font-bold">GID</th>
-              <th className="py-2 px-4 text-left font-bold">Pin</th>
-              <th className="py-2 px-4 text-left font-bold">Name</th>
-              <th className="py-2 px-4 text-left font-bold">Out Going</th>
-              <th className="py-2 px-4 text-left font-bold">Permission Upto</th>
-              <th className="py-2 px-4 text-left font-bold">Entry</th>
-              <th className="py-2 px-4 text-left font-bold">Reason</th>
-              {/* Rounded right side */}
+              <th className="py-2 px-4 text-left font-bold">ID</th>
+              <th className="py-2 px-4 text-left font-bold">Role</th>
+              <th className="py-2 px-4 text-left font-bold">
+                Gatepass Approval
+              </th>
+              <th className="py-2 px-4 text-left font-bold">
+                Gatepass Creation
+              </th>
+              <th className="py-2 px-4 text-left font-bold">
+                Attendance Marking
+              </th>
+              <th className="py-2 px-4 text-left font-bold">Room Allotment</th>
+              <th className="py-2 px-4 text-left font-bold">
+                Admission Credentials
+              </th>
+              <th className="py-2 px-4 text-left font-bold">Grant Access</th>
+              <th className="py-2 px-4 text-left font-bold">Data Updation</th>
+              {/* <th className="py-2 px-4 text-left font-bold rounded-tr-2xl rounded-br-2xl">
+                Actions
+              </th> */}
             </tr>
           </thead>
           <tbody>
             {loading ? (
               <tr>
-                <td colSpan="8">
+                <td colSpan="9">
                   <div className="relative py-8">
                     <div className="absolute inset-0 flex justify-center items-center h-auto">
                       <CustomCircularLoader
@@ -179,41 +182,98 @@ const ArchivedGatepassTable = ({
                 </td>
               </tr>
             ) : (
-              gatepasses.map((gatepass) => (
+              rolesCredentials.map((rolesCredential) => (
                 <tr
-                  key={gatepass.gatepass_number}
+                  key={rolesCredential.role_id}
                   className="border-b hover:bg-gradient-to-r from-blue-200 to-blue-400 odd:bg-gray-200 even:bg-gray-300"
                 >
                   <td className="py-2 px-4">
-                    <span className="font-bold">
-                      {gatepass.gatepass_number}
-                    </span>
+                    <div className="flex flex-col">
+                      <span className="font-bold">
+                        {rolesCredential.role_id}
+                      </span>
+                      {/* <span className="text-gray-500 text-sm">
+                        {rolesCredential.pin_number}
+                      </span> */}
+                      {/* Pin number in light font */}
+                    </div>
+                  </td>
+                  <td className="py-2 px-4">{rolesCredential.role_name}</td>
+                  <td className="py-2 px-4">
+                    {rolesCredential.gatepass_approval_credential ? (
+                      <CheckCircleOutlineIcon style={{ color: 'green' }} />
+                    ) : (
+                      <HighlightOffIcon style={{ color: 'red' }} />
+                    )}
                   </td>
                   <td className="py-2 px-4">
-                    <span className="font-bold">{gatepass.pin_number}</span>
-                  </td>
-                  <td className="py-2 px-4">{gatepass.student_full_name}</td>
-                  <td className="py-2 px-4">
-                    {new Date(gatepass.outgoing_timestamp).toLocaleString()}
-                  </td>
-                  <td className="py-2 px-4">
-                    {new Date(
-                      gatepass.permission_upto_timestamp,
-                    ).toLocaleString()}
+                    {rolesCredential.gatepass_creation_credential ? (
+                      <CheckCircleOutlineIcon style={{ color: 'green' }} />
+                    ) : (
+                      <HighlightOffIcon style={{ color: 'red' }} />
+                    )}
                   </td>
                   <td className="py-2 px-4">
-                    {gatepass.in_timestamp
-                      ? new Date(gatepass.in_timestamp).toLocaleString()
-                      : '-'}
+                    {rolesCredential.attendace_marking_credential ? (
+                      <CheckCircleOutlineIcon style={{ color: 'green' }} />
+                    ) : (
+                      <HighlightOffIcon style={{ color: 'red' }} />
+                    )}
                   </td>
-                  <td className="py-2 px-4">{gatepass.reason}</td>
+                  <td className="py-2 px-4">
+                    {rolesCredential.room_allotment_credential ? (
+                      <CheckCircleOutlineIcon style={{ color: 'green' }} />
+                    ) : (
+                      <HighlightOffIcon style={{ color: 'red' }} />
+                    )}
+                  </td>
+                  <td className="py-2 px-4">
+                    {rolesCredential.admission_credential ? (
+                      <CheckCircleOutlineIcon style={{ color: 'green' }} />
+                    ) : (
+                      <HighlightOffIcon style={{ color: 'red' }} />
+                    )}
+                  </td>
+                  <td className="py-2 px-4">
+                    {rolesCredential.can_grant_access ? (
+                      <CheckCircleOutlineIcon style={{ color: 'green' }} />
+                    ) : (
+                      <HighlightOffIcon style={{ color: 'red' }} />
+                    )}
+                  </td>
+                  <td className="py-2 px-4">
+                    {rolesCredential.update_data_credentials ? (
+                      <CheckCircleOutlineIcon style={{ color: 'green' }} />
+                    ) : (
+                      <HighlightOffIcon style={{ color: 'red' }} />
+                    )}
+                  </td>
+                  {/* <td className="py-2 px-4">
+                    Action
+                    <ActionDropdown
+                      onActionSelect={(action) => {
+                        if (action === 'Show') {
+                          handleShowDetails(rolesCredential);
+                        } else if (action === 'Move To Alumni') {
+                          handleMoveToAlumniAction(rolesCredential);
+                        }
+                      }}
+                    />
+                  </td> */}
                 </tr>
               ))
             )}
           </tbody>
         </table>
+        <RolesCredentialsModal
+          rolesCredentials={rolesCredentials}
+          setRolesCredentials={setRolesCredentials}
+          rolesCredential={selectedRolesCredential}
+          open={modalOpen}
+          onClose={handleCloseModal}
+        />
       </div>
-      <div className="flex justify-between items-center py-4 mx-5">
+      {/* <div className="flex justify-between items-center py-4 mx-5">
         <span className="text-gray-700 whitespace-nowrap">
           {currentPage} of {totalPages}
         </span>
@@ -226,7 +286,6 @@ const ArchivedGatepassTable = ({
             <ArrowBack />
           </IconButton>
           <div className="flex items-center mx-2">
-            {/* Center the page numbers */}
             {pageNumberList.map((number, index) => (
               <button
                 key={index}
@@ -247,9 +306,9 @@ const ArchivedGatepassTable = ({
             <ArrowForward />
           </IconButton>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 };
 
-export default ArchivedGatepassTable;
+export default RolesCredentialsTable;

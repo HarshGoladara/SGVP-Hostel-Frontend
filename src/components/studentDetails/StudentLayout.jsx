@@ -20,6 +20,8 @@ import StudentBody from './StudentBody';
 function StudentLayout() {
   const [students, setStudents] = useState([]);
   const [selectedOption, setSelectedOption] = useState('All');
+  const [selectedUniversity, setSelectedUniversity] = useState('All');
+  const [selectedBranch, setSelectedBranch] = useState('All');
   const [searchResults, setSearchResults] = useState([]);
   const [loading, setLoading] = useState(false);
   const [totalItems, setTotalItems] = useState(0);
@@ -37,43 +39,55 @@ function StudentLayout() {
   };
 
   return (
-    <div className="h-full flex flex-col">
-      <StudentNavbar
-        students={students}
-        setStudents={setStudents}
-        selectedOption={selectedOption}
-        setSelectedOption={setSelectedOption}
-        totalItems={totalItems}
-        setTotalItems={setTotalItems}
-        currentPage={currentPage}
-        setCurrentPage={setCurrentPage}
-        totalPages={totalPages}
-        setTotalPages={setTotalPages}
-        pageNumberList={pageNumberList}
-        setPageNumberList={setPageNumberList}
-        searchQuery={searchQuery}
-        setSearchQuery={setSearchQuery}
-        isLoading={handleLoading}
-      />
-      <StudentBody
-        students={students}
-        setStudents={setStudents}
-        selectedOption={selectedOption}
-        setSelectedOption={setSelectedOption}
-        totalItems={totalItems}
-        setTotalItems={setTotalItems}
-        currentPage={currentPage}
-        setCurrentPage={setCurrentPage}
-        totalPages={totalPages}
-        setTotalPages={setTotalPages}
-        pageNumberList={pageNumberList}
-        setPageNumberList={setPageNumberList}
-        searchQuery={searchQuery}
-        setSearchQuery={setSearchQuery}
-        loading={loading}
-        isLoading={handleLoading}
-        className="flex-grow"
-      />
+    <div className="min-h-screen flex flex-col">
+      <div className="sticky top-0 z-10 bg-white shadow-md">
+        <StudentNavbar
+          students={students}
+          setStudents={setStudents}
+          selectedOption={selectedOption}
+          setSelectedOption={setSelectedOption}
+          totalItems={totalItems}
+          setTotalItems={setTotalItems}
+          currentPage={currentPage}
+          setCurrentPage={setCurrentPage}
+          totalPages={totalPages}
+          setTotalPages={setTotalPages}
+          pageNumberList={pageNumberList}
+          setPageNumberList={setPageNumberList}
+          searchQuery={searchQuery}
+          setSearchQuery={setSearchQuery}
+          isLoading={handleLoading}
+          selectedUniversity={selectedUniversity}
+          setSelectedUniversity={setSelectedUniversity}
+          selectedBranch={selectedBranch}
+          setSelectedBranch={setSelectedBranch}
+        />
+      </div>
+      <div className="flex-grow overflow-y-auto">
+        <StudentBody
+          students={students}
+          setStudents={setStudents}
+          selectedOption={selectedOption}
+          setSelectedOption={setSelectedOption}
+          totalItems={totalItems}
+          setTotalItems={setTotalItems}
+          currentPage={currentPage}
+          setCurrentPage={setCurrentPage}
+          totalPages={totalPages}
+          setTotalPages={setTotalPages}
+          pageNumberList={pageNumberList}
+          setPageNumberList={setPageNumberList}
+          searchQuery={searchQuery}
+          setSearchQuery={setSearchQuery}
+          loading={loading}
+          isLoading={handleLoading}
+          selectedUniversity={selectedUniversity}
+          setSelectedUniversity={setSelectedUniversity}
+          selectedBranch={selectedBranch}
+          setSelectedBranch={setSelectedBranch}
+          className="flex-grow"
+        />
+      </div>
     </div>
   );
 }

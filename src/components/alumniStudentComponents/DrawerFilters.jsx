@@ -35,6 +35,7 @@ import dayjs from 'dayjs';
 import SearchIcon from '@mui/icons-material/Search';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
+import CancelIcon from '@mui/icons-material/Cancel';
 
 export default function DrawerFilters({
   students,
@@ -72,6 +73,20 @@ export default function DrawerFilters({
         color="neutral"
         startDecorator={<TuneIcon />}
         onClick={() => setOpen(true)}
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          textTransform: 'none',
+          fontWeight: 'bold',
+          borderColor: '#6c757d',
+          color: '#6c757d',
+          transition: 'all 0.3s ease',
+          '&:hover': {
+            backgroundColor: '#6c757d',
+            color: '#fff',
+            borderColor: '#6c757d',
+          },
+        }}
       >
         Change filters
       </Button>
@@ -132,6 +147,15 @@ export default function DrawerFilters({
                     }
                   }}
                 />
+                {/* Cancel Button */}
+                {search && (
+                  <span
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 cursor-pointer hover:text-gray-700"
+                    onClick={() => setSearch('')}
+                  >
+                    <CancelIcon />
+                  </span>
+                )}
               </div>
             </div>
           </DialogContent>

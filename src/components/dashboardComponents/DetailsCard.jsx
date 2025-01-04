@@ -28,192 +28,13 @@ import axios from 'axios';
 import toast from 'react-hot-toast';
 import { useCookies } from 'react-cookie';
 
-const DetailsCard = ({
-  gatepasses,
-  setGatepasses,
-  selectedParentOption,
-  selectedAdminOption,
-  gatepass,
-  onClose,
-}) => {
-  const [selectedGatepass, setSelectedGatepass] = useState(gatepass);
-  const [anchorElParent, setAnchorElParent] = useState(null);
-  const [anchorElAdmin, setAnchorElAdmin] = useState(null);
-  const [parentOptions, setParentOptions] = useState([]);
-  const [adminOptions, setAdminOptions] = useState([]);
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [remarksInput, setRemarksInput] = useState('');
-  const [cookies] = useCookies(['token']);
-
-  const isUpdateDialogEnabled = cookies.token.gatepass_approval_credential;
-
-  useEffect(() => {
-    if (selectedGatepass.parent_approval_status === 'pending') {
-      setParentOptions(['approved', 'disapproved']);
-    } else if (selectedGatepass.parent_approval_status === 'approved') {
-      setParentOptions(['pending', 'disapproved']);
-    } else if (selectedGatepass.parent_approval_status === 'disapproved') {
-      setParentOptions(['pending', 'approved']);
-    }
-  }, [selectedGatepass.parent_approval_status]);
-
-  useEffect(() => {
-    if (selectedGatepass.admin_approval_status === 'pending') {
-      setAdminOptions(['approved', 'disapproved']);
-    } else if (selectedGatepass.admin_approval_status === 'approved') {
-      setAdminOptions(['pending', 'disapproved']);
-    } else if (selectedGatepass.admin_approval_status === 'disapproved') {
-      setAdminOptions(['pending', 'approved']);
-    }
-  }, [selectedGatepass.admin_approval_status]);
-
-  const statusColor = (status) => {
-    switch (status) {
-      case 'approved':
-        return 'green';
-      case 'disapproved':
-        return 'red';
-      default:
-        return 'orange';
-    }
-  };
-
-  const handleMenuOpen = (event, type) => {
-    if (type === 'parent') {
-      setAnchorElParent(event.currentTarget);
-    } else {
-      setAnchorElAdmin(event.currentTarget);
-    }
-  };
-
-  const handleMenuClose = (type) => {
-    if (type === 'parent') {
-      setAnchorElParent(null);
-    } else {
-      setAnchorElAdmin(null);
-    }
-  };
-
-  const filterGatepassFromList = (
-    selectedParentOption,
-    selectedAdminOption,
-    updatedBody,
-  ) => {
-    const filteredGatepasses = gatepasses.filter(
-      (gp) => gp.gatepass_number !== updatedBody.gatepass_number,
-    );
-    if (
-      updatedBody.parent_approval_status === selectedParentOption &&
-      updatedBody.admin_approval_status === selectedAdminOption
-    ) {
-      filteredGatepasses.push(updatedBody);
-      filteredGatepasses.sort(function (a, b) {
-        return b.gatepass_number - a.gatepass_number;
-      });
-    }
-    setGatepasses(filteredGatepasses);
-  };
-
-  const handleStatusChange = async (status, type) => {
-    if (type === 'parent') {
-      try {
-        const updatedBody = {
-          ...selectedGatepass,
-          parent_approval_status: status,
-        };
-        const response = await axios.put(
-          `${VITE_BACKEND_BASE_API}/gatepass/updateParentApproval`,
-          {
-            gatepass_number: updatedBody.gatepass_number,
-            parent_approval_status: updatedBody.parent_approval_status,
-            remarks: updatedBody.remarks,
-          },
-        );
-        if (response.status === 200) {
-          toast.success(`Admin Changed Parent Status to ${status}`);
-          setSelectedGatepass(updatedBody);
-          filterGatepassFromList(
-            selectedParentOption,
-            selectedAdminOption,
-            updatedBody,
-          );
-        } else {
-          console.error('Error in parent status update:');
-          toast.error('Error! Try Again');
-        }
-      } catch (error) {
-        console.error('Error in parent status update:', error);
-        toast.error('Error! Try Again');
-      } finally {
-        handleMenuClose(type);
-      }
-    } else {
-      try {
-        const updatedBody = {
-          ...selectedGatepass,
-          admin_approval_status: status,
-        };
-        const response = await axios.put(
-          `${VITE_BACKEND_BASE_API}/gatepass/updateAdminApproval`,
-          {
-            gatepass_number: updatedBody.gatepass_number,
-            admin_approval_status: updatedBody.admin_approval_status,
-            remarks: updatedBody.remarks,
-          },
-        );
-        if (response.status === 200) {
-          toast.success(`Changed Admin Status to ${status}`);
-          setSelectedGatepass(updatedBody);
-          filterGatepassFromList(
-            selectedParentOption,
-            selectedAdminOption,
-            updatedBody,
-          );
-        } else {
-          toast.error('Error Try Again');
-        }
-      } catch (error) {
-        console.log('Error in admin status update:', error);
-        toast.error('Error! Try Again');
-      } finally {
-        handleMenuClose(type);
-      }
-    }
-  };
-
-  const handleDialogToggle = () => setIsDialogOpen(!isDialogOpen);
-
-  const handleSaveRemarks = async () => {
-    try {
-      const updatedBody = {
-        ...selectedGatepass,
-        remarks: remarksInput.trim(),
-      };
-      const response = await axios.put(
-        `${VITE_BACKEND_BASE_API}/gatepass/updateAdminApproval`,
-        {
-          gatepass_number: updatedBody.gatepass_number,
-          remarks: updatedBody.remarks,
-        },
-      );
-      if (response.status === 200) {
-        toast.success('Remarks updated successfully!');
-        setSelectedGatepass(updatedBody);
-      } else {
-        toast.error('Error updating remarks.');
-      }
-    } catch (error) {
-      console.log('Error updating remarks:', error);
-      toast.error('Error updating remarks.');
-    } finally {
-      handleDialogToggle();
-    }
-  };
+const DetailsCard = ({ pendingEntries, onClose }) => {
+  // const [cookies] = useCookies(['token']);
 
   return (
     <Card
       sx={{
-        maxWidth: 700,
+        maxWidth: 900,
         minWidth: 500,
         margin: 'auto',
         padding: 2,
@@ -237,7 +58,7 @@ const DetailsCard = ({
         {/* Card Header */}
         <CardHeader
           title={`SGVP HOSTEL`}
-          subheader={`College Student Gatepass`}
+          subheader={`College Student Pending Entries`}
           sx={{ textAlign: 'center' }}
         />
         {/* Close Icon */}
@@ -248,246 +69,62 @@ const DetailsCard = ({
 
       {/* Card Content */}
       <CardContent>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4">
-          <Grid2 item xs={12}>
-            <Typography variant="body2" color="textSecondary">
-              Gatepass Number:
-            </Typography>
-            <Typography>{selectedGatepass.gatepass_number}</Typography>
-          </Grid2>
-          {/* PIN Number */}
-          <Grid2 item xs={12}>
-            <Typography variant="body2" color="textSecondary">
-              PIN Number:
-            </Typography>
-            <Typography>{selectedGatepass.pin_number}</Typography>
-          </Grid2>
-          {/* Name */}
-          <Grid2 item xs={12}>
-            <Typography variant="body2" color="textSecondary">
-              Student Name:
-            </Typography>
-            <Typography>{selectedGatepass.student_full_name}</Typography>
-          </Grid2>
-
-          {/* Reason */}
-          <Grid2 item xs={12}>
-            <Typography variant="body2" color="textSecondary">
-              Reason:
-            </Typography>
-            <Typography variant="body1">{selectedGatepass.reason}</Typography>
-          </Grid2>
-
-          {/* Outgoing Time */}
-          <Grid2 item xs={6}>
-            <Typography variant="body2" color="textSecondary">
-              Outgoing Time:
-            </Typography>
-            <Typography variant="body1">
-              {new Date(selectedGatepass.outgoing_timestamp).toLocaleString()}
-            </Typography>
-          </Grid2>
-
-          {/* Permission Upto */}
-          <Grid2 item xs={6}>
-            <Typography variant="body2" color="textSecondary">
-              Permission Upto:
-            </Typography>
-            <Typography variant="body1">
-              {new Date(
-                selectedGatepass.permission_upto_timestamp,
-              ).toLocaleString()}
-            </Typography>
-          </Grid2>
-
-          {/* Created Time */}
-          <Grid2 item xs={12}>
-            <Typography variant="body2" color="textSecondary">
-              Created On:
-            </Typography>
-            <Typography variant="body1">
-              {new Date(selectedGatepass.gatepass_created).toLocaleString()}
-            </Typography>
-          </Grid2>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4 mt-4">
-          {/* Parent Approval Status */}
-          <Grid2
-            item
-            xs={6}
-            sx={{
-              display: 'flex',
-            }}
-          >
-            <Grid2>
-              <Typography variant="body2" color="textSecondary">
-                Parent Approval:
-              </Typography>
-              <Typography
-                variant="body1"
-                sx={{
-                  color: statusColor(selectedGatepass.parent_approval_status),
-                  display: 'flex',
-                  alignItems: 'center',
-                }}
-                className="capitalize"
-              >
-                {selectedGatepass.parent_approval_status === 'approved' && (
-                  <CheckCircleOutlineIcon sx={{ marginRight: 1 }} />
-                )}
-                {selectedGatepass.parent_approval_status === 'pending' && (
-                  <PendingIcon sx={{ marginRight: 1 }} />
-                )}
-                {selectedGatepass.parent_approval_status === 'disapproved' && (
-                  <HighlightOffIcon sx={{ marginRight: 1 }} />
-                )}
-                {selectedGatepass.parent_approval_status}
-              </Typography>
-            </Grid2>
-            {isUpdateDialogEnabled && (
-              <Grid2>
-                <IconButton onClick={(e) => handleMenuOpen(e, 'parent')}>
-                  <EditIcon />
-                </IconButton>
-                <Menu
-                  anchorEl={anchorElParent}
-                  open={Boolean(anchorElParent)}
-                  onClose={() => handleMenuClose('parent')}
-                >
-                  {parentOptions.map((status) => (
-                    <MenuItem
-                      key={status}
-                      onClick={() => handleStatusChange(status, 'parent')}
-                      className="capitalize"
-                    >
-                      {status}
-                    </MenuItem>
-                  ))}
-                </Menu>
-              </Grid2>
-            )}
-          </Grid2>
-
-          {/* Admin Approval Status */}
-          <Grid2
-            item
-            xs={6}
-            sx={{
-              display: 'flex',
-            }}
-          >
-            <Grid2>
-              <Typography variant="body2" color="textSecondary">
-                Admin Approval:
-              </Typography>
-              <Typography
-                variant="body1"
-                sx={{
-                  color: statusColor(selectedGatepass.admin_approval_status),
-                  display: 'flex',
-                  alignItems: 'center',
-                }}
-                className="capitalize"
-              >
-                {selectedGatepass.admin_approval_status === 'approved' && (
-                  <CheckCircleOutlineIcon sx={{ marginRight: 1 }} />
-                )}
-                {selectedGatepass.admin_approval_status === 'pending' && (
-                  <PendingIcon sx={{ marginRight: 1 }} />
-                )}
-                {selectedGatepass.admin_approval_status === 'disapproved' && (
-                  <HighlightOffIcon sx={{ marginRight: 1 }} />
-                )}
-                {selectedGatepass.admin_approval_status}
-              </Typography>
-            </Grid2>
-            {isUpdateDialogEnabled && (
-              <Grid2>
-                <IconButton onClick={(e) => handleMenuOpen(e, 'admin')}>
-                  <EditIcon />
-                </IconButton>
-                <Menu
-                  anchorEl={anchorElAdmin}
-                  open={Boolean(anchorElAdmin)}
-                  onClose={() => handleMenuClose('admin')}
-                  className="capitalize"
-                >
-                  {adminOptions.map((status) => (
-                    <MenuItem
-                      key={status}
-                      onClick={() => handleStatusChange(status, 'admin')}
-                    >
-                      {status}
-                    </MenuItem>
-                  ))}
-                </Menu>
-              </Grid2>
-            )}
-          </Grid2>
-
-          {/* Remarks */}
-          {/* {selectedGatepass.remarks && <Grid2 item xs={12}>
-            <Typography variant="body2" color="textSecondary">
-              Remarks:
-            </Typography>
-            <Typography variant="body1">
-              {selectedGatepass.remarks || "No remarks provided"}
-            </Typography>
-          </Grid2>} */}
-
-          {/* Remarks */}
-          {isUpdateDialogEnabled && (
-            <Grid2 item xs={12}>
-              {selectedGatepass.remarks && (
-                <Typography variant="body2" color="textSecondary">
-                  Remarks:
-                </Typography>
-              )}
-              {selectedGatepass.remarks && (
-                <Typography variant="body1">
-                  {selectedGatepass.remarks || 'No remarks available'}
-                </Typography>
-              )}
-              <Button
-                variant="contained"
-                color="primary"
-                size="small"
-                sx={{ mt: 1 }}
-                onClick={handleDialogToggle}
-              >
-                {selectedGatepass.remarks ? 'Update Remarks' : 'Add Remarks'}
-              </Button>
-            </Grid2>
-          )}
+        <div className=" mx-4 mb-4 bg-white shadow-md rounded-lg">
+          <div className="mt-4 mx-2">
+            {/* Added horizontal margin with mx-2 */}
+            <table className="min-w-full border-collapse text-s">
+              <thead className="">
+                <tr className="bg-gray-400 rounded-2xl">
+                  {/* Apply rounded corners to the entire row */}
+                  {/* Rounded left side */}
+                  <th className="py-2 px-4 text-left font-bold">GID</th>
+                  <th className="py-2 px-4 text-left font-bold">Pin</th>
+                  <th className="py-2 px-4 text-left font-bold">Name</th>
+                  <th className="py-2 px-4 text-left font-bold">Out Going</th>
+                  <th className="py-2 px-4 text-left font-bold">
+                    Permission Upto
+                  </th>
+                  <th className="py-2 px-4 text-left font-bold">Entry</th>
+                  <th className="py-2 px-4 text-left font-bold">Reason</th>
+                  {/* Rounded right side */}
+                </tr>
+              </thead>
+              <tbody>
+                {pendingEntries.map((gatepass) => (
+                  <tr
+                    key={gatepass.gatepass_number}
+                    className="border-b hover:bg-gradient-to-r from-blue-200 to-blue-400 odd:bg-gray-200 even:bg-gray-300"
+                  >
+                    <td className="py-2 px-4">
+                      <span className="font-bold">
+                        {gatepass.gatepass_number}
+                      </span>
+                    </td>
+                    <td className="py-2 px-4">
+                      <span className="font-bold">{gatepass.pin_number}</span>
+                    </td>
+                    <td className="py-2 px-4">{gatepass.student_full_name}</td>
+                    <td className="py-2 px-4">
+                      {new Date(gatepass.outgoing_timestamp).toLocaleString()}
+                    </td>
+                    <td className="py-2 px-4">
+                      {new Date(
+                        gatepass.permission_upto_timestamp,
+                      ).toLocaleString()}
+                    </td>
+                    <td className="py-2 px-4 text-center">
+                      {gatepass.in_timestamp
+                        ? new Date(gatepass.in_timestamp).toLocaleString()
+                        : '-'}
+                    </td>
+                    <td className="py-2 px-4">{gatepass.reason}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       </CardContent>
-      {/* Dialog for Adding/Updating Remarks */}
-      {isUpdateDialogEnabled && (
-        <Dialog open={isDialogOpen} onClose={handleDialogToggle}>
-          <DialogTitle>
-            {selectedGatepass.remarks ? 'Update Remarks' : 'Add Remarks'}
-          </DialogTitle>
-          <DialogContent className="mt-2">
-            <TextField
-              label="Remarks"
-              multiline
-              fullWidth
-              rows={4}
-              value={remarksInput}
-              onChange={(e) => setRemarksInput(e.target.value)}
-            />
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={handleDialogToggle} color="secondary">
-              Cancel
-            </Button>
-            <Button onClick={handleSaveRemarks} color="primary">
-              Save
-            </Button>
-          </DialogActions>
-        </Dialog>
-      )}
     </Card>
   );
 };

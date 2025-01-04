@@ -1,16 +1,13 @@
 import React, { useState } from 'react';
 import RoomAllotmentNavbar from './RoomAllotmentNavbar';
 import RoomAllotmentBody from './RoomAllotmentBody';
+import RoomAllotment from './tempRoomsDesign';
 
 function RoomAllotmentLayout() {
-  const [students, setStudents] = useState([]);
-  const [selectedOption, setSelectedOption] = useState('All');
+  const [roomAllotment, setRoomAllotment] = useState([]);
+  const [selectedOption, setSelectedOption] = useState('Wing3');
   const [searchResults, setSearchResults] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [totalItems, setTotalItems] = useState(0);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-  const [pageNumberList, setPageNumberList] = useState([]);
 
   const handleSearch = (results) => {
     setSearchResults(results);
@@ -21,39 +18,38 @@ function RoomAllotmentLayout() {
   };
 
   return (
-    <div className="h-full flex flex-col">
-      <RoomAllotmentNavbar
-        students={students}
-        setStudents={setStudents}
-        selectedOption={selectedOption}
-        setSelectedOption={setSelectedOption}
-        totalItems={totalItems}
-        setTotalItems={setTotalItems}
-        currentPage={currentPage}
-        setCurrentPage={setCurrentPage}
-        totalPages={totalPages}
-        setTotalPages={setTotalPages}
-        pageNumberList={pageNumberList}
-        setPageNumberList={setPageNumberList}
-        isLoading={handleLoading}
-      />
-      <RoomAllotmentBody
-        students={students}
-        setStudents={setStudents}
-        selectedOption={selectedOption}
-        setSelectedOption={setSelectedOption}
-        totalItems={totalItems}
-        setTotalItems={setTotalItems}
-        currentPage={currentPage}
-        setCurrentPage={setCurrentPage}
-        totalPages={totalPages}
-        setTotalPages={setTotalPages}
-        pageNumberList={pageNumberList}
-        setPageNumberList={setPageNumberList}
-        loading={loading}
-        isLoading={handleLoading}
-        className="flex-grow"
-      />
+    <div className="min-h-screen flex flex-col">
+      <div className="sticky top-0 z-10 bg-white shadow-md">
+        <RoomAllotmentNavbar
+          roomAllotment={roomAllotment}
+          setRoomAllotment={setRoomAllotment}
+          selectedOption={selectedOption}
+          setSelectedOption={setSelectedOption}
+          isLoading={handleLoading}
+        />
+      </div>
+      <div className="flex-grow overflow-y-auto">
+        <RoomAllotmentBody
+          roomAllotment={roomAllotment}
+          setRoomAllotment={setRoomAllotment}
+          selectedOption={selectedOption}
+          setSelectedOption={setSelectedOption}
+          loading={loading}
+          isLoading={handleLoading}
+          className="flex-grow"
+        />
+      </div>
+      {/* <div className="flex-grow overflow-y-auto">
+        <RoomAllotment
+          roomAllotment={roomAllotment}
+          setRoomAllotment={setRoomAllotment}
+          selectedOption={selectedOption}
+          setSelectedOption={setSelectedOption}
+          loading={loading}
+          isLoading={handleLoading}
+          className="flex-grow"
+        />
+      </div> */}
     </div>
   );
 }

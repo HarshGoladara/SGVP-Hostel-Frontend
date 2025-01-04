@@ -1,84 +1,51 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import { IconButton } from '@mui/material';
-import { ArrowBack, ArrowForward } from '@mui/icons-material';
-import RoomAllotmentModal from './RoomAllotmentModal.jsx';
-import { VITE_BACKEND_BASE_API } from '../../helper/envConfig/envConfig.js';
-import ActionDropdown from './ActionDropdown.jsx';
-// import { CircularProgress } from '@mui/material';
+import React, { useState, useEffect } from 'react';
 import CustomCircularLoader from '../commonCustomComponents/CustomCircularLoader.jsx';
-import HairballSpinner from '../commonCustomComponents/HairballSpinner.jsx';
+import { VITE_BACKEND_BASE_API } from '../../helper/envConfig/envConfig.js';
+import axios from 'axios';
+import RoomAllotmentModal from './RoomAllotmentModal.jsx';
+import { CheckCircle, Error } from '@mui/icons-material'; // Import MUI icons
+import AddCircleIcon from '@mui/icons-material/AddCircle';
+import DeleteIcon from '@mui/icons-material/Delete';
+import AddRoomDialog from './AddRoomDialog.jsx';
+import AddNewBedDialog from './AddNewBedDialog.jsx';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  Typography,
+  Grid2,
+  Menu,
+  MenuItem,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  TextField,
+  Button,
+} from '@mui/material';
 import toast from 'react-hot-toast';
 
-const RoomAllotmentTable = ({
-  students,
-  setStudents,
-  currentPage,
-  setCurrentPage,
-  totalPages,
-  // setTotalPages,
-  pageNumberList,
-  setPageNumberList,
+const RoomAllotmentBody = ({
+  roomAllotment,
+  setRoomAllotment,
+  selectedOption,
+  setSelectedOption,
   loading,
   isLoading,
 }) => {
-  const [selectedStudent, setSelectedStudent] = useState(null);
+  const [rooms, setRooms] = useState([]);
+  const [error, setError] = useState(null);
+  const [selectBed, setSelectedBed] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
+  const [addRoomDialogOpen, setAddRoomDialogOpen] = useState(false);
+  const [addBedDialogOpen, setAddBedDialogOpen] = useState(false);
+  const [selectedRoomNumber, setSelectedRoomNumber] = useState(null);
+  // New state for confirmation dialog
+  const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
+  const [roomToDelete, setRoomToDelete] = useState(null);
 
-  const fetchStudentData = async (page) => {
-    isLoading(true);
-    try {
-      const { data } = await axios.get(
-        `${VITE_BACKEND_BASE_API}/student/getAlumni?page=${page}&limit=10`,
-      );
-      setStudents(data.data);
-    } catch (error) {
-      console.error('Error fetching student data', error);
-    } finally {
-      isLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    if (students) {
-      setStudents(students);
-    } else {
-      fetchStudentData(currentPage);
-    }
-  }, [students]);
-
-  useEffect(() => {
-    fetchStudentData(currentPage);
-  }, [currentPage]);
-
-  const handleMoveBackToSGVPAction = async (student) => {
-    try {
-      const moveFromToAlumniBody = {
-        pin_number: student.pin_number,
-        is_alumni: false,
-      };
-      const response = await axios.put(
-        `${VITE_BACKEND_BASE_API}/student/moveFromToAlumni`,
-        moveFromToAlumniBody,
-      );
-      if (response.status === 200) {
-        toast.success('Data Moved Back to SGVP');
-        setStudents((prevStudents) =>
-          prevStudents.filter((s) => s.pin_number !== student.pin_number),
-        );
-      } else {
-        toast.error('Error Try Again');
-      }
-    } catch (error) {
-      console.log('Error moving data from alumni', error);
-      toast.error('Error Moving Data from Alumni');
-    } finally {
-      //
-    }
-  };
-
-  const handleShowDetails = (student) => {
-    setSelectedStudent(student);
+  const handleShowDetails = (bed) => {
+    setSelectedBed(bed);
     setModalOpen(true);
   };
 
@@ -86,210 +53,337 @@ const RoomAllotmentTable = ({
     setModalOpen(false);
   };
 
-  const handleNextPage = () => {
-    if (currentPage < totalPages) {
-      setCurrentPage(currentPage + 1);
-    }
+  const confirmRemoveRoom = (room) => {
+    setRoomToDelete(room);
+    setConfirmDialogOpen(true);
   };
 
-  const handlePreviousPage = () => {
-    if (currentPage > 1) {
-      setCurrentPage(currentPage - 1);
-    }
-  };
-
-  const handlePageClick = (page) => {
-    setCurrentPage(page);
-  };
-
-  // Generate page numbers for pagination
-  const getPageNumbers = () => {
-    const pageNumbers = [];
-    if (totalPages <= 5) {
-      // Show all pages if total pages are 5 or less
-      for (let i = 1; i <= totalPages; i++) {
-        pageNumbers.push(i);
-      }
-    } else {
-      // Handle more than 5 pages
-      if (currentPage <= 3) {
-        pageNumbers.push(1, 2, 3, 4, '...', totalPages);
-      } else if (currentPage >= totalPages - 2) {
-        pageNumbers.push(
-          1,
-          '...',
-          totalPages - 3,
-          totalPages - 2,
-          totalPages - 1,
-          totalPages,
-        );
+  const handleRemoveRoom = async (room) => {
+    try {
+      isLoading(true);
+      const response = await axios.delete(
+        `${VITE_BACKEND_BASE_API}/roomAllotment/deleteRoom`,
+        {
+          params: { room_number: room.room_number },
+        },
+      );
+      if (response.status === 200) {
+        toast.success(`Room ${room.room_number} Removed`);
+        fetchRooms();
       } else {
-        pageNumbers.push(
-          1,
-          '...',
-          currentPage - 1,
-          currentPage,
-          currentPage + 1,
-          '...',
-          totalPages,
-        );
+        toast.error('Error!');
       }
+    } catch (error) {
+      console.log('error removing room', error);
+    } finally {
+      isLoading(false);
+      setConfirmDialogOpen(false);
+      setRoomToDelete(null);
     }
-    return pageNumbers;
+  };
+
+  const isRemoveRoomEnabled = (room) => {
+    let occupiedBedCount = 0;
+    room.beds.map((bed) => {
+      if (bed.pin_number) {
+        occupiedBedCount++;
+      }
+    });
+    return occupiedBedCount === 0;
+  };
+
+  // Group beds by room number
+  const groupBedsByRoom = (data) => {
+    // Group beds by room_number
+    const roomsMap = data.reduce((acc, item, index) => {
+      const {
+        room_number,
+        bed_number,
+        category,
+        pin_number,
+        student_full_name,
+      } = item;
+      if (!acc[room_number]) {
+        acc[room_number] = [];
+      }
+
+      // Assign `isOccupied` alternately for example purposes
+      acc[room_number].push({
+        room_number,
+        bed_number,
+        category,
+        pin_number,
+        student_full_name,
+        isOccupied: pin_number !== null, // Alternates true/false
+      });
+
+      return acc;
+    }, {});
+
+    // Convert grouped data to the desired format
+    return Object.entries(roomsMap).map(([room_number, beds]) => ({
+      room_number: Number(room_number),
+      beds,
+    }));
+  };
+
+  const fetchRooms = async () => {
+    isLoading(true);
+    setError(null);
+
+    try {
+      const response = await axios.get(
+        `${VITE_BACKEND_BASE_API}/roomAllotment/getRooms`,
+        {
+          params: { category: selectedOption },
+        },
+      );
+      const groupedData = groupBedsByRoom(response.data.data);
+      setRooms(groupedData);
+      // console.log(groupedData);
+    } catch (err) {
+      console.error('Error fetching rooms:', err);
+      setError('Failed to fetch rooms.');
+    } finally {
+      isLoading(false);
+    }
   };
 
   useEffect(() => {
-    setPageNumberList(getPageNumbers());
-  }, [totalPages]);
-
-  // return (
-  //   <div className="mx-4 mb-4 bg-white shadow-md rounded-lg">
-  //   </div>
-  // );
+    fetchRooms();
+  }, [selectedOption]);
 
   return (
-    <div className=" mx-4 mb-4 bg-white shadow-md rounded-lg">
-      <div className="mt-4 mx-2">
-        {/* Added horizontal margin with mx-2 */}
-        <table className="min-w-full border-collapse text-s">
-          <thead className="">
-            <tr className="bg-gray-200 rounded-2xl">
-              {/* Apply rounded corners to the entire row */}
-              <th className="py-2 px-4 text-left font-bold rounded-tl-2xl rounded-bl-2xl">
-                Photo
-              </th>
-              {/* Rounded left side */}
-              <th className="py-2 px-4 text-left font-bold">Name</th>
-              <th className="py-2 px-4 text-left font-bold">Mobile Number</th>
-              <th className="py-2 px-4 text-left font-bold rounded-tr-2xl rounded-br-2xl">
-                Actions
-              </th>
-              {/* Rounded right side */}
-            </tr>
-          </thead>
-          <tbody>
-            {loading ? (
-              <tr>
-                <td colSpan="6">
-                  <div className="relative py-8">
-                    <div className="absolute inset-0 flex justify-center items-center h-auto">
-                      <CustomCircularLoader
-                        size={50}
-                        logoSrc="/images/logo.jpg"
-                      />
-                      {/* <HairballSpinner
-                        colors={{
-                          fillColor1: '#c0392b',
-                          fillColor2: '#d35400',
-                          fillColor3: '#f39c12',
-                          fillColor4: '#16a085',
-                        }}
-                        backgroundColor="#fff"
-                        speed={1.5}
-                        width={90}
-                        height={90}
-                        logoSrc="/images/logo.jpg"
-                        logoSize={45}
-                      /> */}
-                    </div>
-                  </div>
-                </td>
-              </tr>
-            ) : (
-              students.map((student) => (
-                <tr
-                  key={student.pin_number}
-                  className="border-b hover:bg-gray-50"
-                >
-                  <td className="py-2 px-4">
-                    {student.student_photo_url ? (
-                      <img
-                        src={student.student_photo_url}
-                        alt={student.student_full_name}
-                        className="w-12 h-12 rounded-full"
-                      />
-                    ) : (
-                      <div className="flex items-center justify-center w-12 h-12 bg-blue-500 text-white text-lg font-bold rounded-full">
-                        {student.student_full_name.charAt(0)}
-                      </div>
-                    )}
-                  </td>
-                  <td className="py-2 px-4">
-                    <div className="flex flex-col">
-                      <span className="font-bold">
-                        {student.student_full_name}
-                      </span>
-                      <span className="text-gray-500 text-sm">
-                        {student.pin_number}
-                      </span>
-                      {/* Pin number in light font */}
-                    </div>
-                  </td>
-                  <td className="py-2 px-4">
-                    {student.student_contact_number}
-                  </td>
-                  <td className="py-2 px-4">
-                    Action
-                    <ActionDropdown
-                      onActionSelect={(action) => {
-                        if (action === 'Show') {
-                          handleShowDetails(student);
-                        } else if (action === 'Move Back To SGVP') {
-                          handleMoveBackToSGVPAction(student);
-                        }
-                      }}
-                    />
-                  </td>
-                </tr>
-              ))
-            )}
-          </tbody>
-        </table>
-        <RoomAllotmentModal
-          students={students}
-          setStudents={setStudents}
-          student={selectedStudent}
-          open={modalOpen}
-          onClose={handleCloseModal}
-        />
+    <div className="p-4">
+      {/* Add New Room Button after the last room */}
+      <div className="flex justify-center mt-4 mb-4">
+        <Button
+          variant="outlined"
+          color="primary"
+          onClick={() => setAddRoomDialogOpen(true)}
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            textTransform: 'none',
+            fontWeight: 'bold',
+            borderColor: 'primary.main',
+            color: 'primary.main',
+            transition: 'all 0.3s ease',
+            '&:hover': {
+              backgroundColor: 'primary.main',
+              color: 'white',
+              borderColor: 'primary.main',
+            },
+          }}
+        >
+          <AddCircleIcon className="mr-2" />
+          Add New Room
+        </Button>
       </div>
-      <div className="flex justify-between items-center py-4 mx-5">
-        <span className="text-gray-700 whitespace-nowrap">
-          {currentPage} of {totalPages}
-        </span>
-        <div className="flex items-center justify-center w-full">
-          <IconButton
-            onClick={handlePreviousPage}
-            disabled={currentPage === 1}
-            className={`hover:bg-gray-200 ${currentPage === 1 ? 'opacity-50 cursor-not-allowed' : ''}`}
-          >
-            <ArrowBack />
-          </IconButton>
-          <div className="flex items-center mx-2">
-            {/* Center the page numbers */}
-            {pageNumberList.map((number, index) => (
-              <button
-                key={index}
-                onClick={() =>
-                  typeof number === 'number' && handlePageClick(number)
-                }
-                className={`mx-1 w-8 h-8 rounded-full flex items-center justify-center ${currentPage === number ? 'bg-[#37AFE1] text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}`}
-              >
-                {number}
-              </button>
-            ))}
-          </div>
-          <IconButton
-            onClick={handleNextPage}
-            disabled={currentPage === totalPages}
-            className={`hover:bg-gray-200 ${currentPage === totalPages ? 'opacity-50 cursor-not-allowed' : ''}`}
-          >
-            <ArrowForward />
-          </IconButton>
+
+      {loading ? (
+        <div className="flex flex-row justify-center">
+          <CustomCircularLoader size={50} logoSrc="/images/logo.jpg" />
         </div>
-      </div>
+      ) : (
+        rooms.map((room) => (
+          <div key={room.room_number} className="mb-8">
+            {/* Room Number */}
+            <div className="flex flex-row justify-between">
+              <h1 className="text-lg font-semibold mb-4 text-left ml-4">
+                Room No:- {room.room_number}
+              </h1>
+              <Button
+                variant="outlined"
+                color="error"
+                disabled={!isRemoveRoomEnabled(room)}
+                onClick={() => {
+                  // handleRemoveRoom(room);
+                  confirmRemoveRoom(room);
+                }}
+                sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  textTransform: 'none',
+                  fontWeight: 'bold',
+                  borderColor: 'error.main',
+                  color: 'error.main',
+                  transition: 'all 0.3s ease',
+                  '&:hover': {
+                    backgroundColor: 'error.main',
+                    color: 'white',
+                    borderColor: 'error.main',
+                  },
+                }}
+              >
+                <DeleteIcon className="mr-2" />
+                Remove Room {room.room_number}
+              </Button>
+            </div>
+
+            {/* Bed Cards */}
+            <div className="grid grid-cols-4 gap-4">
+              {room.beds.map((bed) => (
+                <div
+                  // key={bed.bed_number}
+                  // className={`p-4 border rounded-lg text-center shadow-md cursor-pointer ${bed.isOccupied
+                  //   ? 'bg-red-100 text-red-500'
+                  //   : 'bg-green-100 text-green-500'
+                  //   }`}
+                  // onClick={() => {
+                  //   handleShowDetails(bed);
+                  // }}
+                  key={bed.bed_number}
+                  className={`p-4 border rounded-lg text-center shadow-md cursor-pointer`}
+                  style={{
+                    background: bed.isOccupied
+                      ? 'linear-gradient(135deg, #FC9C9C,white, #FC9C9C)' // Gradient for occupied beds (red shades)
+                      : 'linear-gradient(135deg, #9FF59F,white, #9FF59F)', // Gradient for available beds (green shades)
+                    color: bed.isOccupied ? '#FF0000' : '#00A000', // Adjust text color for better visibility
+                  }}
+                  onClick={() => {
+                    handleShowDetails(bed);
+                  }}
+                >
+                  <div className="text-right">
+                    {bed.isOccupied ? (
+                      <Error className="text-red-500" />
+                    ) : (
+                      <CheckCircle className="text-green-500" />
+                    )}
+                  </div>
+
+                  <span className="text-lg font-bold">
+                    Bed {bed.bed_number}
+                  </span>
+                  <div className="text-sm mt-2 text-black">
+                    Name: {bed.student_full_name || '______'}
+                  </div>
+                  <div className="text-sm mt-2 text-black">
+                    PIN: {bed.pin_number || '______'}
+                  </div>
+                  <div className="text-md mt-2 font-bold">
+                    {bed.isOccupied ? 'Occupied' : 'Available'}
+                  </div>
+                </div>
+              ))}
+              {/* Add New Bed Card */}
+              <div
+                className="mt-auto mb-auto p-4 border rounded-lg text-center shadow-md cursor-pointer bg-blue-100 text-blue-500 hover:bg-blue-200"
+                onClick={() => {
+                  // console.log(`Adding a new bed to Room ${room.room_number}`);
+                  // Add functionality here, e.g., open a modal for bed addition.
+                  setSelectedRoomNumber(room.room_number);
+                  setAddBedDialogOpen(true);
+                }}
+              >
+                <AddCircleIcon className="mr-2" />
+                <span className="text-lg mt-2 block font-semibold">
+                  Add New Bed
+                </span>
+              </div>
+            </div>
+          </div>
+        ))
+      )}
+
+      {/* Confirmation Dialog */}
+      <Dialog
+        open={confirmDialogOpen}
+        onClose={() => setConfirmDialogOpen(false)}
+      >
+        <DialogTitle>Confirm Room Deletion</DialogTitle>
+        <DialogContent>
+          <Typography>
+            Are you sure you want to remove Room{' '}
+            <strong>{roomToDelete?.room_number || '---'}</strong>? This action
+            cannot be undone.
+          </Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={() => {
+              setConfirmDialogOpen(false);
+              setRoomToDelete(null);
+            }}
+            variant="outlined"
+            color="primary"
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              textTransform: 'none',
+              fontWeight: 'bold',
+              borderColor: `primary.main`,
+              color: `primary.main`,
+              transition: 'all 0.3s ease',
+              '&:hover': {
+                backgroundColor: `primary.main`,
+                color: 'white',
+                borderColor: `primary.main`,
+              },
+            }}
+          >
+            Cancel
+          </Button>
+          <Button
+            onClick={() => handleRemoveRoom(roomToDelete)}
+            variant="outlined"
+            color="error"
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              textTransform: 'none',
+              fontWeight: 'bold',
+              borderColor: `error.main`,
+              color: `error.main`,
+              transition: 'all 0.3s ease',
+              '&:hover': {
+                backgroundColor: `error.main`,
+                color: 'white',
+                borderColor: `error.main`,
+              },
+            }}
+          >
+            Confirm
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <RoomAllotmentModal
+        roomAllotment={roomAllotment}
+        setRoomAllotment={setRoomAllotment}
+        selectedOption={selectedOption}
+        setSelectedOption={setSelectedOption}
+        loading={loading}
+        isLoading={isLoading}
+        bed={selectBed}
+        open={modalOpen}
+        onClose={handleCloseModal}
+        fetchRooms={fetchRooms}
+      />
+
+      <AddRoomDialog
+        roomAllotment={roomAllotment}
+        setRoomAllotment={setRoomAllotment}
+        selectedOption={selectedOption}
+        setSelectedOption={setSelectedOption}
+        open={addRoomDialogOpen}
+        onClose={() => setAddRoomDialogOpen(false)}
+        fetchRooms={fetchRooms}
+      />
+
+      <AddNewBedDialog
+        roomAllotment={roomAllotment}
+        setRoomAllotment={setRoomAllotment}
+        selectedOption={selectedOption}
+        setSelectedOption={setSelectedOption}
+        roomNumber={selectedRoomNumber}
+        open={addBedDialogOpen}
+        onClose={() => setAddBedDialogOpen(false)}
+        fetchRooms={fetchRooms}
+      />
     </div>
   );
 };
 
-export default RoomAllotmentTable;
+export default RoomAllotmentBody;

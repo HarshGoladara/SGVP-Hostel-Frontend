@@ -2,16 +2,8 @@ import React, { useState, useEffect } from 'react';
 import DetailsCard from './DetailsCard';
 import './css/ModalStyle.css';
 
-const DashboardModal = ({
-  gatepasses,
-  setGatepasses,
-  selectedParentOption,
-  selectedAdminOption,
-  gatepass,
-  open,
-  onClose,
-}) => {
-  const [showGatepass, setShowGatepass] = useState(true);
+const DashboardModal = ({ pendingEntries, open, onClose }) => {
+  const [showPendingEntries, setShowPendingEntries] = useState(true);
   const [isVisible, setIsVisible] = useState(open);
 
   useEffect(() => {
@@ -37,14 +29,10 @@ const DashboardModal = ({
       {/* Background Blur */}
       <div className="fixed inset-0 bg-black opacity-50" onClick={onClose} />
       <DetailsCard
-        gatepasses={gatepasses}
-        setGatepasses={setGatepasses}
-        selectedParentOption={selectedParentOption}
-        selectedAdminOption={selectedAdminOption}
-        gatepass={gatepass}
+        pendingEntries={pendingEntries}
         onClose={() => {
           onClose();
-          setShowGatepass(true); // Reset to show gatepass details on close
+          setShowPendingEntries(true); // Reset to show gatepass details on close
         }}
       />
     </div>

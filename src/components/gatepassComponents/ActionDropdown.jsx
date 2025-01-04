@@ -2,6 +2,11 @@ import React, { useState } from 'react';
 import { Menu, MenuItem, IconButton } from '@mui/material';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import { useCookies } from 'react-cookie';
+import OpenInNewIcon from '@mui/icons-material/OpenInNew';
+import PrintIcon from '@mui/icons-material/Print';
+import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
+import HighlightOffIcon from '@mui/icons-material/HighlightOff';
+import RestoreIcon from '@mui/icons-material/Restore';
 
 const ActionDropdown = ({ onActionSelect, gatepass }) => {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -55,7 +60,10 @@ const ActionDropdown = ({ onActionSelect, gatepass }) => {
       >
         <ul>
           <p className="text-gray-700 hover:bg-[#37AFE1] hover:text-white transition duration-300 cursor-pointer">
-            <MenuItem onClick={() => handleClose('View')}>View</MenuItem>
+            <MenuItem onClick={() => handleClose('View')}>
+              <OpenInNewIcon className="mr-2" />
+              View
+            </MenuItem>
           </p>
           {isApproveEnabled && (
             <p className="text-gray-700 hover:bg-[#37AFE1] hover:text-white transition duration-300 cursor-pointer">
@@ -63,6 +71,7 @@ const ActionDropdown = ({ onActionSelect, gatepass }) => {
                 onClick={() => isApproveEnabled && handleClose('Approve')}
                 disabled={!isApproveEnabled}
               >
+                <CheckCircleOutlineIcon className="mr-2" />
                 Approve
               </MenuItem>
             </p>
@@ -73,6 +82,7 @@ const ActionDropdown = ({ onActionSelect, gatepass }) => {
                 onClick={() => isGenerateEnabled && handleClose('Generate')}
                 disabled={!isGenerateEnabled}
               >
+                <PrintIcon className="mr-2" />
                 Generate
               </MenuItem>
             </p>
@@ -83,6 +93,7 @@ const ActionDropdown = ({ onActionSelect, gatepass }) => {
                 onClick={() => isDisApproveEnabled && handleClose('Disapprove')}
                 disabled={!isDisApproveEnabled}
               >
+                <HighlightOffIcon className="mr-2" />
                 Disapprove
               </MenuItem>
             </p>
@@ -95,6 +106,7 @@ const ActionDropdown = ({ onActionSelect, gatepass }) => {
                 onClick={() => isReentryEnabled && handleClose('Re-entry')}
                 disabled={!isReentryEnabled}
               >
+                <RestoreIcon className="mr-2" />
                 Re-entry
               </MenuItem>
             </p>

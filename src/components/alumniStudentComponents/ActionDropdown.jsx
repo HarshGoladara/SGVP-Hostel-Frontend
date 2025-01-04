@@ -2,6 +2,11 @@ import React, { useState } from 'react';
 import { Menu, MenuItem, IconButton } from '@mui/material';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import { useCookies } from 'react-cookie';
+import OpenInNewIcon from '@mui/icons-material/OpenInNew';
+import UndoIcon from '@mui/icons-material/Undo';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import KeyboardReturnIcon from '@mui/icons-material/KeyboardReturn';
+import ReplayIcon from '@mui/icons-material/Replay';
 
 const ActionDropdown = ({ onActionSelect, student }) => {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -41,7 +46,10 @@ const ActionDropdown = ({ onActionSelect, student }) => {
       >
         <ul>
           <p className="text-gray-700 hover:bg-[#37AFE1] hover:text-white transition duration-300 cursor-pointer">
-            <MenuItem onClick={() => handleClose('Show')}>Show</MenuItem>
+            <MenuItem onClick={() => handleClose('Show')}>
+              <OpenInNewIcon className="mr-2" />
+              Show
+            </MenuItem>
           </p>
           {isMoveBackToSGVPEnabled && (
             <p className="text-gray-700 hover:bg-[#37AFE1] hover:text-white transition duration-300 cursor-pointer">
@@ -51,6 +59,7 @@ const ActionDropdown = ({ onActionSelect, student }) => {
                 }
                 disabled={!isMoveBackToSGVPEnabled}
               >
+                <KeyboardReturnIcon className="mr-2" />
                 Move Back To SGVP
               </MenuItem>
             </p>

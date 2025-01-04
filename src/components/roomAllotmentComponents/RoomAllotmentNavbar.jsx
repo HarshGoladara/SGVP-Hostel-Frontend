@@ -9,25 +9,17 @@ import toast from 'react-hot-toast';
 import DrawerFilters from './DrawerFilters.jsx';
 
 function RoomAllotmentNavbar({
-  students,
-  setStudents,
+  roomAllotment,
+  setRoomAllotment,
   selectedOption,
   setSelectedOption,
-  totalItems,
-  setTotalItems,
-  // currentPage,
-  setCurrentPage,
-  // totalPages,
-  setTotalPages,
-  // pageNumberList,
-  // setPageNumberList,
   isLoading,
 }) {
   const [showMenu, setShowMenu] = useState(false);
   const [pinNumber, setPinNumber] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
 
-  const options = ['All', 'Pending', 'Confirmed', 'Cancelled'];
+  const options = ['Wing3', 'Dome', 'Vishvambharam'];
 
   const handleSelect = (option) => {
     setSelectedOption(option);
@@ -42,111 +34,111 @@ function RoomAllotmentNavbar({
     setSearchQuery(e.target.value);
   };
 
-  const searchStudents = async (searchQuery) => {
-    isLoading(true);
-    try {
-      setCurrentPage(1);
-      const query = searchQuery.trim();
-      if (!query) {
-        const { data } = await axios.get(
-          `${VITE_BACKEND_BASE_API}/student/getAlumni?page=1&limit=10`,
-        );
-        setStudents(data.data);
+  // const searchStudents = async (searchQuery) => {
+  //   isLoading(true);
+  //   try {
+  //     setCurrentPage(1);
+  //     const query = searchQuery.trim();
+  //     if (!query) {
+  //       const { data } = await axios.get(
+  //         `${VITE_BACKEND_BASE_API}/student/getAlumni?page=1&limit=10`,
+  //       );
+  //       setStudents(data.data);
 
-        const response = await axios.get(
-          `${VITE_BACKEND_BASE_API}/pagination/getAlumniPagination`,
-          {
-            params: {
-              limit: 10,
-            },
-          },
-        );
-        setTotalPages(response.data.pagination.totalPages);
-        setTotalItems(response.data.pagination.totalItems);
-      } else {
-        try {
-          const isPin = /^\d+$/.test(query);
-          if (isPin) {
-            const { data } = await axios.get(
-              `${VITE_BACKEND_BASE_API}/student/getAlumni`,
-              {
-                params: {
-                  pin_number: query,
-                },
-              },
-            );
-            setStudents(data.data);
+  //       const response = await axios.get(
+  //         `${VITE_BACKEND_BASE_API}/pagination/getAlumniPagination`,
+  //         {
+  //           params: {
+  //             limit: 10,
+  //           },
+  //         },
+  //       );
+  //       setTotalPages(response.data.pagination.totalPages);
+  //       setTotalItems(response.data.pagination.totalItems);
+  //     } else {
+  //       try {
+  //         const isPin = /^\d+$/.test(query);
+  //         if (isPin) {
+  //           const { data } = await axios.get(
+  //             `${VITE_BACKEND_BASE_API}/student/getAlumni`,
+  //             {
+  //               params: {
+  //                 pin_number: query,
+  //               },
+  //             },
+  //           );
+  //           setStudents(data.data);
 
-            const response = await axios.get(
-              `${VITE_BACKEND_BASE_API}/pagination/getAlumniPagination`,
-              {
-                params: {
-                  limit: 10,
-                  pin_number: query,
-                },
-              },
-            );
-            setTotalPages(response.data.pagination.totalPages);
-            setTotalItems(response.data.pagination.totalItems);
-          } else {
-            const { data } = await axios.get(
-              `${VITE_BACKEND_BASE_API}/student/getAlumni`,
-              {
-                params: {
-                  student_full_name: query,
-                },
-              },
-            );
-            setStudents(data.data);
+  //           const response = await axios.get(
+  //             `${VITE_BACKEND_BASE_API}/pagination/getAlumniPagination`,
+  //             {
+  //               params: {
+  //                 limit: 10,
+  //                 pin_number: query,
+  //               },
+  //             },
+  //           );
+  //           setTotalPages(response.data.pagination.totalPages);
+  //           setTotalItems(response.data.pagination.totalItems);
+  //         } else {
+  //           const { data } = await axios.get(
+  //             `${VITE_BACKEND_BASE_API}/student/getAlumni`,
+  //             {
+  //               params: {
+  //                 student_full_name: query,
+  //               },
+  //             },
+  //           );
+  //           setStudents(data.data);
 
-            const response = await axios.get(
-              `${VITE_BACKEND_BASE_API}/pagination/getAlumniPagination`,
-              {
-                params: {
-                  limit: 10,
-                  student_full_name: query,
-                },
-              },
-            );
-            setTotalPages(response.data.pagination.totalPages);
-            setTotalItems(response.data.pagination.totalItems);
-          }
-        } catch (error) {
-          console.error('Error fetching student data');
-        }
-      }
-      // setStudentData(results);
-      // setNoOfStudent(results.length);
-    } catch (err) {
-      console.error('Error fetching student data:', err);
-      toast.error('Error Try Again');
-    } finally {
-      isLoading(false);
-    }
-  };
+  //           const response = await axios.get(
+  //             `${VITE_BACKEND_BASE_API}/pagination/getAlumniPagination`,
+  //             {
+  //               params: {
+  //                 limit: 10,
+  //                 student_full_name: query,
+  //               },
+  //             },
+  //           );
+  //           setTotalPages(response.data.pagination.totalPages);
+  //           setTotalItems(response.data.pagination.totalItems);
+  //         }
+  //       } catch (error) {
+  //         console.error('Error fetching student data');
+  //       }
+  //     }
+  //     // setStudentData(results);
+  //     // setNoOfStudent(results.length);
+  //   } catch (err) {
+  //     console.error('Error fetching student data:', err);
+  //     toast.error('Error Try Again');
+  //   } finally {
+  //     isLoading(false);
+  //   }
+  // };
 
   useEffect(() => {
     const getData = async () => {
       isLoading(true);
       try {
-        setCurrentPage(1);
+        // setCurrentPage(1);
         const { data } = await axios.get(
-          `${VITE_BACKEND_BASE_API}/student/getAlumni`,
+          `${VITE_BACKEND_BASE_API}/roomAllotment/getRoomAllotment`,
         );
         // // setStudentData(data.data);
         // setNoOfStudent(data.data.length);
-        setStudents(data.data);
+        setRoomAllotment(data.data);
 
-        const response = await axios.get(
-          `${VITE_BACKEND_BASE_API}/pagination/getAlumniPagination`,
-          {
-            params: {
-              limit: 10,
-            },
-          },
-        );
-        setTotalPages(response.data.pagination.totalPages);
-        setTotalItems(response.data.pagination.totalItems);
+        // const response = await axios.get(
+        //   `${VITE_BACKEND_BASE_API}/pagination/getAlumniPagination`,
+        //   {
+        //     params: {
+        //       limit: 10,
+        //     },
+        //   },
+        // );
+        // setTotalPages(response.data.pagination.totalPages);
+        // setTotalItems(response.data.pagination.totalItems);
       } catch (error) {
         console.log(error);
         toast.error('Error Try Again');
@@ -165,27 +157,21 @@ function RoomAllotmentNavbar({
         </div>
 
         <div className="flex-grow flex justify-center items-center space-x-3">
-          <span className="text-[25px] font-bold">Student</span>
-          <span className="text-[18px]">{`  (${totalItems})`}</span>
+          <span className="text-[25px] font-bold">
+            Room Allotment {selectedOption}
+          </span>
+          {/* <span className="text-[18px]">{`  (${totalItems})`}</span> */}
         </div>
 
         <div className="flex-shrink-0">
           <DrawerFilters
-            students={students}
-            setStudents={setStudents}
+            roomAllotment={roomAllotment}
+            setRoomAllotment={setRoomAllotment}
             selectedOption={selectedOption}
             setSelectedOption={setSelectedOption}
-            totalItems={totalItems}
-            setTotalItems={setTotalItems}
-            // currentPage={currentPage}
-            setCurrentPage={setCurrentPage}
-            // totalPages={totalPages}
-            setTotalPages={setTotalPages}
-            // pageNumberList={pageNumberList}
-            // setPageNumberList={setPageNumberList}
+            isLoading={isLoading}
             searchQuery={searchQuery}
             setSearchQuery={setSearchQuery}
-            searchStudents={searchStudents}
           />
         </div>
 

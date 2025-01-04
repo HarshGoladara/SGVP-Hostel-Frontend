@@ -48,6 +48,7 @@ export default function DrawerBasic() {
     '/archivedGatepass': 'Archived Gatepass',
     '/roomAllotment': 'Room Allotment',
     '/alumni': 'Alumni',
+    '/roles': 'Roles',
   };
 
   // Sync active item with the current route on mount and location change
@@ -84,9 +85,29 @@ export default function DrawerBasic() {
     navigate('/login'); // Navigate to the login page
   };
 
+  const isRoomAllotmentEnabled = cookies.token.room_allotment_credential;
+
   return (
     <Box sx={{ display: 'flex' }}>
-      <Button variant="outlined" color="neutral" onClick={toggleDrawer(true)}>
+      <Button
+        variant="outlined"
+        color="neutral"
+        onClick={toggleDrawer(true)}
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          textTransform: 'none',
+          fontWeight: 'bold',
+          borderColor: '#6c757d',
+          color: '#6c757d',
+          transition: 'all 0.3s ease',
+          '&:hover': {
+            backgroundColor: '#6c757d',
+            color: '#fff',
+            borderColor: '#6c757d',
+          },
+        }}
+      >
         <MenuIcon />
       </Button>
       <Drawer open={open} onClose={toggleDrawer(false)} size="sm">
@@ -195,23 +216,25 @@ export default function DrawerBasic() {
               </span>
             </ListItem>
 
-            <ListItem
-              key="Room Allotment"
-              className={`active:bg-blue-300 ${activeItem === 'Room Allotment' ? 'bg-[#37afe1]' : 'hover:bg-blue-200'} cursor-pointer`}
-              // className={activeItem === 'Room Allotment' ? 'active' : ''}
-              onClick={() =>
-                handleItemClick('Room Allotment', '/roomAllotment')
-              }
-            >
-              <BedIcon
-                className={`${activeItem === 'Room Allotment' ? 'text-white' : ''}`}
-              />
-              <span
-                className={`${activeItem === 'Room Allotment' ? 'text-white' : ''}`}
+            {isRoomAllotmentEnabled && (
+              <ListItem
+                key="Room Allotment"
+                className={`active:bg-blue-300 ${activeItem === 'Room Allotment' ? 'bg-[#37afe1]' : 'hover:bg-blue-200'} cursor-pointer`}
+                // className={activeItem === 'Room Allotment' ? 'active' : ''}
+                onClick={() =>
+                  handleItemClick('Room Allotment', '/roomAllotment')
+                }
               >
-                Room Allotment
-              </span>
-            </ListItem>
+                <BedIcon
+                  className={`${activeItem === 'Room Allotment' ? 'text-white' : ''}`}
+                />
+                <span
+                  className={`${activeItem === 'Room Allotment' ? 'text-white' : ''}`}
+                >
+                  Room Allotment
+                </span>
+              </ListItem>
+            )}
 
             <ListItem
               key="Alumni"
@@ -226,6 +249,20 @@ export default function DrawerBasic() {
                 className={`${activeItem === 'Alumni' ? 'text-white' : ''}`}
               >
                 Alumni
+              </span>
+            </ListItem>
+
+            <ListItem
+              key="Roles"
+              className={`active:bg-blue-300 ${activeItem === 'Roles' ? 'bg-[#37afe1]' : 'hover:bg-blue-200'} cursor-pointer`}
+              // className={activeItem === 'Roles' ? 'active' : ''}
+              onClick={() => handleItemClick('Roles', '/roles')}
+            >
+              <PersonIcon
+                className={`${activeItem === 'Roles' ? 'text-white' : ''}`}
+              />
+              <span className={`${activeItem === 'Roles' ? 'text-white' : ''}`}>
+                Roles
               </span>
             </ListItem>
           </List>

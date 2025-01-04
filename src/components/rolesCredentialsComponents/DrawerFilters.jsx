@@ -35,7 +35,6 @@ import dayjs from 'dayjs';
 import SearchIcon from '@mui/icons-material/Search';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
-import CancelIcon from '@mui/icons-material/Cancel';
 
 export default function DrawerFilters({
   students,
@@ -59,10 +58,9 @@ export default function DrawerFilters({
   const [open, setOpen] = React.useState(false);
   const [search, setSearch] = useState('');
 
-  const options = ['All', 'Pending', 'Confirmed', 'Cancelled'];
+  const options = ['All', 'Wing3', 'Dome', 'Vishvambharam'];
 
   const applyFilter = () => {
-    setSelectedOption('All');
     setSearchQuery(search);
     searchStudents(search);
     setOpen(false);
@@ -149,15 +147,6 @@ export default function DrawerFilters({
                     }
                   }}
                 />
-                {/* Cancel Button */}
-                {search && (
-                  <span
-                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 cursor-pointer hover:text-gray-700"
-                    onClick={() => setSearch('')}
-                  >
-                    <CancelIcon />
-                  </span>
-                )}
               </div>
             </div>
 
@@ -167,7 +156,6 @@ export default function DrawerFilters({
             <RadioGroup
               value={selectedOption || ''}
               onChange={(event) => {
-                setSearch('');
                 setSelectedOption(event.target.value);
                 filterStudents(event.target.value);
               }}

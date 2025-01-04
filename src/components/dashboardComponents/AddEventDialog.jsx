@@ -11,6 +11,7 @@ import { VITE_BACKEND_BASE_API } from '../../helper/envConfig/envConfig';
 import toast from 'react-hot-toast';
 import { CircularProgress } from '@mui/material';
 import { useState } from 'react';
+import AddCircleIcon from '@mui/icons-material/AddCircle';
 
 const AddEventDialog = ({
   modalOpen,
@@ -66,10 +67,25 @@ const AddEventDialog = ({
     <>
       {/* Button to open the modal */}
       <Button
-        variant="contained"
+        variant="outlined"
         color="primary"
         onClick={() => setModalOpen(true)}
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          textTransform: 'none',
+          fontWeight: 'bold',
+          borderColor: 'primary.main',
+          color: 'primary.main',
+          transition: 'all 0.3s ease',
+          '&:hover': {
+            backgroundColor: 'primary.main',
+            color: 'white',
+            borderColor: 'primary.main',
+          },
+        }}
       >
+        <AddCircleIcon className="mr-2" />
         Add Event
       </Button>
 

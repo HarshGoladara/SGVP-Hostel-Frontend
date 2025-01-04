@@ -2,19 +2,14 @@ import React, { useState, useEffect } from 'react';
 import DetailsCard from './DetailsCard';
 import './css/ModalStyle.css';
 
-const RoomAllotmentModal = ({
-  roomAllotment,
-  setRoomAllotment,
-  selectedOption,
-  setSelectedOption,
-  loading,
-  isLoading,
-  bed,
+const RolesCredentialsModal = ({
+  rolesCredentials,
+  setRolesCredentials,
+  rolesCredential,
   open,
   onClose,
-  fetchRooms,
 }) => {
-  const [showBed, setShowBed] = useState(true);
+  const [showRolesCredential, setShowRolesCredential] = useState(true);
   const [isVisible, setIsVisible] = useState(open);
 
   useEffect(() => {
@@ -40,21 +35,16 @@ const RoomAllotmentModal = ({
       {/* Background Blur */}
       <div className="fixed inset-0 bg-black opacity-50" onClick={onClose} />
       <DetailsCard
-        roomAllotment={roomAllotment}
-        setRoomAllotment={setRoomAllotment}
-        selectedOption={selectedOption}
-        setSelectedOption={setSelectedOption}
-        loading={loading}
-        isLoading={isLoading}
-        bed={bed}
-        fetchRooms={fetchRooms}
+        rolesCredentials={rolesCredentials}
+        setRolesCredentials={setRolesCredentials}
+        rolesCredential={rolesCredential}
         onClose={() => {
           onClose();
-          setShowBed(true); // Reset to show student details on close
+          setShowRolesCredential(true); // Reset to show rolesCredential details on close
         }}
       />
     </div>
   );
 };
 
-export default RoomAllotmentModal;
+export default RolesCredentialsModal;

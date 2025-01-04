@@ -1,16 +1,17 @@
 import React, { useState } from 'react';
-import TempStudentNavbar from './TempStudentNavbar';
-import TempStudentBody from './TempStudentBody';
+import RolesCredentialsNavbar from './RolesCredentialsNavbar';
+import RolesCredentialsBody from './RolesCredentialsBody';
 
-function TempStudentLayout() {
-  const [students, setStudents] = useState([]);
-  const [selectedOption, setSelectedOption] = useState('All');
+function RolesCredentialsLayout() {
   const [searchResults, setSearchResults] = useState([]);
   const [loading, setLoading] = useState(false);
   const [totalItems, setTotalItems] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [pageNumberList, setPageNumberList] = useState([]);
+  const [rolesCredentials, setRolesCredentials] = useState([]);
+  const [selectedOption, setSelectedOption] = useState('All');
+  const [searchQuery, setSearchQuery] = useState('');
 
   const handleSearch = (results) => {
     setSearchResults(results);
@@ -23,9 +24,9 @@ function TempStudentLayout() {
   return (
     <div className="min-h-screen flex flex-col">
       <div className="sticky top-0 z-10 bg-white shadow-md">
-        <TempStudentNavbar
-          students={students}
-          setStudents={setStudents}
+        <RolesCredentialsNavbar
+          rolesCredentials={rolesCredentials}
+          setRolesCredentials={setRolesCredentials}
           selectedOption={selectedOption}
           setSelectedOption={setSelectedOption}
           totalItems={totalItems}
@@ -36,13 +37,15 @@ function TempStudentLayout() {
           setTotalPages={setTotalPages}
           pageNumberList={pageNumberList}
           setPageNumberList={setPageNumberList}
+          searchQuery={searchQuery}
+          setSearchQuery={setSearchQuery}
           isLoading={handleLoading}
         />
       </div>
       <div className="flex-grow overflow-y-auto">
-        <TempStudentBody
-          students={students}
-          setStudents={setStudents}
+        <RolesCredentialsBody
+          rolesCredentials={rolesCredentials}
+          setRolesCredentials={setRolesCredentials}
           selectedOption={selectedOption}
           setSelectedOption={setSelectedOption}
           totalItems={totalItems}
@@ -53,6 +56,8 @@ function TempStudentLayout() {
           setTotalPages={setTotalPages}
           pageNumberList={pageNumberList}
           setPageNumberList={setPageNumberList}
+          searchQuery={searchQuery}
+          setSearchQuery={setSearchQuery}
           loading={loading}
           isLoading={handleLoading}
           className="flex-grow"
@@ -62,4 +67,4 @@ function TempStudentLayout() {
   );
 }
 
-export default TempStudentLayout;
+export default RolesCredentialsLayout;

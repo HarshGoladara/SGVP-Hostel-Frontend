@@ -41,7 +41,7 @@ const ActionDropdown = ({ onActionSelect, student }) => {
       >
         <ul>
           <p className="text-gray-700 hover:bg-[#37AFE1] hover:text-white transition duration-300 cursor-pointer">
-            <MenuItem onClick={() => handleClose('Show')}>Show</MenuItem>
+            <MenuItem onClick={() => handleClose('Show')}>Update</MenuItem>
           </p>
           {isMoveBackToSGVPEnabled && (
             <p className="text-gray-700 hover:bg-[#37AFE1] hover:text-white transition duration-300 cursor-pointer">
@@ -51,7 +51,7 @@ const ActionDropdown = ({ onActionSelect, student }) => {
                 }
                 disabled={!isMoveBackToSGVPEnabled}
               >
-                Move Back To SGVP
+                De-Allocate.
               </MenuItem>
             </p>
           )}

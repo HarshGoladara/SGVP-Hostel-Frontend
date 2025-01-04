@@ -35,6 +35,7 @@ import dayjs from 'dayjs';
 import SearchIcon from '@mui/icons-material/Search';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
+import CancelIcon from '@mui/icons-material/Cancel';
 
 export default function DrawerFilters({
   students,
@@ -54,13 +55,22 @@ export default function DrawerFilters({
   isLoading,
   filterStudents,
   searchStudents,
+  selectedUniversity,
+  setSelectedUniversity,
+  selectedBranch,
+  setSelectedBranch,
 }) {
   const [open, setOpen] = React.useState(false);
   const [search, setSearch] = useState('');
 
   const options = ['All', 'Wing3', 'Dome', 'Vishvambharam'];
+  const universityOptions = ['All', 'Nirma', 'Silver Oak'];
+  const branchOptions = ['All', 'CSE', 'EC', 'Mechanical', 'Chemical'];
 
   const applyFilter = () => {
+    setSelectedOption('All');
+    setSelectedUniversity('All');
+    setSelectedBranch('All');
     setSearchQuery(search);
     searchStudents(search);
     setOpen(false);
@@ -73,6 +83,20 @@ export default function DrawerFilters({
         color="neutral"
         startDecorator={<TuneIcon />}
         onClick={() => setOpen(true)}
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          textTransform: 'none',
+          fontWeight: 'bold',
+          borderColor: '#6c757d',
+          color: '#6c757d',
+          transition: 'all 0.3s ease',
+          '&:hover': {
+            backgroundColor: '#6c757d',
+            color: '#fff',
+            borderColor: '#6c757d',
+          },
+        }}
       >
         Change filters
       </Button>
@@ -133,6 +157,15 @@ export default function DrawerFilters({
                     }
                   }}
                 />
+                {/* Cancel Button */}
+                {search && (
+                  <span
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 cursor-pointer hover:text-gray-700"
+                    onClick={() => setSearch('')}
+                  >
+                    <CancelIcon />
+                  </span>
+                )}
               </div>
             </div>
 
@@ -142,8 +175,11 @@ export default function DrawerFilters({
             <RadioGroup
               value={selectedOption || ''}
               onChange={(event) => {
+                setSearch('');
                 setSelectedOption(event.target.value);
-                filterStudents(event.target.value);
+                setSelectedUniversity('All');
+                setSelectedBranch('All');
+                filterStudents(event.target.value, 'All', 'All');
               }}
             >
               <Box
@@ -191,6 +227,124 @@ export default function DrawerFilters({
                 ))}
               </Box>
             </RadioGroup>
+
+            <Typography level="title-md" sx={{ fontWeight: 'bold' }}>
+              University
+            </Typography>
+            <RadioGroup
+              value={selectedUniversity || ''}
+              onChange={(event) => {
+                setSearch('');
+                setSelectedOption('All');
+                setSelectedUniversity(event.target.value);
+                setSelectedBranch('All');
+                filterStudents('All', event.target.value, 'All');
+              }}
+            >
+              <Box
+                sx={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))',
+                  gap: 1.5,
+                }}
+              >
+                {universityOptions.map((item) => (
+                  <Card
+                    key={item}
+                    sx={{
+                      boxShadow: 'none',
+                      '&:hover': { bgcolor: 'background.level1' },
+                    }}
+                  >
+                    <CardContent>
+                      <Typography level="title-md">{item}</Typography>
+                    </CardContent>
+                    <Radio
+                      disableIcon
+                      overlay
+                      checked={selectedUniversity === item}
+                      variant="outlined"
+                      color="neutral"
+                      value={item}
+                      sx={{ mt: -2 }}
+                      slotProps={{
+                        action: {
+                          sx: {
+                            ...(selectedUniversity === item && {
+                              borderWidth: 2,
+                              borderColor:
+                                'var(--joy-palette-primary-outlinedBorder)',
+                            }),
+                            '&:hover': {
+                              bgcolor: 'transparent',
+                            },
+                          },
+                        },
+                      }}
+                    />
+                  </Card>
+                ))}
+              </Box>
+            </RadioGroup>
+
+            <Typography level="title-md" sx={{ fontWeight: 'bold' }}>
+              Branch
+            </Typography>
+            <RadioGroup
+              value={selectedBranch || ''}
+              onChange={(event) => {
+                setSearch('');
+                setSelectedOption('All');
+                setSelectedUniversity('All');
+                setSelectedBranch(event.target.value);
+                filterStudents('All', 'All', event.target.value);
+              }}
+            >
+              <Box
+                sx={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))',
+                  gap: 1.5,
+                }}
+              >
+                {branchOptions.map((item) => (
+                  <Card
+                    key={item}
+                    sx={{
+                      boxShadow: 'none',
+                      '&:hover': { bgcolor: 'background.level1' },
+                    }}
+                  >
+                    <CardContent>
+                      <Typography level="title-md">{item}</Typography>
+                    </CardContent>
+                    <Radio
+                      disableIcon
+                      overlay
+                      checked={selectedBranch === item}
+                      variant="outlined"
+                      color="neutral"
+                      value={item}
+                      sx={{ mt: -2 }}
+                      slotProps={{
+                        action: {
+                          sx: {
+                            ...(selectedBranch === item && {
+                              borderWidth: 2,
+                              borderColor:
+                                'var(--joy-palette-primary-outlinedBorder)',
+                            }),
+                            '&:hover': {
+                              bgcolor: 'transparent',
+                            },
+                          },
+                        },
+                      }}
+                    />
+                  </Card>
+                ))}
+              </Box>
+            </RadioGroup>
           </DialogContent>
 
           <Divider sx={{ mt: 'auto' }} />
@@ -210,7 +364,7 @@ export default function DrawerFilters({
             >
               Clear
             </Button>
-            <Button onClick={() => applyFilter()}>Filter</Button>
+            <Button onClick={() => applyFilter()}>Search</Button>
           </Stack>
         </Sheet>
       </Drawer>

@@ -14,6 +14,7 @@ import { useLocation } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { useCookies } from 'react-cookie';
 import { v4 as uuid } from 'uuid';
+import HowToRegIcon from '@mui/icons-material/HowToReg';
 
 export default function OtpVerificationComponent() {
   const location = useLocation(); // To access the state passed from the login component
@@ -182,6 +183,7 @@ export default function OtpVerificationComponent() {
               ) : (
                 'Verify'
               )}
+              <HowToRegIcon className="ml-2" />
             </Button>
           </form>
         </Paper>

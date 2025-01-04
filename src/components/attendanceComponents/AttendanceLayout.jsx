@@ -20,36 +20,40 @@ function AttendanceLayout() {
   };
 
   return (
-    <div className="h-full flex flex-col">
-      <AttendanceNavbar
-        selectedCategoryOption={selectedCategoryOption}
-        setSelectedCategoryOption={setSelectedCategoryOption}
-        selectedStatusOption={selectedStatusOption}
-        setSelectedStatusOption={setSelectedStatusOption}
-        startDate={startDate}
-        setStartDate={setStartDate}
-        endDate={endDate}
-        setEndDate={setEndDate}
-        isLoading={handleLoading}
-        searchQuery={searchQuery}
-        setSearchQuery={setSearchQuery}
-        loading={loading}
-      />
-      <AttendanceBody
-        selectedCategoryOption={selectedCategoryOption}
-        setSelectedCategoryOption={setSelectedCategoryOption}
-        selectedStatusOption={selectedStatusOption}
-        setSelectedStatusOption={setSelectedStatusOption}
-        startDate={startDate}
-        setStartDate={setStartDate}
-        endDate={endDate}
-        setEndDate={setEndDate}
-        searchQuery={searchQuery}
-        setSearchQuery={setSearchQuery}
-        isLoading={handleLoading}
-        loading={loading}
-        className="flex-grow"
-      />
+    <div className="min-h-screen flex flex-col">
+      <div className="sticky top-0 z-10 bg-white shadow-md">
+        <AttendanceNavbar
+          selectedCategoryOption={selectedCategoryOption}
+          setSelectedCategoryOption={setSelectedCategoryOption}
+          selectedStatusOption={selectedStatusOption}
+          setSelectedStatusOption={setSelectedStatusOption}
+          startDate={startDate}
+          setStartDate={setStartDate}
+          endDate={endDate}
+          setEndDate={setEndDate}
+          isLoading={handleLoading}
+          searchQuery={searchQuery}
+          setSearchQuery={setSearchQuery}
+          loading={loading}
+        />
+      </div>
+      <div className="flex-grow overflow-y-auto">
+        <AttendanceBody
+          selectedCategoryOption={selectedCategoryOption}
+          setSelectedCategoryOption={setSelectedCategoryOption}
+          selectedStatusOption={selectedStatusOption}
+          setSelectedStatusOption={setSelectedStatusOption}
+          startDate={startDate}
+          setStartDate={setStartDate}
+          endDate={endDate}
+          setEndDate={setEndDate}
+          searchQuery={searchQuery}
+          setSearchQuery={setSearchQuery}
+          isLoading={handleLoading}
+          loading={loading}
+          className="flex-grow"
+        />
+      </div>
     </div>
   );
 }

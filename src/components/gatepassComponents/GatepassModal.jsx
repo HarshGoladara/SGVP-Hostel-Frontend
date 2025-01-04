@@ -7,6 +7,8 @@ const GatepassModal = ({
   setGatepasses,
   selectedParentOption,
   selectedAdminOption,
+  totalItems,
+  setTotalItems,
   gatepass,
   open,
   onClose,
@@ -42,6 +44,8 @@ const GatepassModal = ({
         selectedParentOption={selectedParentOption}
         selectedAdminOption={selectedAdminOption}
         gatepass={gatepass}
+        totalItems={totalItems}
+        setTotalItems={setTotalItems}
         onClose={() => {
           onClose();
           setShowGatepass(true); // Reset to show gatepass details on close
