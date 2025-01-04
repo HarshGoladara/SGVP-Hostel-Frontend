@@ -1,162 +1,126 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import toast from 'react-hot-toast';
+import { VITE_BACKEND_BASE_API } from '../../helper/envConfig/envConfig.js';
+import { useForm } from 'react-hook-form';
+import { TextField, Button, Grid, Box } from '@mui/material';
 
 const SantReferenceForm = () => {
-  const [santReference, setSantReference] = useState({
-    pin_number: '',
-    name_of_sant: '',
-    sant_phone_number: '',
-  });
-
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+  } = useForm();
   const [loading, setLoading] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
 
-  const handleChange = (e) => {
-    setSantReference({ ...santReference, [e.target.name]: e.target.value });
-  };
-
-  // Validate form data
-  const validateForm = () => {
-    const alphabetRegex = /^[A-Za-z\s]+$/;
-
-    if (!santReference.pin_number || isNaN(santReference.pin_number))
-      return 'Pin number is required and should be a number.';
-
-    if (
-      !santReference.name_of_sant.trim() ||
-      !alphabetRegex.test(santReference.name_of_sant.trim())
-    )
-      return 'Name of Sant is required.';
-
-    if (
-      !santReference.sant_phone_number ||
-      isNaN(santReference.sant_phone_number) ||
-      santReference.sant_phone_number.length !== 10
-    )
-      return 'Sant phone number is required and should be a valid 10-digit number.';
-
-    return null;
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const onSubmit = async (data) => {
     setLoading(true);
     setSuccessMessage('');
     setErrorMessage('');
 
-    // Validate the form
-    const error = validateForm();
-    if (error) {
-      toast.error(error);
-      setErrorMessage(error);
-      setLoading(false);
-      return;
-    }
-
     try {
       const response = await axios.post(
-        'http://localhost:5000/api/admission/addSantReference',
-        santReference,
+        `${VITE_BACKEND_BASE_API}/admission/addSantReference`,
+        data,
       );
       console.log(response.data);
       setSuccessMessage('Sant Reference data added successfully!');
       toast.success('Sant Reference data added successfully!');
     } catch (error) {
-      console.error('error submitting sant reference data:', error);
-      setErrorMessage('Error, Try again!', error.response.data);
-      toast.error(`${error.response.data}`);
+      console.error('Error submitting sant reference data:', error);
+      setErrorMessage('Error, Try again!');
+      toast.error('Error, Try again!');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <>
-      <form
-        onSubmit={handleSubmit}
-        className="mb-10 max-w-xl mx-auto bg-slate-300 p-8 rounded-lg shadow-md"
-      >
-        <h2 className="text-2xl font-bold mb-6 text-gray-700">
-          Add Sant Reference
-        </h2>
+    <form
+      onSubmit={handleSubmit(onSubmit)}
+      className="mb-10 max-w-xl mx-auto bg-slate-300 p-8 rounded-lg shadow-md"
+    >
+      <h2 className="text-2xl font-bold mb-6 text-gray-700">
+        Add Sant Reference
+      </h2>
 
-        <div className="mb-4">
-          <label className="block text-gray-700 font-medium mb-2">
-            Pin Number:
-          </label>
-          <input
+      <Grid container spacing={2}>
+        <Grid item xs={12}>
+          <TextField
+            label="Pin Number"
+            fullWidth
+            variant="outlined"
             type="text"
-            name="pin_number"
-            value={santReference.pin_number}
-            onChange={handleChange}
-            required
-            className="w-full border-gray-600 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            {...register('pin_number', {
+              required: 'Pin number is required',
+              pattern: /^[0-9]+$/,
+            })}
+            error={!!errors.pin_number}
+            helperText={errors.pin_number?.message}
+            className="mt-1 block w-full p-2 border border-gray-600 rounded-md bg-white"
           />
-        </div>
+        </Grid>
 
-        <div className="mb-4">
-          <label className="block text-gray-700 font-medium mb-2">
-            Name of Sant:
-          </label>
-          <input
+        <Grid item xs={12}>
+          <TextField
+            label="Name of Sant"
+            fullWidth
+            variant="outlined"
+            {...register('name_of_sant', {
+              required: 'Name of Sant is required',
+              pattern: /^[A-Za-z\s]+$/,
+            })}
+            error={!!errors.name_of_sant}
+            helperText={errors.name_of_sant?.message}
+            className="mt-1 block w-full p-2 border border-gray-600 rounded-md bg-white"
+          />
+        </Grid>
+
+        <Grid item xs={12}>
+          <TextField
+            label="Sant Phone Number"
+            fullWidth
+            variant="outlined"
             type="text"
-            name="name_of_sant"
-            value={santReference.name_of_sant}
-            onChange={handleChange}
-            required
-            className="w-full border-gray-600 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            {...register('sant_phone_number', {
+              required: 'Sant phone number is required',
+              pattern: /^[0-9]{10}$/,
+            })}
+            error={!!errors.sant_phone_number}
+            helperText={errors.sant_phone_number?.message}
+            className="mt-1 block w-full p-2 border border-gray-600 rounded-md bg-white"
           />
-        </div>
+        </Grid>
+      </Grid>
 
-        <div className="mb-6">
-          <label className="block text-gray-700 font-medium mb-2">
-            Sant Phone Number:
-          </label>
-          <input
-            type="text"
-            name="sant_phone_number"
-            value={santReference.sant_phone_number}
-            onChange={handleChange}
-            required
-            className="w-full border-gray-600 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-        </div>
-
-        <button
+      <Box mt={2} display="flex" justifyContent="center" gap={2}>
+        <Button
           type="submit"
-          className="w-1/4 bg-blue-600 text-white font-bold py-2 rounded hover:bg-blue-700"
+          variant="contained"
+          color="primary"
           disabled={loading}
+          sx={{ width: 150 }}
         >
           {loading ? 'Submitting...' : 'Submit'}
-        </button>
-        <button
+        </Button>
+        {/* <Button
           type="button"
-          className="ml-10 w-1/4 bg-blue-600 text-white font-bold py-2 rounded hover:bg-blue-700"
-          onClick={() =>
-            setSantReference({
-              // Student Data
-              pin_number: '',
-              name_of_sant: '',
-              sant_phone_number: '',
-            })
-          }
+          variant="outlined"
+          color="secondary"
+          onClick={() => {
+            reset();
+            setSuccessMessage('');
+            setErrorMessage('');
+          }}
+          sx={{ width: 150 }}
         >
           Cancel
-        </button>
-        {/* {successMessage && (
-                    <p className="bg-green-100 text-green-800 border border-green-200 rounded-md p-4 my-4 text-center font-medium shadow-md">
-                        {successMessage}
-                    </p>
-                )}
-                {errorMessage && (
-                    <p className="bg-red-100 text-red-800 border border-red-200 rounded-md p-4 my-4 text-center font-medium shadow-md">
-                        {errorMessage}
-                    </p>
-                )} */}
-      </form>
-    </>
+        </Button> */}
+      </Box>
+    </form>
   );
 };
 

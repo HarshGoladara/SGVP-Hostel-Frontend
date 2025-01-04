@@ -1,0 +1,158 @@
+/* Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  height: 100%;
+  font-family: Arial, sans-serif;
+}
+
+/* Sidebar Container */
+.sidebar-container {
+  /* position: fixed;
+    left: 15px;
+    top: 15px;
+    bottom: 15px;
+    right: 15px; */
+  margin: 15px 0px 15px 15px;
+  width: 250px;
+  transition: width 0.4s ease;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.sidebar-container.collapsed {
+  width: 80px; /* Shrink to icon size */
+}
+
+/* Sidebar Styling */
+.sidebar {
+  background-color: #ffffff;
+  color: black;
+  width: 100%;
+  height: calc(100% - 40px);
+  padding: 20px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: padding 0.4s ease;
+  /* border-width: 1px;
+    border-color: black; */
+  overflow: hidden; /* Prevent unintended overflow */
+}
+
+/* Scrollable Sidebar Content */
+ul {
+  list-style: none;
+  flex-grow: 1; /* Allows ul to grow and take up remaining space */
+  overflow-y: auto; /* Enable vertical scrolling */
+  max-height: calc(
+    100vh - 150px
+  ); /* Adjust based on header and footer height */
+  padding-right: 10px; /* Add padding for better spacing */
+}
+
+/* Hide Scrollbar */
+ul::-webkit-scrollbar {
+  display: none; /* Hide scrollbar in WebKit-based browsers */
+}
+
+ul {
+  scrollbar-width: none; /* Hide scrollbar in Firefox */
+}
+
+/* Title and Header */
+.sidebar-title {
+  font-size: 1.2rem;
+  font-weight: bold;
+  transition:
+    opacity 0.3s ease-in-out,
+    width 0.4s ease;
+  white-space: nowrap;
+  overflow: hidden;
+  width: 100%;
+}
+
+.sidebar-title.hidden {
+  opacity: 0;
+  width: 0;
+}
+
+/* Header with Toggle Icon */
+.toggle-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  margin-bottom: 20px;
+}
+
+/* Sidebar Items */
+.item {
+  padding: 5;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: background 0.3s ease;
+  margin-bottom: 10px;
+}
+
+.imgg {
+  padding: 0px 10px 5px 10px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: background 0.3s ease;
+  margin-bottom: 10px;
+}
+
+/* .item {
+  margin-right: 10px;
+} */
+
+.menu-text {
+  margin-left: 10px;
+  /* white-space: nowrap; */
+  white-space: normal;
+  word-break: break-word;
+  /* overflow: hidden; */
+  overflow: visible;
+  transition:
+    opacity 0.3s ease,
+    width 0.4s ease;
+  width: auto;
+  line-height: 1.2; /* Adjust line height for better readability */
+  text-align: left; /* Align text for multiline */
+}
+
+.menu-text.hidden {
+  opacity: 0;
+  width: 0;
+}
+
+/* Active & Hover States */
+/* .item:hover {
+  background: #37afe1;
+  color: white;
+} */
+
+.item.active {
+  background: #37afe1;
+  color: white;
+}
+
+/* Padding and alignment remain constant */
+.sidebar-container.collapsed ul li {
+  justify-content: center;
+}
+
+.sidebar-container.collapsed .sidebar {
+  padding: 20px; /* No padding change */
+}

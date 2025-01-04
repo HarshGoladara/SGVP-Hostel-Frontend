@@ -1,28 +1,14 @@
 import * as React from 'react';
 import { styled, useTheme } from '@mui/material/styles';
-import Box from '@mui/material/Box';
 import MuiDrawer from '@mui/material/Drawer';
 import MuiAppBar from '@mui/material/AppBar';
-import Toolbar from '@mui/material/Toolbar';
-import List from '@mui/material/List';
-import CssBaseline from '@mui/material/CssBaseline';
-import Typography from '@mui/material/Typography';
-import Divider from '@mui/material/Divider';
-import IconButton from '@mui/material/IconButton';
-import MenuIcon from '@mui/icons-material/Menu';
-import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
-import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import ListItem from '@mui/material/ListItem';
-import ListItemButton from '@mui/material/ListItemButton';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import ListItemText from '@mui/material/ListItemText';
-import LoginIcon from '@mui/icons-material/Login';
 
-import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import AddIcon from '@mui/icons-material/Add';
 import VisibilityIcon from '@mui/icons-material/Visibility';
-import { Button } from '@mui/material';
-// import Background from './Background.jsx';
+import Sidebar from '../layouts/Sidebar.jsx';
+import { Outlet } from 'react-router-dom';
+import '../assets/css/pages/HomePage.css';
 
 const drawerWidth = 240;
 
@@ -97,14 +83,6 @@ function HomePage() {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const handleDrawerOpen = () => {
-    setOpen(true);
-  };
-
-  const handleDrawerClose = () => {
-    setOpen(false);
-  };
-
   // eslint-disable-next-line no-unused-vars
   const handleLogOut = async (urlName) => {
     navigate('/login');
@@ -125,7 +103,14 @@ function HomePage() {
     },
   ];
 
-  return <></>;
+  return (
+    <>
+      <div className="app-container">
+        <Sidebar /> {/* Sidebar should take full height */}
+        <Outlet />
+      </div>
+    </>
+  );
 }
 
 export default HomePage;
