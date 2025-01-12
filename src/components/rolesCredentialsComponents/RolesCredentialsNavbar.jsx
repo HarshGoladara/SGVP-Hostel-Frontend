@@ -24,6 +24,8 @@ function RolesCredentialsNavbar({
   searchQuery,
   setSearchQuery,
   isLoading,
+  rectors,
+  setRectors,
 }) {
   const [showMenu, setShowMenu] = useState(false);
   const [pinNumber, setPinNumber] = useState('');
@@ -64,16 +66,16 @@ function RolesCredentialsNavbar({
         // setNoOfStudent(results.length);
         setRolesCredentials(results);
 
-        const response = await axios.get(
-          `${VITE_BACKEND_BASE_API}/pagination/getStudentPagination`, //changes require------------------
-          {
-            params: {
-              limit: 10,
-            },
-          },
-        );
-        setTotalPages(response.data.pagination.totalPages);
-        setTotalItems(response.data.pagination.totalItems);
+        // const response = await axios.get(
+        //   `${VITE_BACKEND_BASE_API}/pagination/getStudentPagination`, //changes require------------------
+        //   {
+        //     params: {
+        //       limit: 10,
+        //     },
+        //   },
+        // );
+        // setTotalPages(response.data.pagination.totalPages);
+        // setTotalItems(response.data.pagination.totalItems);
       } else {
         const { data } = await axios.get(
           `${VITE_BACKEND_BASE_API}/credential/getRolesAndCredentials`,
@@ -90,17 +92,17 @@ function RolesCredentialsNavbar({
         // setNoOfStudent(results.length);
         setRolesCredentials(results);
 
-        const response = await axios.get(
-          `${VITE_BACKEND_BASE_API}/pagination/getStudentPagination`,
-          {
-            params: {
-              limit: 10,
-              category: option,
-            },
-          },
-        );
-        setTotalPages(response.data.pagination.totalPages);
-        setTotalItems(response.data.pagination.totalItems);
+        // const response = await axios.get(
+        //   `${VITE_BACKEND_BASE_API}/pagination/getStudentPagination`,
+        //   {
+        //     params: {
+        //       limit: 10,
+        //       category: option,
+        //     },
+        //   },
+        // );
+        // setTotalPages(response.data.pagination.totalPages);
+        // setTotalItems(response.data.pagination.totalItems);
       }
     } catch (error) {
       console.log('Error fetching student data', error);
@@ -121,16 +123,16 @@ function RolesCredentialsNavbar({
 
         setRolesCredentials(data.data);
 
-        const response = await axios.get(
-          `${VITE_BACKEND_BASE_API}/pagination/getStudentPagination`,
-          {
-            params: {
-              limit: 10,
-            },
-          },
-        );
-        setTotalPages(response.data.pagination.totalPages);
-        setTotalItems(response.data.pagination.totalItems);
+        // const response = await axios.get(
+        //   `${VITE_BACKEND_BASE_API}/pagination/getStudentPagination`,
+        //   {
+        //     params: {
+        //       limit: 10,
+        //     },
+        //   },
+        // );
+        // setTotalPages(response.data.pagination.totalPages);
+        // setTotalItems(response.data.pagination.totalItems);
       } else {
         try {
           const isPin = /^\d+$/.test(query);
@@ -146,17 +148,17 @@ function RolesCredentialsNavbar({
 
             setRolesCredentials(data.data);
 
-            const response = await axios.get(
-              `${VITE_BACKEND_BASE_API}/pagination/getStudentPagination`,
-              {
-                params: {
-                  limit: 10,
-                  pin_number: query,
-                },
-              },
-            );
-            setTotalPages(response.data.pagination.totalPages);
-            setTotalItems(response.data.pagination.totalItems);
+            // const response = await axios.get(
+            //   `${VITE_BACKEND_BASE_API}/pagination/getStudentPagination`,
+            //   {
+            //     params: {
+            //       limit: 10,
+            //       pin_number: query,
+            //     },
+            //   },
+            // );
+            // setTotalPages(response.data.pagination.totalPages);
+            // setTotalItems(response.data.pagination.totalItems);
           } else {
             const { data } = await axios.get(
               `${VITE_BACKEND_BASE_API}/credential/getRolesAndCredentials`,
@@ -169,17 +171,17 @@ function RolesCredentialsNavbar({
 
             setRolesCredentials(data.data);
 
-            const response = await axios.get(
-              `${VITE_BACKEND_BASE_API}/pagination/getStudentPagination`,
-              {
-                params: {
-                  limit: 10,
-                  student_full_name: query,
-                },
-              },
-            );
-            setTotalPages(response.data.pagination.totalPages);
-            setTotalItems(response.data.pagination.totalItems);
+            // const response = await axios.get(
+            //   `${VITE_BACKEND_BASE_API}/pagination/getStudentPagination`,
+            //   {
+            //     params: {
+            //       limit: 10,
+            //       student_full_name: query,
+            //     },
+            //   },
+            // );
+            // setTotalPages(response.data.pagination.totalPages);
+            // setTotalItems(response.data.pagination.totalItems);
           }
         } catch (error) {
           console.log('Error fetching RolesCredentials data');
@@ -204,16 +206,16 @@ function RolesCredentialsNavbar({
         // setNoOfStudent(data.data.length);
         setRolesCredentials(data.data);
 
-        const response = await axios.get(
-          `${VITE_BACKEND_BASE_API}/pagination/getStudentPagination`,
-          {
-            params: {
-              limit: 10,
-            },
-          },
-        );
-        setTotalPages(response.data.pagination.totalPages);
-        setTotalItems(response.data.pagination.totalItems);
+        // const response = await axios.get(
+        //   `${VITE_BACKEND_BASE_API}/pagination/getStudentPagination`,
+        //   {
+        //     params: {
+        //       limit: 10,
+        //     },
+        //   },
+        // );
+        // setTotalPages(response.data.pagination.totalPages);
+        // setTotalItems(response.data.pagination.totalItems);
       } catch (error) {
         console.log(error);
       } finally {
@@ -221,6 +223,35 @@ function RolesCredentialsNavbar({
       }
     };
     getData();
+
+    const getRectors = async () => {
+      isLoading(true);
+      try {
+        setCurrentPage(1);
+        const { data } = await axios.get(
+          `${VITE_BACKEND_BASE_API}/rector/getRector`,
+        );
+        // // setStudentData(data.data);
+        // setNoOfStudent(data.data.length);
+        setRectors(data.data);
+
+        // const response = await axios.get(
+        //   `${VITE_BACKEND_BASE_API}/pagination/getStudentPagination`,
+        //   {
+        //     params: {
+        //       limit: 10,
+        //     },
+        //   },
+        // );
+        // setTotalPages(response.data.pagination.totalPages);
+        // setTotalItems(response.data.pagination.totalItems);
+      } catch (error) {
+        console.log(error);
+      } finally {
+        isLoading(false);
+      }
+    };
+    getRectors();
   }, []);
 
   return (
@@ -233,6 +264,7 @@ function RolesCredentialsNavbar({
         <div className="flex-grow flex justify-center items-center space-x-3">
           <span className="text-[25px] font-bold">Roles & Credentials</span>
           {/* <span className="text-[18px]">{`  (${totalItems})`}</span> */}
+          <img src="../images/logo.jpg" alt="Profile" className="w-10 h-10" />
         </div>
 
         {/* <div className="flex-shrink-0">

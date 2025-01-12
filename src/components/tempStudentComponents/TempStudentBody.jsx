@@ -20,6 +20,7 @@ import toast from 'react-hot-toast';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import PendingIcon from '@mui/icons-material/Pending';
 import HighlightOffIcon from '@mui/icons-material/HighlightOff';
+import { TextField } from '@mui/material';
 
 const TempStudentTable = ({
   students,
@@ -38,6 +39,7 @@ const TempStudentTable = ({
   const [modalOpen, setModalOpen] = useState(false);
   const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
   const [confirmDialogType, setConfirmDialogType] = useState(''); // 'confirm' or 'cancel'
+  const [pinNumber, setPinNumber] = useState(''); // New state for pin number
 
   const statusColor = (status) => {
     switch (status) {
@@ -81,7 +83,7 @@ const TempStudentTable = ({
     try {
       const confirmationBody = {
         entry_number: student.entry_number,
-        pin_number: student.pin_number ? student.pin_number : -1,
+        pin_number: student.pin_number ? student.pin_number : pinNumber,
       };
       const response = await axios.post(
         `${VITE_BACKEND_BASE_API}/admission/confirmAdmission`,
@@ -117,7 +119,7 @@ const TempStudentTable = ({
       console.log('error while confirming the admission', error);
       toast.error('Admission Confirmation Error');
     } finally {
-      //
+      setPinNumber('');
     }
   };
 
@@ -390,7 +392,8 @@ const TempStudentTable = ({
           open={modalOpen}
           onClose={handleCloseModal}
         />
-        <Dialog open={confirmDialogOpen} onClose={handleConfirmDialogClose}>
+
+        {/* <Dialog open={confirmDialogOpen} onClose={handleConfirmDialogClose}>
           <DialogTitle>Confirm Action</DialogTitle>
           <DialogContent>
             <DialogContentText>
@@ -439,6 +442,51 @@ const TempStudentTable = ({
                   borderColor: `${confirmDialogType === 'confirm' ? 'success.main' : 'error.main'}`,
                 },
               }}
+            >
+              {confirmDialogType === 'confirm'
+                ? 'Confirm Admission'
+                : 'Cancel Admission'}
+            </Button>
+          </DialogActions>
+        </Dialog> */}
+
+        <Dialog open={confirmDialogOpen} onClose={handleConfirmDialogClose}>
+          <DialogTitle>Confirm Action</DialogTitle>
+          <DialogContent>
+            <DialogContentText>
+              Are you sure you want to{' '}
+              {confirmDialogType === 'confirm' ? 'confirm' : 'cancel'} admission
+              for <strong>{selectedStudent?.student_full_name}</strong>?
+            </DialogContentText>
+            {confirmDialogType === 'confirm' &&
+              selectedStudent?.pin_number === null && (
+                <TextField
+                  label="Pin Number"
+                  variant="outlined"
+                  fullWidth
+                  margin="dense"
+                  value={pinNumber}
+                  onChange={(e) => setPinNumber(e.target.value)}
+                />
+              )}
+          </DialogContent>
+          <DialogActions>
+            <Button
+              onClick={handleConfirmDialogClose}
+              variant="outlined"
+              color="primary"
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={handleConfirmDialogAction}
+              color={confirmDialogType === 'confirm' ? 'success' : 'error'}
+              variant="outlined"
+              disabled={
+                confirmDialogType === 'confirm' &&
+                !pinNumber &&
+                selectedStudent?.pin_number === null
+              } // Disable if pin number is empty
             >
               {confirmDialogType === 'confirm'
                 ? 'Confirm Admission'

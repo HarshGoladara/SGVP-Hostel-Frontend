@@ -39,6 +39,10 @@ import AssessmentIcon from '@mui/icons-material/Assessment';
 import PrintIcon from '@mui/icons-material/Print';
 import FileCopyIcon from '@mui/icons-material/FileCopy';
 import BedIcon from '@mui/icons-material/Bed';
+import PendingActionsIcon from '@mui/icons-material/PendingActions';
+import CakeIcon from '@mui/icons-material/Cake';
+import BirthdayModal from './BirthdayModal.jsx';
+import PersonAddIcon from '@mui/icons-material/PersonAdd';
 
 const DashboardBody = ({}) => {
   const [noOfStudents, setNoOfStudents] = useState(null);
@@ -49,6 +53,9 @@ const DashboardBody = ({}) => {
   const [noOfPendingEntries, setNoOfPendingEntries] = useState(null);
   const [pendingEntries, setPendingEntries] = useState([]);
   const [emptyBeds, setEmptyBeds] = useState(null);
+  const [noOfBirthdayStudents, setNoOfBirthdayStudents] = useState(null);
+  const [birthdayStudents, setBirthdayStudents] = useState([]);
+  const [birthdayModalOpen, setBirthdayModalOpen] = useState(false);
   const [events, setEvents] = useState([]);
   const [modalOpen, setModalOpen] = useState(false);
   const [modalPendingEntriesOpen, setModalPendingEntriesOpen] = useState(false);
@@ -119,7 +126,7 @@ const DashboardBody = ({}) => {
         );
         // console.log(response);
         if (response.status === 200) {
-          console.log(response.data.data);
+          // console.log(response.data.data);
           setEmptyBeds(response.data.data);
         } else {
           toast.error('Error Loading no of empty beds.');
@@ -192,6 +199,23 @@ const DashboardBody = ({}) => {
       } catch (error) {
         console.error(error);
         toast.error('Error Loading no of pending entries');
+      }
+
+      // load number of birthday students
+      try {
+        const response = await axios.get(
+          `${VITE_BACKEND_BASE_API}/dashboard/getTodayBirthdayStudents`,
+        );
+        // console.log(response);
+        if (response.status === 200) {
+          setNoOfBirthdayStudents(response.data.total_birthday_students);
+          setBirthdayStudents(response.data.data);
+        } else {
+          toast.error('Error Loading no of birthday boys');
+        }
+      } catch (error) {
+        console.error(error);
+        toast.error('Error Loading no of birthday boys');
       }
     };
 
@@ -280,7 +304,7 @@ const DashboardBody = ({}) => {
 
   return (
     <div className="bg-[#e2e8f0] flex-grow w-full h-full mt-2 rounded-xl">
-      <div className="my-2 mx-5 grid grid-flow-col justify-stretch">
+      <div className="my-2 mx-5 grid grid-flow-col justify-around">
         <div className="flex flex-col">
           <Card
             sx={{
@@ -308,7 +332,7 @@ const DashboardBody = ({}) => {
                     paddingX: 4,
                     paddingY: 1,
                     borderRadius: '25px',
-                    backgroundColor: `${noOfStudents !== null ? '#2196f3' : ''}`, // Blue background
+                    backgroundColor: `${noOfStudents !== null ? '#4d4b4b' : ''}`, // Black background
                     color: '#fff', // White text
                     display: 'inline-block',
                     textAlign: 'center',
@@ -347,7 +371,7 @@ const DashboardBody = ({}) => {
                 height: '100%',
               }}
             >
-              <PersonIcon fontSize="large" />
+              <PersonAddIcon fontSize="large" />
               <Typography variant="h6">Pending Admission Requests</Typography>
               <Typography variant="h4" sx={{ marginTop: 1 }}>
                 <Box
@@ -356,7 +380,7 @@ const DashboardBody = ({}) => {
                     paddingX: 4,
                     paddingY: 1,
                     borderRadius: '25px',
-                    backgroundColor: `${noOfPendingAdmissions !== null ? '#2196f3' : ''}`, // Blue background
+                    backgroundColor: `${noOfPendingAdmissions !== null ? '#4d4b4b' : ''}`, // Blue background
                     color: '#fff', // White text
                     display: 'inline-block',
                     textAlign: 'center',
@@ -397,34 +421,30 @@ const DashboardBody = ({}) => {
             >
               <BedIcon fontSize="large" />
               <Typography variant="h6">Available Beds</Typography>
-              <Typography variant="h4" sx={{ marginTop: 1 }}>
-                <Box
-                  sx={{
-                    marginTop: 1,
-                    paddingX: 5,
-                    paddingY: 1,
-                    borderRadius: '25px',
-                    backgroundColor: `${emptyBeds !== null ? '#2196f3' : ''}`, // Blue background
-                    color: '#fff', // White text
-                    display: 'inline-block',
-                    textAlign: 'Left',
-                    minWidth: '50px', // Ensure oval shape
-                    fontSize: '20px',
-                  }}
-                >
-                  {emptyBeds !== null ? (
-                    emptyBeds
-                      .map(
-                        (data) => `${data.category}: ${data.empty_beds_count}`,
-                      )
-                      .join('\n') // Join categories and counts with line breaks
-                  ) : (
-                    <CustomCircularLoader
-                      size={50}
-                      logoSrc="/images/logo.jpg"
-                    />
-                  )}
-                </Box>
+              <Typography variant="h4" className="flex flex-col">
+                {emptyBeds !== null ? (
+                  emptyBeds.map((data, index) => (
+                    <Box
+                      key={index}
+                      sx={{
+                        marginTop: 0.5,
+                        paddingX: 4,
+                        paddingY: 1,
+                        borderRadius: '25px',
+                        backgroundColor: '#4d4b4b', // Blue background
+                        color: '#fff', // White text
+                        display: 'inline-block',
+                        textAlign: 'Left',
+                        minWidth: '50px', // Ensure oval shape
+                        fontSize: '1rem',
+                      }}
+                    >
+                      {`${data.category}:- ${data.empty_beds_count}`}
+                    </Box>
+                  ))
+                ) : (
+                  <CustomCircularLoader size={50} logoSrc="/images/logo.jpg" />
+                )}
               </Typography>
             </CardContent>
           </Card>
@@ -432,7 +452,7 @@ const DashboardBody = ({}) => {
       </div>
 
       <Divider />
-      <div className="my-2 mx-5 grid grid-flow-col justify-stretch">
+      <div className="my-2 mx-5 grid grid-flow-col justify-around">
         <div className="flex flex-col">
           <Card
             sx={{
@@ -460,7 +480,7 @@ const DashboardBody = ({}) => {
                     paddingX: 4,
                     paddingY: 1,
                     borderRadius: '25px',
-                    backgroundColor: `${noOfActiveGatepasses !== null ? '#2196f3' : ''}`, // Blue background
+                    backgroundColor: `${noOfActiveGatepasses !== null ? '#4d4b4b' : ''}`, // Blue background
                     color: '#fff', // White text
                     display: 'inline-block',
                     textAlign: 'center',
@@ -499,8 +519,11 @@ const DashboardBody = ({}) => {
                 height: '100%',
               }}
             >
-              <DirectionsWalkIcon fontSize="large" />
-              <Typography variant="h6">No of Incoming Students</Typography>
+              <DirectionsWalkIcon
+                fontSize="large"
+                style={{ transform: 'rotateY(180deg)' }}
+              />
+              <Typography variant="h6">Today Incoming Students</Typography>
               <Typography variant="h4" sx={{ marginTop: 1 }}>
                 <Box
                   sx={{
@@ -508,7 +531,7 @@ const DashboardBody = ({}) => {
                     paddingX: 4,
                     paddingY: 1,
                     borderRadius: '25px',
-                    backgroundColor: `${noOfIncomingStudents !== null ? '#2196f3' : ''}`, // Blue background
+                    backgroundColor: `${noOfIncomingStudents !== null ? '#4d4b4b' : ''}`, // Blue background
                     color: '#fff', // White text
                     display: 'inline-block',
                     textAlign: 'center',
@@ -548,7 +571,7 @@ const DashboardBody = ({}) => {
               }}
             >
               <DirectionsWalkIcon fontSize="large" />
-              <Typography variant="h6">No of OutGoing Students</Typography>
+              <Typography variant="h6">Today OutGoing Students</Typography>
               <Typography variant="h4" sx={{ marginTop: 1 }}>
                 <Box
                   sx={{
@@ -556,7 +579,7 @@ const DashboardBody = ({}) => {
                     paddingX: 4,
                     paddingY: 1,
                     borderRadius: '25px',
-                    backgroundColor: `${noOfOutgoingStudents !== null ? '#2196f3' : ''}`, // Blue background
+                    backgroundColor: `${noOfOutgoingStudents !== null ? '#4d4b4b' : ''}`, // Blue background
                     color: '#fff', // White text
                     display: 'inline-block',
                     textAlign: 'center',
@@ -579,7 +602,7 @@ const DashboardBody = ({}) => {
         </div>
       </div>
       <Divider />
-      <div className="my-2 mx-5 grid grid-flow-col justify-stretch">
+      <div className="my-2 mx-5 grid grid-flow-col justify-around">
         <div className="flex flex-col">
           <Card
             sx={{
@@ -598,19 +621,19 @@ const DashboardBody = ({}) => {
                 height: '100%',
               }}
             >
-              <ConfirmationNumberIcon fontSize="large" />
+              <PendingActionsIcon fontSize="large" />
               <Typography variant="h6">Pending Entries</Typography>
               <Typography variant="h4" sx={{ marginTop: 1 }}>
                 <Box
                   onClick={() => {
-                    // setModalPendingEntriesOpen(true);
+                    setModalPendingEntriesOpen(true);
                   }}
                   sx={{
                     marginTop: 1,
                     paddingX: 4,
                     paddingY: 1,
                     borderRadius: '25px',
-                    backgroundColor: `${noOfPendingEntries !== null ? '#2196f3' : ''}`, // Blue background
+                    backgroundColor: `${noOfPendingEntries !== null ? '#4d4b4b' : ''}`, // Blue background
                     color: '#fff', // White text
                     display: 'inline-block',
                     textAlign: 'center',
@@ -660,7 +683,91 @@ const DashboardBody = ({}) => {
             </CardContent>
           </Card>
         </div>
+        <div className="flex flex-col">
+          <Card
+            sx={{
+              width: 350,
+              height: 200,
+              background: 'linear-gradient(135deg, #62417A, white, #62417A)',
+            }}
+          >
+            <CardContent
+              sx={{
+                textAlign: 'center',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'center',
+                alignItems: 'center',
+                height: '100%',
+              }}
+            >
+              <CakeIcon fontSize="large" />
+              <Typography variant="h6">Birthday Boys</Typography>
+              <Typography variant="h4" sx={{ marginTop: 1 }}>
+                <Box
+                  onClick={() => {
+                    // setModalPendingEntriesOpen(true);
+                    setBirthdayModalOpen(true);
+                  }}
+                  sx={{
+                    marginTop: 1,
+                    paddingX: 4,
+                    paddingY: 1,
+                    borderRadius: '25px',
+                    backgroundColor: `${noOfBirthdayStudents !== null ? '#4d4b4b' : ''}`, // Blue background
+                    color: '#fff', // White text
+                    display: 'inline-block',
+                    textAlign: 'center',
+                    fontSize: '1.5rem', // Adjust font size
+                    minWidth: '50px', // Ensure oval shape
+                    cursor: 'pointer', // Pointer cursor on hover
+                    '&:hover': {
+                      backgroundColor: `${noOfBirthdayStudents !== null ? '#1976d2' : ''}`, // Slightly darker blue on hover
+                    },
+                  }}
+                >
+                  {noOfBirthdayStudents !== null ? (
+                    noOfBirthdayStudents
+                  ) : (
+                    <CustomCircularLoader
+                      size={50}
+                      logoSrc="/images/logo.jpg"
+                    />
+                  )}
+                </Box>
+              </Typography>
+              {/* <BirthdayModal > 3 </BirthdayModal> */}
+              {/* {noOfBirthdayStudents !== null && (
+                <Button
+                  variant="outlined"
+                  color="primary"
+                  onClick={() => generateReport(pendingEntries)}
+                  sx={{
+                    marginTop: 2,
+                    display: 'flex',
+                    alignItems: 'center',
+                    textTransform: 'none',
+                    fontWeight: 'bold',
+                    borderColor: 'primary.main',
+                    color: 'primary.main',
+                    transition: 'all 0.3s ease',
+                    '&:hover': {
+                      backgroundColor: 'primary.main',
+                      color: 'white',
+                      borderColor: 'primary.main',
+                    },
+                  }}
+                >
+                  <FileCopyIcon className="mr-2" />
+                  Generate Report
+                </Button>
+              )} */}
+            </CardContent>
+          </Card>
+        </div>
       </div>
+
+      <Divider />
 
       <div>
         <div style={{ padding: '20px' }}>
@@ -668,6 +775,7 @@ const DashboardBody = ({}) => {
             modalOpen={modalOpen}
             setModalOpen={setModalOpen}
             newEvent={newEvent}
+            setNewEvent={setNewEvent}
             handleInputChange={handleInputChange}
             setEvents={setEvents}
           />
@@ -690,6 +798,11 @@ const DashboardBody = ({}) => {
         </div>
       </div>
       <div>
+        <BirthdayModal
+          birthdayModalOpen={birthdayModalOpen}
+          setBirthdayModalOpen={setBirthdayModalOpen}
+          birthdayStudents={birthdayStudents}
+        />
         <DashoboardModal
           pendingEntries={pendingEntries}
           open={modalPendingEntriesOpen}

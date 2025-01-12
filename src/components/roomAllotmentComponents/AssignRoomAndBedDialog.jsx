@@ -89,7 +89,7 @@ const AssignRoomAndBedDialog = ({
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
-      <DialogTitle>Add New Bed</DialogTitle>
+      <DialogTitle>Bed Allotment</DialogTitle>
       <DialogContent>
         <div className="flex flex-col gap-4 mt-2">
           <TextField

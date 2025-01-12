@@ -176,16 +176,14 @@ const DetailsCard = ({
               <Typography variant="body2" color="textSecondary">
                 PIN Number:
               </Typography>
-              <Typography>{selectedBed.pin_number || '__________'}</Typography>
+              <Typography>{selectedBed.pin_number || 'N/A'}</Typography>
             </Grid2>
 
             <Grid2 item xs={12}>
               <Typography variant="body2" color="textSecondary">
                 Student Name:
               </Typography>
-              <Typography>
-                {selectedBed.student_full_name || '____________'}
-              </Typography>
+              <Typography>{selectedBed.student_full_name || 'N/A'}</Typography>
             </Grid2>
 
             <Grid2 item xs={12}>

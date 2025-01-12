@@ -71,57 +71,69 @@ const DetailsCard = ({ pendingEntries, onClose }) => {
       <CardContent>
         <div className=" mx-4 mb-4 bg-white shadow-md rounded-lg">
           <div className="mt-4 mx-2">
-            {/* Added horizontal margin with mx-2 */}
-            <table className="min-w-full border-collapse text-s">
-              <thead className="">
-                <tr className="bg-gray-400 rounded-2xl">
-                  {/* Apply rounded corners to the entire row */}
-                  {/* Rounded left side */}
-                  <th className="py-2 px-4 text-left font-bold">GID</th>
-                  <th className="py-2 px-4 text-left font-bold">Pin</th>
-                  <th className="py-2 px-4 text-left font-bold">Name</th>
-                  <th className="py-2 px-4 text-left font-bold">Out Going</th>
-                  <th className="py-2 px-4 text-left font-bold">
-                    Permission Upto
-                  </th>
-                  <th className="py-2 px-4 text-left font-bold">Entry</th>
-                  <th className="py-2 px-4 text-left font-bold">Reason</th>
-                  {/* Rounded right side */}
-                </tr>
-              </thead>
-              <tbody>
-                {pendingEntries.map((gatepass) => (
-                  <tr
-                    key={gatepass.gatepass_number}
-                    className="border-b hover:bg-gradient-to-r from-blue-200 to-blue-400 odd:bg-gray-200 even:bg-gray-300"
-                  >
-                    <td className="py-2 px-4">
-                      <span className="font-bold">
-                        {gatepass.gatepass_number}
-                      </span>
-                    </td>
-                    <td className="py-2 px-4">
-                      <span className="font-bold">{gatepass.pin_number}</span>
-                    </td>
-                    <td className="py-2 px-4">{gatepass.student_full_name}</td>
-                    <td className="py-2 px-4">
-                      {new Date(gatepass.outgoing_timestamp).toLocaleString()}
-                    </td>
-                    <td className="py-2 px-4">
-                      {new Date(
-                        gatepass.permission_upto_timestamp,
-                      ).toLocaleString()}
-                    </td>
-                    <td className="py-2 px-4 text-center">
-                      {gatepass.in_timestamp
-                        ? new Date(gatepass.in_timestamp).toLocaleString()
-                        : '-'}
-                    </td>
-                    <td className="py-2 px-4">{gatepass.reason}</td>
+            {/* Scrollable Table Container */}
+            <div
+              style={{
+                maxHeight: '300px', // Adjust height as needed
+                overflowY: 'auto', // Vertical scroll
+                border: '1px solid #ddd',
+                borderRadius: '8px',
+              }}
+            >
+              {/* Added horizontal margin with mx-2 */}
+              <table className="min-w-full border-collapse text-s">
+                <thead className="">
+                  <tr className="sticky top-0 bg-gray-400 rounded-2xl">
+                    {/* Apply rounded corners to the entire row */}
+                    {/* Rounded left side */}
+                    <th className="py-2 px-4 text-left font-bold">GID</th>
+                    <th className="py-2 px-4 text-left font-bold">Pin</th>
+                    <th className="py-2 px-4 text-left font-bold">Name</th>
+                    <th className="py-2 px-4 text-left font-bold">Out Going</th>
+                    <th className="py-2 px-4 text-left font-bold">
+                      Permission Upto
+                    </th>
+                    <th className="py-2 px-4 text-left font-bold">Entry</th>
+                    <th className="py-2 px-4 text-left font-bold">Reason</th>
+                    {/* Rounded right side */}
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {pendingEntries.map((gatepass) => (
+                    <tr
+                      key={gatepass.gatepass_number}
+                      className="border-b hover:bg-gradient-to-r from-blue-200 to-blue-400 odd:bg-gray-200 even:bg-gray-300"
+                    >
+                      <td className="py-2 px-4">
+                        <span className="font-bold">
+                          {gatepass.gatepass_number}
+                        </span>
+                      </td>
+                      <td className="py-2 px-4">
+                        <span className="font-bold">{gatepass.pin_number}</span>
+                      </td>
+                      <td className="py-2 px-4">
+                        {gatepass.student_full_name}
+                      </td>
+                      <td className="py-2 px-4">
+                        {new Date(gatepass.outgoing_timestamp).toLocaleString()}
+                      </td>
+                      <td className="py-2 px-4">
+                        {new Date(
+                          gatepass.permission_upto_timestamp,
+                        ).toLocaleString()}
+                      </td>
+                      <td className="py-2 px-4 text-center">
+                        {gatepass.in_timestamp
+                          ? new Date(gatepass.in_timestamp).toLocaleString()
+                          : '-'}
+                      </td>
+                      <td className="py-2 px-4">{gatepass.reason}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       </CardContent>

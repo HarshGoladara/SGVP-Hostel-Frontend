@@ -136,7 +136,7 @@ export default function DrawerFilters({
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                   onFocus={(e) => {
-                    e.target.placeholder = 'Search Pin / Name ';
+                    e.target.placeholder = 'Search Pin / GID ';
                     e.target.classList.add('focused');
                   }}
                   onBlur={(e) => {
@@ -304,7 +304,7 @@ export default function DrawerFilters({
                 setOpen(false);
               }}
             >
-              Filter
+              Search
             </Button>
           </Stack>
         </Sheet>

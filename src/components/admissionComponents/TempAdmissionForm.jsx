@@ -678,7 +678,7 @@ const TempAdmissionForm = () => {
           </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            <div>
+            {/* <div>
               <TextField
                 label="Name of University"
                 variant="outlined"
@@ -700,9 +700,35 @@ const TempAdmissionForm = () => {
                 }
                 className="mt-1 block w-full p-2 border border-gray-600 rounded-md bg-white"
               />
+            </div> */}
+
+            <div className="mt-4">
+              <FormControl
+                fullWidth
+                variant="outlined"
+                className="mt-1 block w-full p-2 border border-gray-600 rounded-md bg-white"
+              >
+                <InputLabel>Select University</InputLabel>
+                <Select
+                  label="Select University"
+                  {...register('name_of_university', { required: true })}
+                  error={!!errors.name_of_university}
+                >
+                  <MenuItem value="Nirma">Nirma</MenuItem>
+                  <MenuItem value="Silver Oak">Silver Oak</MenuItem>
+                  <MenuItem value="Adani">Adani</MenuItem>
+                  <MenuItem value="Other">Other</MenuItem>
+                </Select>
+                {errors.name_of_university && (
+                  <p style={{ color: 'red', fontSize: '0.75rem' }}>
+                    {errors.name_of_university.message ||
+                      'University is required.'}
+                  </p>
+                )}
+              </FormControl>
             </div>
 
-            <div>
+            {/* <div>
               <TextField
                 label="Name of College"
                 variant="outlined"
@@ -722,6 +748,31 @@ const TempAdmissionForm = () => {
                 }
                 className="mt-1 block w-full p-2 border border-gray-600 rounded-md bg-white"
               />
+            </div> */}
+
+            <div className="mt-4">
+              <FormControl
+                fullWidth
+                variant="outlined"
+                className="mt-1 block w-full p-2 border border-gray-600 rounded-md bg-white"
+              >
+                <InputLabel>Select College</InputLabel>
+                <Select
+                  label="Select College"
+                  {...register('name_of_collage', { required: true })}
+                  error={!!errors.name_of_collage}
+                >
+                  <MenuItem value="Nirma">Nirma</MenuItem>
+                  <MenuItem value="Silver Oak">Silver Oak</MenuItem>
+                  <MenuItem value="Adani">Adani</MenuItem>
+                  <MenuItem value="Other">Other</MenuItem>
+                </Select>
+                {errors.name_of_collage && (
+                  <p style={{ color: 'red', fontSize: '0.75rem' }}>
+                    {errors.name_of_collage.message || 'College is required.'}
+                  </p>
+                )}
+              </FormControl>
             </div>
 
             <div>
@@ -743,7 +794,7 @@ const TempAdmissionForm = () => {
               />
             </div>
 
-            <div>
+            {/* <div>
               <TextField
                 label="Branch"
                 variant="outlined"
@@ -760,6 +811,37 @@ const TempAdmissionForm = () => {
                 helperText={errors.branch ? errors.branch.message : ''}
                 className="mt-1 block w-full p-2 border border-gray-600 rounded-md bg-white"
               />
+            </div> */}
+
+            <div className="mt-4">
+              <FormControl
+                fullWidth
+                variant="outlined"
+                className="mt-1 block w-full p-2 border border-gray-600 rounded-md bg-white"
+              >
+                <InputLabel>Select Branch</InputLabel>
+                <Select
+                  label="Select Branch"
+                  {...register('branch', { required: true })}
+                  error={!!errors.branch}
+                >
+                  <MenuItem value="CSE">CSE</MenuItem>
+                  <MenuItem value="Mechanical">Mechanical</MenuItem>
+                  <MenuItem value="Electrical">Electrical</MenuItem>
+                  <MenuItem value="Civil">Civil</MenuItem>
+                  <MenuItem value="Chemical">Chemical</MenuItem>
+                  <MenuItem value="EC">EC</MenuItem>
+                  <MenuItem value="IT">IT</MenuItem>
+                  <MenuItem value="BCA">BCA</MenuItem>
+                  <MenuItem value="MCA">MCA</MenuItem>
+                  <MenuItem value="Other">Other</MenuItem>
+                </Select>
+                {errors.branch && (
+                  <p style={{ color: 'red', fontSize: '0.75rem' }}>
+                    {errors.branch.message || 'Branch is required.'}
+                  </p>
+                )}
+              </FormControl>
             </div>
 
             <div>

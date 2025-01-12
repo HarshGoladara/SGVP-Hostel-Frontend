@@ -17,6 +17,7 @@ const AddEventDialog = ({
   modalOpen,
   setModalOpen,
   newEvent,
+  setNewEvent,
   handleInputChange,
   setEvents,
 }) => {
@@ -52,6 +53,10 @@ const AddEventDialog = ({
           },
         ]);
         setModalOpen(false); // Close modal after successful submission
+        setNewEvent({
+          title: '',
+          date: '',
+        });
       } else {
         toast.error('Error adding event');
       }
@@ -74,6 +79,8 @@ const AddEventDialog = ({
           display: 'flex',
           alignItems: 'center',
           textTransform: 'none',
+          marginLeft: 'auto',
+          marginRight: 'auto',
           fontWeight: 'bold',
           borderColor: 'primary.main',
           color: 'primary.main',

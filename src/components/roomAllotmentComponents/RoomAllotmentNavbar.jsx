@@ -161,6 +161,7 @@ function RoomAllotmentNavbar({
             Room Allotment {selectedOption}
           </span>
           {/* <span className="text-[18px]">{`  (${totalItems})`}</span> */}
+          <img src="../images/logo.jpg" alt="Profile" className="w-10 h-10" />
         </div>
 
         <div className="flex-shrink-0">

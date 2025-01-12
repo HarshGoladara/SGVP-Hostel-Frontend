@@ -2,7 +2,17 @@ import React, { useState } from 'react';
 import CloseIcon from '@mui/icons-material/Close';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
-import { Divider, Box, IconButton } from '@mui/material';
+import {
+  Divider,
+  Box,
+  IconButton,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  Button,
+} from '@mui/material';
 import './css/DetailsCard.css';
 import { UpdateDialog } from './UpdateDialog.jsx';
 import { useCookies } from 'react-cookie';
@@ -13,21 +23,26 @@ import toast from 'react-hot-toast';
 import { VITE_BACKEND_BASE_API } from '../../helper/envConfig/envConfig.js';
 import { CircularProgress } from '@mui/material';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import EditIcon from '@mui/icons-material/Edit';
 
 const DetailsCard = ({ students, setStudents, student, onClose }) => {
   const totalPages = 4;
   const [selectedStudent, setSelectedStudent] = useState(student);
   const [currentPage, setCurrentPage] = useState(1);
   const [animationDirection, setAnimationDirection] = useState('');
-  const [studentLoading, setStudentLoading] = useState(false);
-  const [fatherLoading, setFatherLoading] = useState(false);
-  const [motherLoading, setMotherLoading] = useState(false);
+  const [photoUploading, setPhotoUploading] = useState(false);
   const [photoFile, setPhotoFile] = useState({
     studentPhotoFile: null,
     fatherPhotoFile: null,
     motherPhotoFile: null,
   });
+  const [confirmPhotoUploadDialog, setConfirmPhotoUploadDialog] = useState({
+    open: false,
+    type: '',
+  });
+
   const [cookies] = useCookies(['token']);
+
   const gotoNextPage = () => {
     if (currentPage < totalPages) {
       setAnimationDirection('slide-out'); // Set to slide out
@@ -51,6 +66,36 @@ const DetailsCard = ({ students, setStudents, student, onClose }) => {
   const handleFileChange = (e) => {
     const { name, files } = e.target;
     setPhotoFile({ ...photoFile, [name]: files[0] }); // Store the file in state
+    if (name === 'studentPhotoFile') {
+      setConfirmPhotoUploadDialog({ open: true, type: 'student' });
+    } else if (name === 'fatherPhotoFile') {
+      setConfirmPhotoUploadDialog({ open: true, type: 'father' });
+    } else if (name === 'motherPhotoFile') {
+      setConfirmPhotoUploadDialog({ open: true, type: 'mother' });
+    }
+  };
+
+  const closeConfirmDialog = () => {
+    if (confirmPhotoUploadDialog.type === 'student') {
+      setPhotoFile({ ...photoFile, studentPhotoFile: null }); // Reset the file if upload is canceled
+    } else if (confirmPhotoUploadDialog.type === 'father') {
+      setPhotoFile({ ...photoFile, fatherPhotoFile: null }); // Reset the file if upload is canceled
+    } else if (confirmPhotoUploadDialog.type === 'mother') {
+      setPhotoFile({ ...photoFile, motherPhotoFile: null }); // Reset the file if upload is canceled
+    }
+    setConfirmPhotoUploadDialog({ open: false, type: '' });
+  };
+
+  const confirmUpdate = async () => {
+    if (confirmPhotoUploadDialog.type === 'student') {
+      await uploadStudentPhoto();
+    } else if (confirmPhotoUploadDialog.type === 'father') {
+      await uploadFatherPhoto();
+    } else if (confirmPhotoUploadDialog.type === 'mother') {
+      await uploadMotherPhoto();
+    }
+    // handlePhotoUpdate(confirmDialog.type);
+    closeConfirmDialog();
   };
 
   const uploadImage = (file, path) => {
@@ -83,7 +128,8 @@ const DetailsCard = ({ students, setStudents, student, onClose }) => {
 
   const uploadStudentPhoto = async () => {
     try {
-      setStudentLoading(true);
+      setPhotoUploading(true);
+
       const studentPhotoUrl = await uploadImage(
         photoFile.studentPhotoFile,
         `students/${selectedStudent.student_full_name}/student_photo`,
@@ -103,6 +149,7 @@ const DetailsCard = ({ students, setStudents, student, onClose }) => {
           ...selectedStudent,
           student_photo_url: studentPhotoUrl,
         });
+        setConfirmPhotoUploadDialog({ open: false, type: '' }); // Close the confirmation dialog
       } else {
         toast.error('Error Updating Student Photo');
       }
@@ -110,12 +157,13 @@ const DetailsCard = ({ students, setStudents, student, onClose }) => {
       console.log('Error photo upload:', error);
       toast.error('Error Updating Student Photo');
     } finally {
-      setStudentLoading(false);
+      setPhotoUploading(false);
     }
   };
   const uploadFatherPhoto = async () => {
     try {
-      setFatherLoading(true);
+      setPhotoUploading(true);
+
       const fatherPhotoUrl = await uploadImage(
         photoFile.fatherPhotoFile,
         `students/${selectedStudent.student_full_name}/father_photo`,
@@ -135,6 +183,7 @@ const DetailsCard = ({ students, setStudents, student, onClose }) => {
           ...selectedStudent,
           father_photo_url: fatherPhotoUrl,
         });
+        setConfirmPhotoUploadDialog({ open: false, type: '' }); // Close the confirmation dialog
       } else {
         toast.error('Error Updating Father Photo');
       }
@@ -142,12 +191,13 @@ const DetailsCard = ({ students, setStudents, student, onClose }) => {
       console.log('Error photo upload:', error);
       toast.error('Error Updating Father Photo');
     } finally {
-      setFatherLoading(false);
+      setPhotoUploading(false);
     }
   };
   const uploadMotherPhoto = async () => {
     try {
-      setMotherLoading(true);
+      setPhotoUploading(true);
+
       const motherPhotoUrl = await uploadImage(
         photoFile.motherPhotoFile,
         `students/${selectedStudent.student_full_name}/student_photo`,
@@ -167,6 +217,7 @@ const DetailsCard = ({ students, setStudents, student, onClose }) => {
           ...selectedStudent,
           mother_photo_url: motherPhotoUrl,
         });
+        setConfirmPhotoUploadDialog({ open: false, type: '' }); // Close the confirmation dialog
       } else {
         toast.error('Error Updating Mother Photo');
       }
@@ -174,7 +225,7 @@ const DetailsCard = ({ students, setStudents, student, onClose }) => {
       console.log('Error photo upload:', error);
       toast.error('Error Updating Mother Photo');
     } finally {
-      setMotherLoading(false);
+      setPhotoUploading(false);
     }
   };
 
@@ -218,33 +269,32 @@ const DetailsCard = ({ students, setStudents, student, onClose }) => {
           )}
         </div>
         <div className="flex mt-[10px]">
-          <div className="h-[180px] md:h-[250px] w-[20%] flex-shrink-0 mr-4">
-            {' '}
+          <div className="h-[180px] md:h-[250px] w-[20%] flex-shrink-0 mr-4 relative group">
             {/* Fixed 20% width for the image */}
-            {selectedStudent.student_photo_url ? (
-              <img
-                src={
-                  selectedStudent.student_photo_url ||
-                  `https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQVrNIrc_GMNFCWvfIVx-5-1jI0YMf-3a6yyg&s`
-                }
-                alt={selectedStudent.student_full_name}
-                className="h-full w-full object-cover rounded-lg"
-              />
-            ) : (
-              <div className="flex items-center justify-center h-full w-full bg-blue-500 text-white text-lg font-bold rounded-lg">
-                {selectedStudent.student_full_name.charAt(0)}
+            <label htmlFor="upload-photo">
+              {selectedStudent.student_photo_url ? (
+                <img
+                  src={
+                    selectedStudent.student_photo_url ||
+                    `https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQVrNIrc_GMNFCWvfIVx-5-1jI0YMf-3a6yyg&s`
+                  }
+                  alt={selectedStudent.student_full_name}
+                  className="h-full w-full object-cover rounded-lg"
+                />
+              ) : (
+                <div className="flex items-center justify-center h-full w-full bg-blue-500 text-white text-lg font-bold rounded-lg">
+                  {selectedStudent.student_full_name.charAt(0)}
+                </div>
+              )}
+
+              {/* Overlay */}
+              <div className="cursor-pointer absolute inset-0 bg-black bg-opacity-70 rounded-lg flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <EditIcon className="text-white text-4xl" />
               </div>
-            )}
+            </label>
             {/* Upload Photo Button */}
             {isUpdateDialogEnabled && (
               <div className="mt-2 flex flex-row items-center gap-2">
-                <label
-                  htmlFor="upload-photo"
-                  className="cursor-pointer bg-blue-500 text-white text-sm px-4 py-1 rounded-lg hover:bg-blue-600"
-                >
-                  <CloudUploadIcon className="mr-2" />
-                  Photo
-                </label>
                 <input
                   type="file"
                   id="upload-photo"
@@ -253,17 +303,6 @@ const DetailsCard = ({ students, setStudents, student, onClose }) => {
                   accept="image/*"
                   onChange={handleFileChange}
                 />
-                <button
-                  onClick={uploadStudentPhoto}
-                  className={`bg-green-500 text-black text-sm px-4 py-1 rounded-lg hover:bg-green-600 ${
-                    photoFile.studentPhotoFile
-                      ? ''
-                      : 'opacity-50 cursor-not-allowed'
-                  }`}
-                  disabled={!photoFile.studentPhotoFile}
-                >
-                  {studentLoading ? <CircularProgress size={16} /> : 'Save'}
-                </button>
               </div>
             )}
           </div>
@@ -345,18 +384,40 @@ const DetailsCard = ({ students, setStudents, student, onClose }) => {
           )}
         </div>
         <div className="flex mt-[10px]">
-          <div className="h-[180px] md:h-[250px] w-[20%] flex-shrink-0 mr-4">
-            {' '}
+          <div className="h-[180px] md:h-[250px] w-[20%] flex-shrink-0 mr-4 relative group">
             {/* Fixed 20% width for the image */}
-            {selectedStudent.student_photo_url ? (
-              <img
-                src={selectedStudent.student_photo_url}
-                alt={selectedStudent.student_full_name}
-                className="h-full w-full object-cover rounded-lg"
-              />
-            ) : (
-              <div className="flex items-center justify-center h-full w-full bg-blue-500 text-white text-lg font-bold rounded-lg">
-                {selectedStudent.student_full_name.charAt(0)}
+            <label htmlFor="upload-photo">
+              {selectedStudent.student_photo_url ? (
+                <img
+                  src={
+                    selectedStudent.student_photo_url ||
+                    `https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQVrNIrc_GMNFCWvfIVx-5-1jI0YMf-3a6yyg&s`
+                  }
+                  alt={selectedStudent.student_full_name}
+                  className="h-full w-full object-cover rounded-lg"
+                />
+              ) : (
+                <div className="flex items-center justify-center h-full w-full bg-blue-500 text-white text-lg font-bold rounded-lg">
+                  {selectedStudent.student_full_name.charAt(0)}
+                </div>
+              )}
+
+              {/* Overlay */}
+              <div className="cursor-pointer absolute inset-0 bg-black bg-opacity-70 rounded-lg flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <EditIcon className="text-white text-4xl" />
+              </div>
+            </label>
+            {/* Upload Photo Button */}
+            {isUpdateDialogEnabled && (
+              <div className="mt-2 flex flex-row items-center gap-2">
+                <input
+                  type="file"
+                  id="upload-photo"
+                  name="studentPhotoFile"
+                  className="hidden"
+                  accept="image/*"
+                  onChange={handleFileChange}
+                />
               </div>
             )}
           </div>
@@ -438,28 +499,28 @@ const DetailsCard = ({ students, setStudents, student, onClose }) => {
         <div className="flex mt-[10px]">
           <div>
             {/* Father's Photo Section */}
-            <div className="h-[90px] md:h-[125px] w-full flex-shrink-0 mr-4 mb-1">
-              {selectedStudent.father_photo_url ? (
-                <img
-                  src={selectedStudent.father_photo_url}
-                  alt={selectedStudent.father_name}
-                  className="h-full w-full object-cover rounded-lg"
-                />
-              ) : (
-                <div className="flex items-center justify-center h-full w-[150px] bg-blue-500 text-white text-lg font-bold rounded-lg">
-                  {selectedStudent.father_name.charAt(0)}
+            <div className="h-[90px] md:h-[125px] w-full flex-shrink-0 mr-4 mb-1 relative group">
+              <label htmlFor="upload-father-photo">
+                {selectedStudent.father_photo_url ? (
+                  <img
+                    src={selectedStudent.father_photo_url}
+                    alt={selectedStudent.father_name}
+                    className="h-full w-full object-cover rounded-lg"
+                  />
+                ) : (
+                  <div className="flex items-center justify-center h-full w-[150px] bg-blue-500 text-white text-lg font-bold rounded-lg">
+                    {selectedStudent.father_name.charAt(0)}
+                  </div>
+                )}
+
+                {/* Overlay */}
+                <div className="cursor-pointer absolute inset-0 bg-black bg-opacity-70 rounded-lg flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  <EditIcon className="text-white text-4xl" />
                 </div>
-              )}
+              </label>
             </div>
             {isUpdateDialogEnabled && (
               <div className="mt-2 flex flex-row items-center gap-2">
-                <label
-                  htmlFor="upload-father-photo"
-                  className="cursor-pointer bg-blue-500 text-white text-sm px-4 py-1 rounded-lg hover:bg-blue-600"
-                >
-                  <CloudUploadIcon className="mr-2" />
-                  Photo
-                </label>
                 <input
                   type="file"
                   id="upload-father-photo"
@@ -468,43 +529,32 @@ const DetailsCard = ({ students, setStudents, student, onClose }) => {
                   name="fatherPhotoFile"
                   onChange={handleFileChange}
                 />
-                <button
-                  onClick={uploadFatherPhoto}
-                  className={`bg-green-500 text-black text-sm px-4 py-1 rounded-lg hover:bg-green-600 ${
-                    photoFile.fatherPhotoFile
-                      ? ''
-                      : 'opacity-50 cursor-not-allowed'
-                  }`}
-                  disabled={!photoFile.fatherPhotoFile}
-                >
-                  {fatherLoading ? <CircularProgress size={16} /> : 'Save'}
-                </button>
               </div>
             )}
 
             {/* Mother's Photo Section */}
-            <div className="h-[90px] md:h-[125px] w-full flex-shrink-0 mr-4 mt-4">
-              {selectedStudent.mother_photo_url ? (
-                <img
-                  src={selectedStudent.mother_photo_url}
-                  alt={selectedStudent.mother_name}
-                  className="h-full w-full object-cover rounded-lg"
-                />
-              ) : (
-                <div className="flex items-center justify-center h-full w-[150px] bg-blue-500 text-white text-lg font-bold rounded-lg">
-                  {selectedStudent.mother_name.charAt(0)}
+            <div className="h-[90px] md:h-[125px] w-full flex-shrink-0 mr-4 mt-4 relative group">
+              <label htmlFor="upload-mother-photo">
+                {selectedStudent.mother_photo_url ? (
+                  <img
+                    src={selectedStudent.mother_photo_url}
+                    alt={selectedStudent.mother_name}
+                    className="h-full w-full object-cover rounded-lg"
+                  />
+                ) : (
+                  <div className="flex items-center justify-center h-full w-[150px] bg-blue-500 text-white text-lg font-bold rounded-lg">
+                    {selectedStudent.mother_name.charAt(0)}
+                  </div>
+                )}
+
+                {/* Overlay */}
+                <div className="cursor-pointer absolute inset-0 bg-black bg-opacity-70 rounded-lg flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  <EditIcon className="text-white text-4xl" />
                 </div>
-              )}
+              </label>
             </div>
             {isUpdateDialogEnabled && (
               <div className="mt-2 flex flex-row items-center gap-2">
-                <label
-                  htmlFor="upload-mother-photo"
-                  className="cursor-pointer bg-blue-500 text-white text-sm px-4 py-1 rounded-lg hover:bg-blue-600"
-                >
-                  <CloudUploadIcon className="mr-2" />
-                  Photo
-                </label>
                 <input
                   type="file"
                   id="upload-mother-photo"
@@ -513,17 +563,6 @@ const DetailsCard = ({ students, setStudents, student, onClose }) => {
                   name="motherPhotoFile"
                   onChange={handleFileChange}
                 />
-                <button
-                  onClick={uploadMotherPhoto}
-                  className={`bg-green-500 text-black text-sm px-4 py-1 rounded-lg hover:bg-green-600 ${
-                    photoFile.motherPhotoFile
-                      ? ''
-                      : 'opacity-50 cursor-not-allowed'
-                  }`}
-                  disabled={!photoFile.motherPhotoFile}
-                >
-                  {motherLoading ? <CircularProgress size={16} /> : 'Save'}
-                </button>
               </div>
             )}
           </div>
@@ -617,18 +656,40 @@ const DetailsCard = ({ students, setStudents, student, onClose }) => {
           )}
         </div>
         <div className="flex mt-[10px]">
-          <div className="h-[180px] md:h-[250px] w-[20%] flex-shrink-0 mr-4">
-            {' '}
-            {/* Fixed 30% width for the image */}
-            {selectedStudent.student_photo_url ? (
-              <img
-                src={selectedStudent.student_photo_url}
-                alt={selectedStudent.student_full_name}
-                className="h-full w-full object-cover rounded-lg"
-              />
-            ) : (
-              <div className="flex items-center justify-center h-full w-full bg-blue-500 text-white text-lg font-bold rounded-lg">
-                {selectedStudent.student_full_name.charAt(0)}
+          <div className="h-[180px] md:h-[250px] w-[20%] flex-shrink-0 mr-4 relative group">
+            {/* Fixed 20% width for the image */}
+            <label htmlFor="upload-photo">
+              {selectedStudent.student_photo_url ? (
+                <img
+                  src={
+                    selectedStudent.student_photo_url ||
+                    `https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQVrNIrc_GMNFCWvfIVx-5-1jI0YMf-3a6yyg&s`
+                  }
+                  alt={selectedStudent.student_full_name}
+                  className="h-full w-full object-cover rounded-lg"
+                />
+              ) : (
+                <div className="flex items-center justify-center h-full w-full bg-blue-500 text-white text-lg font-bold rounded-lg">
+                  {selectedStudent.student_full_name.charAt(0)}
+                </div>
+              )}
+
+              {/* Overlay */}
+              <div className="cursor-pointer absolute inset-0 bg-black bg-opacity-70 rounded-lg flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <EditIcon className="text-white text-4xl" />
+              </div>
+            </label>
+            {/* Upload Photo Button */}
+            {isUpdateDialogEnabled && (
+              <div className="mt-2 flex flex-row items-center gap-2">
+                <input
+                  type="file"
+                  id="upload-photo"
+                  name="studentPhotoFile"
+                  className="hidden"
+                  accept="image/*"
+                  onChange={handleFileChange}
+                />
               </div>
             )}
           </div>
@@ -706,6 +767,29 @@ const DetailsCard = ({ students, setStudents, student, onClose }) => {
           </button>
         </div>
       </div>
+
+      {/* Confirmation Dialog */}
+      <Dialog open={confirmPhotoUploadDialog.open} onClose={closeConfirmDialog}>
+        <DialogTitle>Confirm Photo Update</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Are you sure you want to update the {confirmPhotoUploadDialog.type}{' '}
+            photo?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={closeConfirmDialog} color="secondary">
+            Cancel
+          </Button>
+          <Button onClick={confirmUpdate} color="primary">
+            {photoUploading ? (
+              <CircularProgress size={24} sx={{ color: 'primary' }} />
+            ) : (
+              'Confirm'
+            )}
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 };

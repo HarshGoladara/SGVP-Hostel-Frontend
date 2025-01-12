@@ -332,7 +332,7 @@ export default function DrawerFilters({
             >
               Clear
             </Button>
-            <Button onClick={() => applyFilter()}>Filter</Button>
+            <Button onClick={() => applyFilter()}>Search</Button>
           </Stack>
         </Sheet>
       </Drawer>

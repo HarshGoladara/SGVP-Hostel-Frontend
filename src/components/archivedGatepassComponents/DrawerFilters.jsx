@@ -225,7 +225,7 @@ export default function DrawerFilters({
                 setOpen(false);
               }}
             >
-              Filter
+              Search
             </Button>
           </Stack>
         </Sheet>

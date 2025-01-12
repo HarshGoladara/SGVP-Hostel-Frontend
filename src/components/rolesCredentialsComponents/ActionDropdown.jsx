@@ -5,6 +5,7 @@ import { useCookies } from 'react-cookie';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import SchoolIcon from '@mui/icons-material/School';
+import EditIcon from '@mui/icons-material/Edit';
 
 const ActionDropdown = ({ onActionSelect, student }) => {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -22,7 +23,7 @@ const ActionDropdown = ({ onActionSelect, student }) => {
     }
   };
 
-  const isMoveToAlumniEnabled = cookies.token.update_data_credentials;
+  // const isMoveToAlumniEnabled = cookies.token.update_data_credentials;
 
   return (
     <>
@@ -49,19 +50,19 @@ const ActionDropdown = ({ onActionSelect, student }) => {
               Show
             </MenuItem>
           </p>
-          {isMoveToAlumniEnabled && (
+          {/* {isMoveToAlumniEnabled && (
             <p className="text-gray-700 hover:bg-[#37AFE1] hover:text-white transition duration-300 cursor-pointer">
               <MenuItem
                 onClick={() =>
-                  isMoveToAlumniEnabled && handleClose('Move To Alumni')
+                  isMoveToAlumniEnabled && handleClose('Edit')
                 }
                 disabled={!isMoveToAlumniEnabled}
               >
-                <SchoolIcon className="mr-2" />
-                Move To Alumni
+                <EditIcon className="mr-2" />
+                Edit
               </MenuItem>
             </p>
-          )}
+          )} */}
         </ul>
       </Menu>
     </>

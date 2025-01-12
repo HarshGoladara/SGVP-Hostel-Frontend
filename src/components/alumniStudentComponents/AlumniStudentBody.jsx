@@ -74,7 +74,7 @@ const AlumniStudentTable = ({
         moveFromToAlumniBody,
       );
       if (response.status === 200) {
-        toast.success('Data Moved Back to SGVP');
+        toast.success('Student Moved Back to SGVP');
         setStudents((prevStudents) =>
           prevStudents.filter((s) => s.pin_number !== student.pin_number),
         );

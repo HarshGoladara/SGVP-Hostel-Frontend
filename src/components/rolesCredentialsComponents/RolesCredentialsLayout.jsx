@@ -10,6 +10,7 @@ function RolesCredentialsLayout() {
   const [totalPages, setTotalPages] = useState(1);
   const [pageNumberList, setPageNumberList] = useState([]);
   const [rolesCredentials, setRolesCredentials] = useState([]);
+  const [rectors, setRectors] = useState([]);
   const [selectedOption, setSelectedOption] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -40,6 +41,8 @@ function RolesCredentialsLayout() {
           searchQuery={searchQuery}
           setSearchQuery={setSearchQuery}
           isLoading={handleLoading}
+          rectors={rectors}
+          setRectors={setRectors}
         />
       </div>
       <div className="flex-grow overflow-y-auto">
@@ -60,6 +63,8 @@ function RolesCredentialsLayout() {
           setSearchQuery={setSearchQuery}
           loading={loading}
           isLoading={handleLoading}
+          rectors={rectors}
+          setRectors={setRectors}
           className="flex-grow"
         />
       </div>

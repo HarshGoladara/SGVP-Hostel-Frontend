@@ -18,6 +18,8 @@ import ListItemButton from '@mui/joy/ListItemButton';
 import toast from 'react-hot-toast';
 // import "./css/DrawerBasic.css";
 import { useCookies } from 'react-cookie';
+import SchoolIcon from '@mui/icons-material/School';
+import PersonAddIcon from '@mui/icons-material/PersonAdd';
 
 export default function DrawerBasic() {
   const [open, setOpen] = React.useState(false);
@@ -156,7 +158,7 @@ export default function DrawerBasic() {
                 handleItemClick('Admission Request', '/tempStudentDetails')
               }
             >
-              <PersonIcon
+              <PersonAddIcon
                 className={`${activeItem === 'Admission Request' ? 'text-white' : ''}`}
               />
               <span
@@ -242,7 +244,7 @@ export default function DrawerBasic() {
               // className={activeItem === 'Alumni' ? 'active' : ''}
               onClick={() => handleItemClick('Alumni', '/alumni')}
             >
-              <PersonIcon
+              <SchoolIcon
                 className={`${activeItem === 'Alumni' ? 'text-white' : ''}`}
               />
               <span

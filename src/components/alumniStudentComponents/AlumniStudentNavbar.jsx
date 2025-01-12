@@ -167,6 +167,7 @@ function AlumniStudentNavbar({
         <div className="flex-grow flex justify-center items-center space-x-3">
           <span className="text-[25px] font-bold">Student</span>
           <span className="text-[18px]">{`  (${totalItems})`}</span>
+          <img src="../images/logo.jpg" alt="Profile" className="w-10 h-10" />
         </div>
 
         <div className="flex-shrink-0">

@@ -13,6 +13,7 @@ import axios from 'axios';
 import toast from 'react-hot-toast';
 import { CircularProgress } from '@mui/material';
 import { VITE_BACKEND_BASE_API } from '../../helper/envConfig/envConfig';
+import AddCircleIcon from '@mui/icons-material/AddCircle';
 
 export const UpdateDialog = ({
   rolesCredentials,
@@ -78,12 +79,34 @@ export const UpdateDialog = ({
 
   return (
     <>
-      <IconButton
-        // sx={{ position: "absolute", top: 16, left: 16 }}
-        onClick={() => setOpenEditDialog(true)} // Open dialog
+      {/* <IconButton
+        onClick={() => setOpenEditDialog(true)}
       >
         <EditIcon />
-      </IconButton>
+      </IconButton> */}
+      <Button
+        onClick={() => setOpenEditDialog(true)}
+        variant="outlined"
+        color="primary"
+        size="medium"
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          textTransform: 'none',
+          fontWeight: 'bold',
+          borderColor: 'primary.main',
+          color: 'primary.main',
+          transition: 'all 0.3s ease',
+          '&:hover': {
+            backgroundColor: 'primary.main',
+            color: 'white',
+            borderColor: 'primary.main',
+          },
+        }}
+      >
+        <AddCircleIcon className="mr-2" />
+        Add Rector
+      </Button>
 
       {/* Material Dialog for editing */}
       {currentPage === 1 && (
@@ -94,7 +117,7 @@ export const UpdateDialog = ({
               <TextField
                 name="student_full_name"
                 label="Full Name"
-                value={formData.student_full_name}
+                value={formData?.student_full_name}
                 onChange={handleEditInputChange}
                 fullWidth
                 margin="normal"
@@ -103,7 +126,7 @@ export const UpdateDialog = ({
               <TextField
                 name="religion"
                 label="Religion"
-                value={formData.religion}
+                value={formData?.religion}
                 onChange={handleEditInputChange}
                 fullWidth
                 margin="normal"
@@ -112,7 +135,7 @@ export const UpdateDialog = ({
               <TextField
                 name="caste"
                 label="Caste"
-                value={formData.caste}
+                value={formData?.caste}
                 onChange={handleEditInputChange}
                 fullWidth
                 margin="normal"
@@ -123,7 +146,7 @@ export const UpdateDialog = ({
               <TextField
                 name="student_contact_number"
                 label="Contact Number"
-                value={formData.student_contact_number}
+                value={formData?.student_contact_number}
                 onChange={handleEditInputChange}
                 fullWidth
                 margin="normal"
@@ -132,7 +155,7 @@ export const UpdateDialog = ({
               <TextField
                 name="city"
                 label="Home Town"
-                value={formData.city}
+                value={formData?.city}
                 onChange={handleEditInputChange}
                 fullWidth
                 margin="normal"
@@ -141,7 +164,7 @@ export const UpdateDialog = ({
               <TextField
                 name="student_email"
                 label="Email"
-                value={formData.student_email}
+                value={formData?.student_email}
                 onChange={handleEditInputChange}
                 fullWidth
                 margin="normal"
@@ -153,8 +176,8 @@ export const UpdateDialog = ({
                 name="dob"
                 type="date"
                 label="Date of Birth"
-                // value={formData.dob}
-                value={convertToDateOnly(formData.dob)}
+                // value={formData?.dob}
+                value={convertToDateOnly(formData?.dob)}
                 onChange={handleEditInputChange}
                 fullWidth
                 margin="normal"
@@ -163,7 +186,7 @@ export const UpdateDialog = ({
               <TextField
                 name="nationality"
                 label="Nationality"
-                value={formData.nationality}
+                value={formData?.nationality}
                 onChange={handleEditInputChange}
                 fullWidth
                 margin="normal"
@@ -172,7 +195,7 @@ export const UpdateDialog = ({
               <TextField
                 name="postal_pin_number"
                 label="Postal Pin Number"
-                value={formData.postal_pin_number}
+                value={formData?.postal_pin_number}
                 onChange={handleEditInputChange}
                 fullWidth
                 margin="normal"
@@ -184,7 +207,7 @@ export const UpdateDialog = ({
                 name="address"
                 label="Address"
                 variant="outlined"
-                value={formData.address}
+                value={formData?.address}
                 fullWidth
                 multiline
                 onChange={handleEditInputChange}

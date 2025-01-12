@@ -28,9 +28,13 @@ const AttendanceBody = ({
 }) => {
   const [noOfStudents, setNoOfStudents] = useState(null);
   const [morningAttendance, setMorningAttendance] = useState(null);
+  const [morningAttendanceTable, setMorningAttendanceTable] = useState(null);
   const [eveningAttendance, setEveningAttendance] = useState(null);
+  const [eveningAttendanceTable, setEveningAttendanceTable] = useState(null);
   const [nightAttendance, setNightAttendance] = useState(null);
+  const [nightAttendanceTable, setNightAttendanceTable] = useState(null);
   const [sundayAttendance, setSundayAttendance] = useState(null);
+  const [sundayAttendanceTable, setSundayAttendanceTable] = useState(null);
 
   const loadTotalStudents = async () => {
     setNoOfStudents(null);
@@ -58,11 +62,11 @@ const AttendanceBody = ({
       if (response.status === 200) {
         setNoOfStudents(response.data.totalStudents);
       } else {
-        toast.error('Error Loading morning attendance.');
+        toast.error('Error counting total students.');
       }
     } catch (error) {
       console.error(error);
-      toast.error('Error Loading morning attendance.');
+      toast.error('Error: counting total students.');
     }
   };
 
@@ -109,6 +113,23 @@ const AttendanceBody = ({
       toast.error('Error Loading Morning Attendance.');
     }
   };
+  const loadMorningAttendanceTable = async () => {
+    try {
+      const response = await axios.get(
+        `${VITE_BACKEND_BASE_API}/attendance/getMorningAttendanceTable`,
+      );
+      // console.log(response.data.data);
+      if (response.status === 200) {
+        setMorningAttendanceTable(response.data.data);
+      } else {
+        toast.error('Error Loading Morning Attendance Table.');
+      }
+    } catch (err) {
+      console.log('Error Loading Morning Attendance Table.', err);
+      toast.error('Error Loading Morning Attendance Table.');
+    } finally {
+    }
+  };
   const loadEveningAttendance = async () => {
     setEveningAttendance(null);
     try {
@@ -149,6 +170,23 @@ const AttendanceBody = ({
     } catch (error) {
       console.error(error);
       toast.error('Error Loading Evening Attendance.');
+    }
+  };
+  const loadEveningAttendanceTable = async () => {
+    try {
+      const response = await axios.get(
+        `${VITE_BACKEND_BASE_API}/attendance/getEveningAttendanceTable`,
+      );
+      // console.log(response);
+      if (response.status === 200) {
+        setEveningAttendanceTable(response.data.data);
+      } else {
+        toast.error('Error Loading Evening Attendance Table.');
+      }
+    } catch (err) {
+      console.log('Error Loading Evening Attendance Table.', err);
+      toast.error('Error Loading Evening Attendance Table.');
+    } finally {
     }
   };
   const loadNightAttendance = async () => {
@@ -193,6 +231,23 @@ const AttendanceBody = ({
       toast.error('Error Loading Night Attendance.');
     }
   };
+  const loadNightAttendanceTable = async () => {
+    try {
+      const response = await axios.get(
+        `${VITE_BACKEND_BASE_API}/attendance/getNightAttendanceTable`,
+      );
+      // console.log(response);
+      if (response.status === 200) {
+        setNightAttendanceTable(response.data.data);
+      } else {
+        toast.error('Error Loading Night Attendance Table.');
+      }
+    } catch (err) {
+      console.log('Error Loading Night Attendance Table.', err);
+      toast.error('Error Loading Night Attendance Table.');
+    } finally {
+    }
+  };
   const loadSundayAttendance = async () => {
     setSundayAttendance(null);
     try {
@@ -235,6 +290,23 @@ const AttendanceBody = ({
       toast.error('Error Loading Sunday Attendance.');
     }
   };
+  const loadSundayAttendanceTable = async () => {
+    try {
+      const response = await axios.get(
+        `${VITE_BACKEND_BASE_API}/attendance/getSundayAttendanceTable`,
+      );
+      // console.log(response);
+      if (response.status === 200) {
+        setSundayAttendanceTable(response.data.data);
+      } else {
+        toast.error('Error Loading Sunday Attendance Table.');
+      }
+    } catch (err) {
+      console.log('Error Loading Sunday Attendance Table.', err);
+      toast.error('Error Loading Sunday Attendance Table.');
+    } finally {
+    }
+  };
 
   useEffect(() => {
     loadTotalStudents(selectedCategoryOption);
@@ -253,6 +325,13 @@ const AttendanceBody = ({
     endDate,
     searchQuery,
   ]);
+
+  useEffect(() => {
+    loadMorningAttendanceTable();
+    loadEveningAttendanceTable();
+    loadNightAttendanceTable();
+    loadSundayAttendanceTable();
+  }, []);
 
   // Function to generate and download the Excel file
   const generateReport = (attendanceType, attendance) => {
@@ -326,7 +405,14 @@ const AttendanceBody = ({
     <div className="bg-[#e2e8f0] flex-grow w-full h-full mt-2 rounded-xl">
       <div className="my-2 mx-5 grid grid-flow-col justify-around">
         <div className="flex flex-col">
-          <Card sx={{ width: 250, height: 200 }}>
+          <Card
+            sx={{
+              width: 250,
+              height: 200,
+              background:
+                'linear-gradient(90deg, #EFCC25,white, white, #EFCC25)',
+            }}
+          >
             <CardContent
               sx={{
                 textAlign: 'center',
@@ -395,7 +481,14 @@ const AttendanceBody = ({
           </Card>
         </div>
         <div className="flex flex-col">
-          <Card sx={{ width: 250, height: 200 }}>
+          <Card
+            sx={{
+              width: 250,
+              height: 200,
+              background:
+                'linear-gradient(90deg, #4895ef,white, white, #4895ef)',
+            }}
+          >
             <CardContent
               sx={{
                 textAlign: 'center',
@@ -464,7 +557,14 @@ const AttendanceBody = ({
           </Card>
         </div>
         <div className="flex flex-col">
-          <Card sx={{ width: 250, height: 200 }}>
+          <Card
+            sx={{
+              width: 250,
+              height: 200,
+              background:
+                'linear-gradient(90deg, #4361ee,white, white, #4361ee)',
+            }}
+          >
             <CardContent
               sx={{
                 textAlign: 'center',
@@ -534,7 +634,14 @@ const AttendanceBody = ({
         </div>
         {new Date().getDay() === 0 && ( //condition to check whether today is sunday or not
           <div className="flex flex-col">
-            <Card sx={{ width: 250, height: 200 }}>
+            <Card
+              sx={{
+                width: 250,
+                height: 200,
+                background:
+                  'linear-gradient(90deg, #d66853,white, white, #d66853)',
+              }}
+            >
               <CardContent
                 sx={{
                   textAlign: 'center',
@@ -576,10 +683,24 @@ const AttendanceBody = ({
                 {/* Generate Report Button */}
                 {sundayAttendance !== null && (
                   <Button
-                    variant="contained"
+                    variant="outlined"
                     color="primary"
                     onClick={() => generateReport('Sunday', sundayAttendance)}
-                    sx={{ marginTop: 2 }}
+                    sx={{
+                      marginTop: 2,
+                      display: 'flex',
+                      alignItems: 'center',
+                      textTransform: 'none',
+                      fontWeight: 'bold',
+                      borderColor: 'primary.main',
+                      color: 'primary.main',
+                      transition: 'all 0.3s ease',
+                      '&:hover': {
+                        backgroundColor: 'primary.main',
+                        color: 'white',
+                        borderColor: 'primary.main',
+                      },
+                    }}
                   >
                     Generate Report
                   </Button>
@@ -590,6 +711,361 @@ const AttendanceBody = ({
         )}
       </div>
       <Divider />
+
+      <div className="attendance-table">
+        <h2 className="inline-block ml-5 mb-2 mt-2 px-4 py-2 bg-blue-200 text-black rounded-lg shadow-md">
+          Today's Morning Attendance
+        </h2>
+        <table className="min-w-full border-collapse text-s">
+          <thead>
+            <tr className="bg-gray-400 rounded-2xl">
+              <th className="py-2 px-4 text-left font-bold">Category</th>
+              <th className="py-2 px-4 text-left font-bold">Total Students</th>
+              <th className="py-2 px-4 text-left font-bold">Present</th>
+              <th className="py-2 px-4 text-left font-bold">Absent</th>
+              <th className="py-2 px-4 text-left font-bold">Leave</th>
+              <th className="py-2 px-4 text-left font-bold">Sick</th>
+              <th className="py-2 px-4 text-left font-bold">Exam</th>
+              <th className="py-2 px-4 text-left font-bold">College</th>
+              <th className="py-2 px-4 text-left font-bold">Job</th>
+            </tr>
+          </thead>
+          <tbody>
+            {morningAttendanceTable?.map((row, index) => (
+              <tr key={index}>
+                <td className="py-2 px-4">{row.category}</td>
+                <td className="py-2 px-4">{row.total}</td>
+                <td className="py-2 px-4">{row.present}</td>
+                <td className="py-2 px-4">{row.absent}</td>
+                <td className="py-2 px-4">{row.leave}</td>
+                <td className="py-2 px-4">{row.sick}</td>
+                <td className="py-2 px-4">{row.exam}</td>
+                <td className="py-2 px-4">{row.college}</td>
+                <td className="py-2 px-4">{row.job}</td>
+              </tr>
+            ))}
+            <tr>
+              <td className="py-2 px-4">Total</td>
+              <td className="py-2 px-4">
+                {morningAttendanceTable?.reduce(
+                  (acc, row) => acc + Number(row.total),
+                  0,
+                )}
+              </td>
+              <td className="py-2 px-4">
+                {morningAttendanceTable?.reduce(
+                  (acc, row) => acc + Number(row.present),
+                  0,
+                )}
+              </td>
+              <td className="py-2 px-4">
+                {morningAttendanceTable?.reduce(
+                  (acc, row) => acc + Number(row.absent),
+                  0,
+                )}
+              </td>
+              <td className="py-2 px-4">
+                {morningAttendanceTable?.reduce(
+                  (acc, row) => acc + Number(row.leave),
+                  0,
+                )}
+              </td>
+              <td className="py-2 px-4">
+                {morningAttendanceTable?.reduce(
+                  (acc, row) => acc + Number(row.sick),
+                  0,
+                )}
+              </td>
+              <td className="py-2 px-4">
+                {morningAttendanceTable?.reduce(
+                  (acc, row) => acc + Number(row.exam),
+                  0,
+                )}
+              </td>
+              <td className="py-2 px-4">
+                {morningAttendanceTable?.reduce(
+                  (acc, row) => acc + Number(row.college),
+                  0,
+                )}
+              </td>
+              <td className="py-2 px-4">
+                {morningAttendanceTable?.reduce(
+                  (acc, row) => acc + Number(row.job),
+                  0,
+                )}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <Divider />
+
+      <div className="attendance-table">
+        <h2 className="inline-block ml-5 mb-2 mt-2 px-4 py-2 bg-blue-200 text-black rounded-lg shadow-md">
+          Today's Evening Attendance
+        </h2>
+        <table className="min-w-full border-collapse text-s">
+          <thead>
+            <tr className="bg-gray-400 rounded-2xl">
+              <th className="py-2 px-4 text-left font-bold">Category</th>
+              <th className="py-2 px-4 text-left font-bold">Total Students</th>
+              <th className="py-2 px-4 text-left font-bold">Present</th>
+              <th className="py-2 px-4 text-left font-bold">Absent</th>
+              <th className="py-2 px-4 text-left font-bold">Leave</th>
+              <th className="py-2 px-4 text-left font-bold">Sick</th>
+              <th className="py-2 px-4 text-left font-bold">Exam</th>
+              <th className="py-2 px-4 text-left font-bold">College</th>
+              <th className="py-2 px-4 text-left font-bold">Job</th>
+            </tr>
+          </thead>
+          <tbody>
+            {eveningAttendanceTable?.map((row, index) => (
+              <tr key={index}>
+                <td className="py-2 px-4">{row.category}</td>
+                <td className="py-2 px-4">{row.total}</td>
+                <td className="py-2 px-4">{row.present}</td>
+                <td className="py-2 px-4">{row.absent}</td>
+                <td className="py-2 px-4">{row.leave}</td>
+                <td className="py-2 px-4">{row.sick}</td>
+                <td className="py-2 px-4">{row.exam}</td>
+                <td className="py-2 px-4">{row.college}</td>
+                <td className="py-2 px-4">{row.job}</td>
+              </tr>
+            ))}
+            <tr>
+              <td className="py-2 px-4">Total</td>
+              <td className="py-2 px-4">
+                {eveningAttendanceTable?.reduce(
+                  (acc, row) => acc + Number(row.total),
+                  0,
+                )}
+              </td>
+              <td className="py-2 px-4">
+                {eveningAttendanceTable?.reduce(
+                  (acc, row) => acc + Number(row.present),
+                  0,
+                )}
+              </td>
+              <td className="py-2 px-4">
+                {eveningAttendanceTable?.reduce(
+                  (acc, row) => acc + Number(row.absent),
+                  0,
+                )}
+              </td>
+              <td className="py-2 px-4">
+                {eveningAttendanceTable?.reduce(
+                  (acc, row) => acc + Number(row.leave),
+                  0,
+                )}
+              </td>
+              <td className="py-2 px-4">
+                {eveningAttendanceTable?.reduce(
+                  (acc, row) => acc + Number(row.sick),
+                  0,
+                )}
+              </td>
+              <td className="py-2 px-4">
+                {eveningAttendanceTable?.reduce(
+                  (acc, row) => acc + Number(row.exam),
+                  0,
+                )}
+              </td>
+              <td className="py-2 px-4">
+                {eveningAttendanceTable?.reduce(
+                  (acc, row) => acc + Number(row.college),
+                  0,
+                )}
+              </td>
+              <td className="py-2 px-4">
+                {eveningAttendanceTable?.reduce(
+                  (acc, row) => acc + Number(row.job),
+                  0,
+                )}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <Divider />
+
+      <div className="attendance-table">
+        <h2 className="inline-block ml-5 mb-2 mt-2 px-4 py-2 bg-blue-200 text-black rounded-lg shadow-md">
+          Today's Night Attendance
+        </h2>
+        <table className="min-w-full border-collapse text-s">
+          <thead>
+            <tr className="bg-gray-400 rounded-2xl">
+              <th className="py-2 px-4 text-left font-bold">Category</th>
+              <th className="py-2 px-4 text-left font-bold">Total Students</th>
+              <th className="py-2 px-4 text-left font-bold">Present</th>
+              <th className="py-2 px-4 text-left font-bold">Absent</th>
+              <th className="py-2 px-4 text-left font-bold">Leave</th>
+              <th className="py-2 px-4 text-left font-bold">Sick</th>
+              <th className="py-2 px-4 text-left font-bold">Exam</th>
+              <th className="py-2 px-4 text-left font-bold">College</th>
+              <th className="py-2 px-4 text-left font-bold">Job</th>
+            </tr>
+          </thead>
+          <tbody>
+            {nightAttendanceTable?.map((row, index) => (
+              <tr key={index}>
+                <td className="py-2 px-4">{row.category}</td>
+                <td className="py-2 px-4">{row.total}</td>
+                <td className="py-2 px-4">{row.present}</td>
+                <td className="py-2 px-4">{row.absent}</td>
+                <td className="py-2 px-4">{row.leave}</td>
+                <td className="py-2 px-4">{row.sick}</td>
+                <td className="py-2 px-4">{row.exam}</td>
+                <td className="py-2 px-4">{row.college}</td>
+                <td className="py-2 px-4">{row.job}</td>
+              </tr>
+            ))}
+            <tr>
+              <td className="py-2 px-4">Total</td>
+              <td className="py-2 px-4">
+                {nightAttendanceTable?.reduce(
+                  (acc, row) => acc + Number(row.total),
+                  0,
+                )}
+              </td>
+              <td className="py-2 px-4">
+                {nightAttendanceTable?.reduce(
+                  (acc, row) => acc + Number(row.present),
+                  0,
+                )}
+              </td>
+              <td className="py-2 px-4">
+                {nightAttendanceTable?.reduce(
+                  (acc, row) => acc + Number(row.absent),
+                  0,
+                )}
+              </td>
+              <td className="py-2 px-4">
+                {nightAttendanceTable?.reduce(
+                  (acc, row) => acc + Number(row.leave),
+                  0,
+                )}
+              </td>
+              <td className="py-2 px-4">
+                {nightAttendanceTable?.reduce(
+                  (acc, row) => acc + Number(row.sick),
+                  0,
+                )}
+              </td>
+              <td className="py-2 px-4">
+                {nightAttendanceTable?.reduce(
+                  (acc, row) => acc + Number(row.exam),
+                  0,
+                )}
+              </td>
+              <td className="py-2 px-4">
+                {nightAttendanceTable?.reduce(
+                  (acc, row) => acc + Number(row.college),
+                  0,
+                )}
+              </td>
+              <td className="py-2 px-4">
+                {nightAttendanceTable?.reduce(
+                  (acc, row) => acc + Number(row.job),
+                  0,
+                )}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <Divider />
+
+      {new Date().getDay() === 0 && (
+        <div className="attendance-table">
+          <h2 className="inline-block ml-5 mb-2 mt-2 px-4 py-2 bg-blue-200 text-black rounded-lg shadow-md">
+            Today's Sadhu Ashram Sunday Attendance
+          </h2>
+          <table className="min-w-full border-collapse text-s">
+            <thead>
+              <tr className="bg-gray-400 rounded-2xl">
+                <th className="py-2 px-4 text-left font-bold">Category</th>
+                <th className="py-2 px-4 text-left font-bold">
+                  Total Students
+                </th>
+                <th className="py-2 px-4 text-left font-bold">Present</th>
+                <th className="py-2 px-4 text-left font-bold">Absent</th>
+                <th className="py-2 px-4 text-left font-bold">Leave</th>
+                <th className="py-2 px-4 text-left font-bold">Sick</th>
+                <th className="py-2 px-4 text-left font-bold">Exam</th>
+                <th className="py-2 px-4 text-left font-bold">College</th>
+                <th className="py-2 px-4 text-left font-bold">Job</th>
+              </tr>
+            </thead>
+            <tbody>
+              {sundayAttendanceTable?.map((row, index) => (
+                <tr key={index}>
+                  <td className="py-2 px-4">{row.category}</td>
+                  <td className="py-2 px-4">{row.total}</td>
+                  <td className="py-2 px-4">{row.present}</td>
+                  <td className="py-2 px-4">{row.absent}</td>
+                  <td className="py-2 px-4">{row.leave}</td>
+                  <td className="py-2 px-4">{row.sick}</td>
+                  <td className="py-2 px-4">{row.exam}</td>
+                  <td className="py-2 px-4">{row.college}</td>
+                  <td className="py-2 px-4">{row.job}</td>
+                </tr>
+              ))}
+              <tr>
+                <td className="py-2 px-4">Total</td>
+                <td className="py-2 px-4">
+                  {sundayAttendanceTable?.reduce(
+                    (acc, row) => acc + Number(row.total),
+                    0,
+                  )}
+                </td>
+                <td className="py-2 px-4">
+                  {sundayAttendanceTable?.reduce(
+                    (acc, row) => acc + Number(row.present),
+                    0,
+                  )}
+                </td>
+                <td className="py-2 px-4">
+                  {sundayAttendanceTable?.reduce(
+                    (acc, row) => acc + Number(row.absent),
+                    0,
+                  )}
+                </td>
+                <td className="py-2 px-4">
+                  {sundayAttendanceTable?.reduce(
+                    (acc, row) => acc + Number(row.leave),
+                    0,
+                  )}
+                </td>
+                <td className="py-2 px-4">
+                  {sundayAttendanceTable?.reduce(
+                    (acc, row) => acc + Number(row.sick),
+                    0,
+                  )}
+                </td>
+                <td className="py-2 px-4">
+                  {sundayAttendanceTable?.reduce(
+                    (acc, row) => acc + Number(row.exam),
+                    0,
+                  )}
+                </td>
+                <td className="py-2 px-4">
+                  {sundayAttendanceTable?.reduce(
+                    (acc, row) => acc + Number(row.college),
+                    0,
+                  )}
+                </td>
+                <td className="py-2 px-4">
+                  {sundayAttendanceTable?.reduce(
+                    (acc, row) => acc + Number(row.job),
+                    0,
+                  )}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      )}
 
       <div>{/*  */}</div>
     </div>

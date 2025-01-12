@@ -64,8 +64,19 @@ export default function DrawerFilters({
   const [search, setSearch] = useState('');
 
   const options = ['All', 'Wing3', 'Dome', 'Vishvambharam'];
-  const universityOptions = ['All', 'Nirma', 'Silver Oak'];
-  const branchOptions = ['All', 'CSE', 'EC', 'Mechanical', 'Chemical'];
+  const universityOptions = ['All', 'Nirma', 'Silver Oak', 'Adani'];
+  const branchOptions = [
+    'All',
+    'CSE',
+    'EC',
+    'Mechanical',
+    'Chemical',
+    'Electrical',
+    'Civil',
+    'IT',
+    'BCA',
+    'MCA',
+  ];
 
   const applyFilter = () => {
     setSelectedOption('All');
