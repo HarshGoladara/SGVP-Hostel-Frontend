@@ -274,6 +274,80 @@ const TempAdmissionForm = () => {
         );
       }
 
+      // // ---------------------multer chatgpt starts-----------------------------------------
+      // const formData = new FormData();
+      // formData.append('student_surname', data.student_surname);
+      // formData.append('student_name', data.student_name);
+      // formData.append('student_father_name', data.student_father_name);
+      // formData.append('dob', data.dob);
+      // formData.append('nationality', data.nationality);
+      // formData.append('religion', data.religion);
+      // formData.append('caste', data.caste);
+      // formData.append('address', data.address);
+      // formData.append('city', data.city);
+      // formData.append('postal_pin_number', data.postal_pin_number);
+      // formData.append('student_contact_number', data.student_contact_number);
+      // formData.append('student_email', data.student_email);
+      // formData.append('student_qualification', data.student_qualification);
+      // formData.append('student_full_name', student_full_name);
+
+      // formData.append('name_of_university', data.name_of_university);
+      // formData.append('name_of_collage', data.name_of_collage);
+      // formData.append('course', data.course);
+      // formData.append('branch', data.branch);
+      // formData.append('course_duration_years', data.course_duration_years);
+      // formData.append('current_year', data.current_year);
+      // formData.append('current_sem', data.current_sem);
+
+      // formData.append('father_name', data.father_name);
+      // formData.append('father_contact_number', data.father_contact_number);
+      // formData.append('father_email', data.father_email);
+      // formData.append('mother_name', data.mother_name);
+      // formData.append('mother_contact_number', data.mother_contact_number);
+      // formData.append('approval_person_name', data.approval_person_name);
+      // formData.append('approval_person_contact', data.approval_person_contact);
+      // formData.append('approval_person_relation', data.approval_person_relation);
+      // formData.append('approval_person_email', data.approval_person_email);
+
+      // formData.append('relative_name', data.relative_name);
+      // formData.append('relative_relation', data.relative_relation);
+      // formData.append('relative_contact_number', data.relative_contact_number);
+      // formData.append('relative_address', data.relative_address);
+
+      // formData.append('name_of_sant', data.name_of_sant);
+      // formData.append('sant_phone_number', data.sant_phone_number);
+
+      // formData.append('reference_relative_full_name', data.reference_relative_full_name);
+      // formData.append('reference_relative_relation', data.reference_relative_relation);
+      // formData.append('reference_relative_mobile', data.reference_relative_mobile);
+
+      // // Append Photos if selected
+      // if (photoFile.studentPhotoFile) {
+      //   formData.append('student_profile_photo', photoFile.studentPhotoFile);
+      // }
+      // if (photoFile.fatherPhotoFile) {
+      //   formData.append('father_profile_photo', photoFile.fatherPhotoFile);
+      // }
+      // if (photoFile.motherPhotoFile) {
+      //   formData.append('mother_profile_photo', photoFile.motherPhotoFile);
+      // }
+
+      // const response = await axios.post(
+      //   `${VITE_BACKEND_BASE_API}/admission/tempAddStudentDetails`,
+      //   formData,
+      //   {
+      //     headers: {
+      //       'Content-Type': 'multipart/form-data',
+      //     },
+      //   }
+      // );
+
+      // console.log('Student data added successfully:', response.data);
+      // setSuccessMessage('Student data added successfully!');
+      // toast.success('Student data Submitted successfully!');
+      // navigate('/');
+      // // ---------------------multer chatgpt ends-----------------------------------------
+
       // console.log(studentPhotoUrl, fatherPhotoUrl, motherPhotoUrl);
 
       // console.log(student_full_name);

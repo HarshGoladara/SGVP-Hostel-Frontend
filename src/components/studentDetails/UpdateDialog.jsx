@@ -48,7 +48,12 @@ export const UpdateDialog = ({
       setLoading(true);
       const response = await axios.put(
         `${VITE_BACKEND_BASE_API}/updateData/updateStudent`,
-        formData,
+        {
+          ...formData,
+          old_student_contact_number: selectedStudent.student_contact_number,
+          old_father_contact_number: selectedStudent.father_contact_number,
+          old_mother_contact_number: selectedStudent.mother_contact_number,
+        },
       );
       if (response.status === 200) {
         // console.log("Successfully updated alumni data.");
