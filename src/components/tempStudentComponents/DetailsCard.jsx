@@ -3,6 +3,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import { Divider, Box, IconButton } from '@mui/material';
+import { VITE_BACKEND_BASE } from '../../helper/envConfig/envConfig';
 import './css/DetailsCard.css';
 
 const DetailsCard = ({ student, onClose }) => {
@@ -64,7 +65,7 @@ const DetailsCard = ({ student, onClose }) => {
             {student.student_photo_url ? (
               <img
                 src={
-                  student.student_photo_url ||
+                  `${VITE_BACKEND_BASE}${student.student_photo_url}` ||
                   `https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQVrNIrc_GMNFCWvfIVx-5-1jI0YMf-3a6yyg&s`
                 }
                 alt={student.student_full_name}
@@ -150,7 +151,7 @@ const DetailsCard = ({ student, onClose }) => {
             {/* Fixed 20% width for the image */}
             {student.student_photo_url ? (
               <img
-                src={student.student_photo_url}
+                src={`${VITE_BACKEND_BASE}${student.student_photo_url}`}
                 alt={student.student_full_name}
                 className="h-full w-full object-cover rounded-lg"
               />
@@ -233,7 +234,7 @@ const DetailsCard = ({ student, onClose }) => {
               {/* Fixed 30% width for the image */}
               {student.father_photo_url ? (
                 <img
-                  src={student.father_photo_url}
+                  src={`${VITE_BACKEND_BASE}${student.father_photo_url}`}
                   alt={student.father_name}
                   className="h-full w-full object-cover rounded-lg"
                 />
@@ -248,7 +249,7 @@ const DetailsCard = ({ student, onClose }) => {
               {/* Fixed 30% width for the image */}
               {student.mother_photo_url ? (
                 <img
-                  src={student.mother_photo_url}
+                  src={`${VITE_BACKEND_BASE}${student.mother_photo_url}`}
                   alt={student.mother_name}
                   className="h-full w-full object-cover rounded-lg"
                 />
@@ -342,7 +343,7 @@ const DetailsCard = ({ student, onClose }) => {
             {/* Fixed 30% width for the image */}
             {student.student_photo_url ? (
               <img
-                src={student.student_photo_url}
+                src={`${VITE_BACKEND_BASE}${student.student_photo_url}`}
                 alt={student.student_full_name}
                 className="h-full w-full object-cover rounded-lg"
               />

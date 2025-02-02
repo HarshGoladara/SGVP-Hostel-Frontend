@@ -7,4 +7,5 @@ export const {
   VITE_APP_ID,
   VITE_MEASUREMENT_ID,
   VITE_BACKEND_BASE_API,
+  VITE_BACKEND_BASE,
 } = import.meta.env;

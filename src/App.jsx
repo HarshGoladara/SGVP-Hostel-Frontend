@@ -25,6 +25,7 @@ import Sidebar from './layouts/Sidebar.jsx';
 import AttendanceLayout from './components/attendanceComponents/AttendanceLayout.jsx';
 import RoomAllotmentLayout from './components/roomAllotmentComponents/RoomAllotmentLayout.jsx';
 import RolesCredentialsLayout from './components/rolesCredentialsComponents/RolesCredentialsLayout.jsx';
+import ImageUpload from './components/admissionComponents/ImageUpload.jsx';
 
 function App() {
   const router = createBrowserRouter([
@@ -55,6 +56,10 @@ function App() {
     {
       path: '/drawer',
       element: <DrawerBasic />,
+    },
+    {
+      path: '/imageupload',
+      element: <ImageUpload />,
     },
     {
       path: '/circle',
