@@ -3,7 +3,10 @@ import axios from 'axios';
 import { IconButton } from '@mui/material';
 import { ArrowBack, ArrowForward } from '@mui/icons-material';
 import RolesCredentialsModal from './RolesCredentialsModal';
-import { VITE_BACKEND_BASE_API } from '../../helper/envConfig/envConfig.js';
+import {
+  VITE_BACKEND_BASE_API,
+  VITE_BACKEND_BASE,
+} from '../../helper/envConfig/envConfig.js';
 import ActionDropdown from './ActionDropdown.jsx';
 import { CircularProgress } from '@mui/material';
 import CustomCircularLoader from '../commonCustomComponents/CustomCircularLoader.jsx';
@@ -372,7 +375,7 @@ const RolesCredentialsTable = ({
                   <td className="py-2 px-4">
                     {rector.photo_url ? (
                       <img
-                        src={rector.photo_url}
+                        src={`${VITE_BACKEND_BASE}${rector.photo_url}`}
                         alt={rector.name}
                         className="w-12 h-12 rounded-full"
                       />

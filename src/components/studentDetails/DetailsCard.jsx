@@ -20,7 +20,10 @@ import { storage } from '../../firebase_config/firebase.js';
 import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import axios from 'axios';
 import toast from 'react-hot-toast';
-import { VITE_BACKEND_BASE_API } from '../../helper/envConfig/envConfig.js';
+import {
+  VITE_BACKEND_BASE_API,
+  VITE_BACKEND_BASE,
+} from '../../helper/envConfig/envConfig.js';
 import { CircularProgress } from '@mui/material';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import EditIcon from '@mui/icons-material/Edit';
@@ -275,7 +278,7 @@ const DetailsCard = ({ students, setStudents, student, onClose }) => {
               {selectedStudent.student_photo_url ? (
                 <img
                   src={
-                    selectedStudent.student_photo_url ||
+                    `${VITE_BACKEND_BASE}${selectedStudent.student_photo_url}` ||
                     `https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQVrNIrc_GMNFCWvfIVx-5-1jI0YMf-3a6yyg&s`
                   }
                   alt={selectedStudent.student_full_name}
@@ -390,7 +393,7 @@ const DetailsCard = ({ students, setStudents, student, onClose }) => {
               {selectedStudent.student_photo_url ? (
                 <img
                   src={
-                    selectedStudent.student_photo_url ||
+                    `${VITE_BACKEND_BASE}${selectedStudent.student_photo_url}` ||
                     `https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQVrNIrc_GMNFCWvfIVx-5-1jI0YMf-3a6yyg&s`
                   }
                   alt={selectedStudent.student_full_name}
@@ -503,7 +506,7 @@ const DetailsCard = ({ students, setStudents, student, onClose }) => {
               <label htmlFor="upload-father-photo">
                 {selectedStudent.father_photo_url ? (
                   <img
-                    src={selectedStudent.father_photo_url}
+                    src={`${VITE_BACKEND_BASE}${selectedStudent.father_photo_url}`}
                     alt={selectedStudent.father_name}
                     className="h-full w-full object-cover rounded-lg"
                   />
@@ -537,7 +540,7 @@ const DetailsCard = ({ students, setStudents, student, onClose }) => {
               <label htmlFor="upload-mother-photo">
                 {selectedStudent.mother_photo_url ? (
                   <img
-                    src={selectedStudent.mother_photo_url}
+                    src={`${VITE_BACKEND_BASE}${selectedStudent.mother_photo_url}`}
                     alt={selectedStudent.mother_name}
                     className="h-full w-full object-cover rounded-lg"
                   />
@@ -662,7 +665,7 @@ const DetailsCard = ({ students, setStudents, student, onClose }) => {
               {selectedStudent.student_photo_url ? (
                 <img
                   src={
-                    selectedStudent.student_photo_url ||
+                    `${VITE_BACKEND_BASE}${selectedStudent.student_photo_url}` ||
                     `https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQVrNIrc_GMNFCWvfIVx-5-1jI0YMf-3a6yyg&s`
                   }
                   alt={selectedStudent.student_full_name}

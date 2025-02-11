@@ -21,7 +21,10 @@ import { storage } from '../../firebase_config/firebase.js';
 import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import axios from 'axios';
 import toast from 'react-hot-toast';
-import { VITE_BACKEND_BASE_API } from '../../helper/envConfig/envConfig.js';
+import {
+  VITE_BACKEND_BASE_API,
+  VITE_BACKEND_BASE,
+} from '../../helper/envConfig/envConfig.js';
 import { CircularProgress } from '@mui/material';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import EditIcon from '@mui/icons-material/Edit';
@@ -246,7 +249,7 @@ const ReactorDetailsCard = ({ rectors, setRectors, rector, onClose }) => {
               {selectedRector.photo_url ? (
                 <img
                   src={
-                    selectedRector.photo_url ||
+                    `${VITE_BACKEND_BASE}${selectedRector.photo_url}` ||
                     `https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQVrNIrc_GMNFCWvfIVx-5-1jI0YMf-3a6yyg&s`
                   }
                   alt={selectedRector.name}

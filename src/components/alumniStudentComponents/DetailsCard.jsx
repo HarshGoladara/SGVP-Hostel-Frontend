@@ -6,6 +6,7 @@ import { Divider, Box, IconButton } from '@mui/material';
 import './css/DetailsCard.css';
 import { UpdateDialog } from './UpdateDialog.jsx';
 import { useCookies } from 'react-cookie';
+import { VITE_BACKEND_BASE } from '../../helper/envConfig/envConfig.js';
 
 const DetailsCard = ({ students, setStudents, student, onClose }) => {
   const totalPages = 4;
@@ -80,7 +81,7 @@ const DetailsCard = ({ students, setStudents, student, onClose }) => {
             {selectedStudent.student_photo_url ? (
               <img
                 src={
-                  selectedStudent.student_photo_url ||
+                  `${VITE_BACKEND_BASE}${selectedStudent.student_photo_url}` ||
                   `https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQVrNIrc_GMNFCWvfIVx-5-1jI0YMf-3a6yyg&s`
                 }
                 alt={selectedStudent.student_full_name}
@@ -175,7 +176,7 @@ const DetailsCard = ({ students, setStudents, student, onClose }) => {
             {/* Fixed 20% width for the image */}
             {selectedStudent.student_photo_url ? (
               <img
-                src={selectedStudent.student_photo_url}
+                src={`${VITE_BACKEND_BASE}${selectedStudent.student_photo_url}`}
                 alt={selectedStudent.student_full_name}
                 className="h-full w-full object-cover rounded-lg"
               />
@@ -267,7 +268,7 @@ const DetailsCard = ({ students, setStudents, student, onClose }) => {
               {/* Fixed 30% width for the image */}
               {selectedStudent.father_photo_url ? (
                 <img
-                  src={selectedStudent.father_photo_url}
+                  src={`${VITE_BACKEND_BASE}${selectedStudent.father_photo_url}`}
                   alt={selectedStudent.father_name}
                   className="h-full w-full object-cover rounded-lg"
                 />
@@ -282,7 +283,7 @@ const DetailsCard = ({ students, setStudents, student, onClose }) => {
               {/* Fixed 30% width for the image */}
               {selectedStudent.mother_photo_url ? (
                 <img
-                  src={selectedStudent.mother_photo_url}
+                  src={`${VITE_BACKEND_BASE}${selectedStudent.mother_photo_url}`}
                   alt={selectedStudent.mother_name}
                   className="h-full w-full object-cover rounded-lg"
                 />
@@ -387,7 +388,7 @@ const DetailsCard = ({ students, setStudents, student, onClose }) => {
             {/* Fixed 30% width for the image */}
             {selectedStudent.student_photo_url ? (
               <img
-                src={selectedStudent.student_photo_url}
+                src={`${VITE_BACKEND_BASE}${selectedStudent.student_photo_url}`}
                 alt={selectedStudent.student_full_name}
                 className="h-full w-full object-cover rounded-lg"
               />

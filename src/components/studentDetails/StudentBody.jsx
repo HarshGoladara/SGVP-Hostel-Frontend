@@ -11,7 +11,10 @@ import {
 } from '@mui/material';
 import { ArrowBack, ArrowForward } from '@mui/icons-material';
 import StudentModal from './StudentModal';
-import { VITE_BACKEND_BASE_API } from '../../helper/envConfig/envConfig.js';
+import {
+  VITE_BACKEND_BASE_API,
+  VITE_BACKEND_BASE,
+} from '../../helper/envConfig/envConfig.js';
 import ActionDropdown from './ActionDropdown.jsx';
 import { CircularProgress } from '@mui/material';
 import CustomCircularLoader from '../commonCustomComponents/CustomCircularLoader.jsx';
@@ -252,7 +255,7 @@ const StudentTable = ({
                   <td className="py-2 px-4">
                     {student.student_photo_url ? (
                       <img
-                        src={student.student_photo_url}
+                        src={`${VITE_BACKEND_BASE}${student.student_photo_url}`}
                         alt={student.student_full_name}
                         className="w-12 h-12 rounded-full"
                       />
