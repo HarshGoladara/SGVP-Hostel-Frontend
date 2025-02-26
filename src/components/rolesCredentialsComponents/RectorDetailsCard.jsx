@@ -111,16 +111,43 @@ const ReactorDetailsCard = ({ rectors, setRectors, rector, onClose }) => {
     try {
       setRectorLoading(true);
 
-      const rectorPhotoUrl = await uploadImage(
-        photoFile.rectorPhotoFile,
-        `rectors/${selectedRector.name}/rector_photo`,
-      );
+      //-------------------------------------firebase photoupload code start-----------------------------
+      // const rectorPhotoUrl = await uploadImage(
+      //   photoFile.rectorPhotoFile,
+      //   `rectors/${selectedRector.name}/rector_photo`,
+      // );
+
+      // const response = await axios.put(
+      //   `${VITE_BACKEND_BASE_API}/rector/updateRector`,
+      //   {
+      //     rector_id: selectedRector.rector_id,
+      //     photo_url: rectorPhotoUrl,
+      //   },
+      // );
+
+      // if (response.status === 200) {
+      //   toast.success('Rector Photo Updated Successfully.');
+      //   setSelectedRector({
+      //     ...selectedRector,
+      //     photo_url: rectorPhotoUrl,
+      //   });
+      //   setPhotoUploadConfirmationDialogOpen(false); // Close the confirmation dialog
+      // } else {
+      //   toast.error('Error Updating Rector Photo');
+      // }
+      //-------------------------------------firebase photoupload code end-----------------------------
+
+      const formData = new FormData();
+      formData.append('rector_profile_update_photo', photoFile.rectorPhotoFile);
+      formData.append('rector_id', selectedRector.rector_id);
 
       const response = await axios.put(
         `${VITE_BACKEND_BASE_API}/rector/updateRector`,
+        formData,
         {
-          rector_id: selectedRector.rector_id,
-          photo_url: rectorPhotoUrl,
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
         },
       );
 
@@ -128,7 +155,7 @@ const ReactorDetailsCard = ({ rectors, setRectors, rector, onClose }) => {
         toast.success('Rector Photo Updated Successfully.');
         setSelectedRector({
           ...selectedRector,
-          photo_url: rectorPhotoUrl,
+          photo_url: response.data.photo_url,
         });
         setPhotoUploadConfirmationDialogOpen(false); // Close the confirmation dialog
       } else {

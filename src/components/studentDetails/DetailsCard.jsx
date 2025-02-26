@@ -132,17 +132,46 @@ const DetailsCard = ({ students, setStudents, student, onClose }) => {
   const uploadStudentPhoto = async () => {
     try {
       setPhotoUploading(true);
+      //-------------------------------------firebase photoupload code start-----------------------------
+      // const studentPhotoUrl = await uploadImage(
+      //   photoFile.studentPhotoFile,
+      //   `students/${selectedStudent.student_full_name}/student_photo`,
+      // );
 
-      const studentPhotoUrl = await uploadImage(
+      // const response = await axios.put(
+      //   `${VITE_BACKEND_BASE_API}/updateData/updateStudentData`,
+      //   {
+      //     pin_number: selectedStudent.pin_number,
+      //     student_photo_url: studentPhotoUrl,
+      //   },
+      // );
+
+      // if (response.status === 200) {
+      //   toast.success('Student Photo Updated Successfully.');
+      //   setSelectedStudent({
+      //     ...selectedStudent,
+      //     student_photo_url: studentPhotoUrl,
+      //   });
+      //   setConfirmPhotoUploadDialog({ open: false, type: '' }); // Close the confirmation dialog
+      // } else {
+      //   toast.error('Error Updating Student Photo');
+      // }
+      //-------------------------------------firebase photoupload code end-----------------------------
+
+      const formData = new FormData();
+      formData.append(
+        'student_profile_update_photo',
         photoFile.studentPhotoFile,
-        `students/${selectedStudent.student_full_name}/student_photo`,
       );
+      formData.append('pin_number', selectedStudent.pin_number);
 
       const response = await axios.put(
         `${VITE_BACKEND_BASE_API}/updateData/updateStudentData`,
+        formData,
         {
-          pin_number: selectedStudent.pin_number,
-          student_photo_url: studentPhotoUrl,
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
         },
       );
 
@@ -150,7 +179,7 @@ const DetailsCard = ({ students, setStudents, student, onClose }) => {
         toast.success('Student Photo Updated Successfully.');
         setSelectedStudent({
           ...selectedStudent,
-          student_photo_url: studentPhotoUrl,
+          student_photo_url: response.data.student_photo_url,
         });
         setConfirmPhotoUploadDialog({ open: false, type: '' }); // Close the confirmation dialog
       } else {
@@ -166,25 +195,50 @@ const DetailsCard = ({ students, setStudents, student, onClose }) => {
   const uploadFatherPhoto = async () => {
     try {
       setPhotoUploading(true);
+      //-------------------------------------firebase photoupload code start-----------------------------
+      // const fatherPhotoUrl = await uploadImage(
+      //   photoFile.fatherPhotoFile,
+      //   `students/${selectedStudent.student_full_name}/father_photo`,
+      // );
 
-      const fatherPhotoUrl = await uploadImage(
-        photoFile.fatherPhotoFile,
-        `students/${selectedStudent.student_full_name}/father_photo`,
-      );
+      // const response = await axios.put(
+      //   `${VITE_BACKEND_BASE_API}/updateData/updateParentDetails`,
+      //   {
+      //     pin_number: selectedStudent.pin_number,
+      //     father_photo_url: fatherPhotoUrl,
+      //   },
+      // );
+
+      // if (response.status === 200) {
+      //   toast.success('Father Photo Updated Successfully.');
+      //   setSelectedStudent({
+      //     ...selectedStudent,
+      //     father_photo_url: fatherPhotoUrl,
+      //   });
+      //   setConfirmPhotoUploadDialog({ open: false, type: '' }); // Close the confirmation dialog
+      // } else {
+      //   toast.error('Error Updating Father Photo');
+      // }
+      //-------------------------------------firebase photoupload code end-----------------------------
+
+      const formData = new FormData();
+      formData.append('father_profile_update_photo', photoFile.fatherPhotoFile);
+      formData.append('pin_number', selectedStudent.pin_number);
 
       const response = await axios.put(
         `${VITE_BACKEND_BASE_API}/updateData/updateParentDetails`,
+        formData,
         {
-          pin_number: selectedStudent.pin_number,
-          father_photo_url: fatherPhotoUrl,
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
         },
       );
-
       if (response.status === 200) {
         toast.success('Father Photo Updated Successfully.');
         setSelectedStudent({
           ...selectedStudent,
-          father_photo_url: fatherPhotoUrl,
+          father_photo_url: response.data.father_photo_url,
         });
         setConfirmPhotoUploadDialog({ open: false, type: '' }); // Close the confirmation dialog
       } else {
@@ -200,25 +254,50 @@ const DetailsCard = ({ students, setStudents, student, onClose }) => {
   const uploadMotherPhoto = async () => {
     try {
       setPhotoUploading(true);
+      //-------------------------------------firebase photoupload code start-----------------------------
+      // const motherPhotoUrl = await uploadImage(
+      //   photoFile.motherPhotoFile,
+      //   `students/${selectedStudent.student_full_name}/student_photo`,
+      // );
 
-      const motherPhotoUrl = await uploadImage(
-        photoFile.motherPhotoFile,
-        `students/${selectedStudent.student_full_name}/student_photo`,
-      );
+      // const response = await axios.put(
+      //   `${VITE_BACKEND_BASE_API}/updateData/updateParentDetails`,
+      //   {
+      //     pin_number: selectedStudent.pin_number,
+      //     mother_photo_url: motherPhotoUrl,
+      //   },
+      // );
+
+      // if (response.status === 200) {
+      //   toast.success('Mother Photo Updated Successfully.');
+      //   setSelectedStudent({
+      //     ...selectedStudent,
+      //     mother_photo_url: motherPhotoUrl,
+      //   });
+      //   setConfirmPhotoUploadDialog({ open: false, type: '' }); // Close the confirmation dialog
+      // } else {
+      //   toast.error('Error Updating Mother Photo');
+      // }
+      //-------------------------------------firebase photoupload code end-----------------------------
+
+      const formData = new FormData();
+      formData.append('mother_profile_update_photo', photoFile.motherPhotoFile);
+      formData.append('pin_number', selectedStudent.pin_number);
 
       const response = await axios.put(
         `${VITE_BACKEND_BASE_API}/updateData/updateParentDetails`,
+        formData,
         {
-          pin_number: selectedStudent.pin_number,
-          mother_photo_url: motherPhotoUrl,
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
         },
       );
-
       if (response.status === 200) {
         toast.success('Mother Photo Updated Successfully.');
         setSelectedStudent({
           ...selectedStudent,
-          mother_photo_url: motherPhotoUrl,
+          mother_photo_url: response.data.mother_photo_url,
         });
         setConfirmPhotoUploadDialog({ open: false, type: '' }); // Close the confirmation dialog
       } else {
@@ -502,13 +581,13 @@ const DetailsCard = ({ students, setStudents, student, onClose }) => {
         <div className="flex mt-[10px]">
           <div>
             {/* Father's Photo Section */}
-            <div className="h-[90px] md:h-[125px] w-full flex-shrink-0 mr-4 mb-1 relative group">
+            <div className="h-[90px] md:h-36 w-36 flex-shrink-0 mr-4 mb-1 relative group">
               <label htmlFor="upload-father-photo">
                 {selectedStudent.father_photo_url ? (
                   <img
                     src={`${VITE_BACKEND_BASE}${selectedStudent.father_photo_url}`}
                     alt={selectedStudent.father_name}
-                    className="h-full w-full object-cover rounded-lg"
+                    className="h-[90px] md:h-36 w-36 object-cover rounded-lg"
                   />
                 ) : (
                   <div className="flex items-center justify-center h-full w-[150px] bg-blue-500 text-white text-lg font-bold rounded-lg">
@@ -536,13 +615,13 @@ const DetailsCard = ({ students, setStudents, student, onClose }) => {
             )}
 
             {/* Mother's Photo Section */}
-            <div className="h-[90px] md:h-[125px] w-full flex-shrink-0 mr-4 mt-4 relative group">
+            <div className="h-[90px] md:h-36 w-36 flex-shrink-0 mr-4 mt-4 relative group">
               <label htmlFor="upload-mother-photo">
                 {selectedStudent.mother_photo_url ? (
                   <img
                     src={`${VITE_BACKEND_BASE}${selectedStudent.mother_photo_url}`}
                     alt={selectedStudent.mother_name}
-                    className="h-full w-full object-cover rounded-lg"
+                    className="h-[90px] md:h-36 w-36 object-cover rounded-lg"
                   />
                 ) : (
                   <div className="flex items-center justify-center h-full w-[150px] bg-blue-500 text-white text-lg font-bold rounded-lg">
